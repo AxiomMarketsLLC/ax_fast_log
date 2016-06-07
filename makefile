@@ -1,22 +1,24 @@
-TOPDIR   := $(HOME)/dev/monitor_worker/
+TOPDIR   := $(HOME)/dev/ax_fast_log/
 LIBDIR   := $(TOPDIR)lib/
-NAME     := libax_fast_log.so
-LIB		 := $(LIBDIR)$(NAME)
-SOFLAG   := -fpic -Wall
-SOLINK	 := -shared	
-all:	so
+NAME	 := libax_fast_log.so
+TARGET	 := $(LIBDIR)$(NAME)
+CXXFLAGS = -fPIC -Wall
+LDFLAGS	 = -shared	
 
 
-CC       := g++
+CXX      := g++
 
-src = $(wildcard *.cpp)
-objects = $(src:.cpp=.o)
+SOURCES = $(wildcard *.cpp)
+OBJECTS = $(SOURCES:.cpp=.o)
 
-so:		dep $(LIB)
-$(LIB): $(objects)
-	$(CC) $(SOFLAG) $(SOLINK) -o $@ $^
+$(TARGET):	$(OBJECTS)
+	$(CXX) $(LDFLAGS) -o $@ $^
+$(SOURCES:.cpp=.d):%.d:%.cpp	
+	$(CXX) $(CXXFLAGS) -MM $< >$@
+include $(SRCS:.cpp=.d)
+
 .PHONY: clean
 clean:
-	rm -f $(objects) $(LIB)
+	rm -f $(OBJECTS) $(TARGET)
 
 	
