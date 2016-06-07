@@ -1,7 +1,7 @@
 #include <stdio.h>
-#include "foo.hpp"
+#include "AxFastLog.hpp"
 
-void entry(void)
+void AxFastLog::entry(void)
 {
 	puts("-------SL TEST--------");
 }
