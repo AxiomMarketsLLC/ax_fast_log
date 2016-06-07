@@ -1,18 +1,28 @@
 TOPDIR   := $(HOME)/dev/ax_fast_log/
 LIBDIR   := $(TOPDIR)lib/
-NAME	 := libax_fast_log.so
-TARGET	 := $(LIBDIR)$(NAME)
-CXXFLAGS = -fPIC -Wall
-LDFLAGS	 = -shared	
-
+SONAME	 := libax_fast_log.so
+SOTARGET := $(LIBDIR)$(SONAME)
+ANAME	 := libax_fast_log.a
+ATARGET  := $(LIBDIR)$(ANAME)
+CXXFLAGS  = -fPIC -Wall
+SOLDFLAGS = -shared	
+ALDFLAGS =
 
 CXX      := g++
 
 SOURCES = $(wildcard *.cpp)
 OBJECTS = $(SOURCES:.cpp=.o)
 
-$(TARGET):	$(OBJECTS)
-	$(CXX) $(LDFLAGS) -o $@ $^
+all:	$(SOTARGET)
+
+archive:	$(ATARGET)
+
+$(SOTARGET):	$(OBJECTS)
+	$(CXX) $(SOLDFLAGS) -o $@ $^
+
+$(ATARGET):	$(OBJECTS)
+	ar rcs -o $@ $^
+
 $(SOURCES:.cpp=.d):%.d:%.cpp	
 	$(CXX) $(CXXFLAGS) -MM $< >$@
 include $(SRCS:.cpp=.d)
