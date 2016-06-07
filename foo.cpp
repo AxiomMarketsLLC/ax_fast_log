@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "foo.hpp"
 
-void foo(void)
+void entry(void)
 {
 	puts("-------SL TEST--------");
 }
