@@ -8,6 +8,6 @@ Severity testSev = Severity::INFO;
 
 AxFastLog::testAxFastLog(LogEnums:: FILE, "STRING");
 
-TEST_LOG(testString, testSev){
+testAxFastLog::TEST_LOG(testString, testSev){
   testAxFastLog.log(testString, testSev);
 }
