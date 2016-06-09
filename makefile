@@ -1,12 +1,13 @@
-TOPDIR   := $(HOME)/ax_fast_log/
+TOPDIR   := $(HOME)/dev/ax_fast_log/
+SRCDIR	 := $(TOPDIR)src/
 LIBDIR   := $(TOPDIR)lib/
 SONAME	 := libax_fast_log.so
 SOTARGET := $(LIBDIR)$(SONAME)
 ANAME	 := libax_fast_log.a
 ATARGET  := $(LIBDIR)$(ANAME)
 CXXFLAGS  = -fPIC -Wall -std=c++1y
-SOLDFLAGS = -shared	
-ALDFLAGS =
+SOLDFLAGS = -shared -lboost_thread	
+ALDFLAGS = -lboost_thread
 
 CXX      := g++
 
