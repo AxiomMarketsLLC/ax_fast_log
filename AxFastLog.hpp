@@ -33,7 +33,8 @@ private:
 
   private:
   SafeQueue<std::pair<std::string,LogEnums::Severity>> safeQ;
-  TransportInterface* transport;
+  //TransportInterface* transport;
+  std::unique_ptr<TransportInterface> transport;
   void post();
   //boost::thread postThread;
 

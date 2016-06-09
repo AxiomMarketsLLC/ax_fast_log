@@ -4,7 +4,7 @@
 AxFastLog::AxFastLog(LogEnums::TransportType t, const std::string& address): safeQ() {
 	 switch(t) {
 		 case LogEnums::FILE:
-		 transport = new FileTransport(address);
+		 transport = std::unique_ptr<FileTransport>(new FileTransport(address));
 		 break;
 		 case LogEnums::SCKT:
 		 break;
@@ -14,10 +14,7 @@ AxFastLog::AxFastLog(LogEnums::TransportType t, const std::string& address): saf
 
 		 //postThread(boost::thread(&(this->post), this));
 }
-AxFastLog::~AxFastLog() {
 
-	delete transport;
-}
 /*
 AxFastLog::setTransportType(LogEnums::TransportType t){
 	if(safeQ.empty()){
