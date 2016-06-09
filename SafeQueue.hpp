@@ -37,6 +37,10 @@ public:
     return val;
   }
 
+  size_type size(void){
+    return q.size();
+  }
+
 private:
   std::queue<T> q;
   mutable std::mutex m;
