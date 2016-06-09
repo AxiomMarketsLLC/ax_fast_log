@@ -8,8 +8,11 @@
 
 class AxFastLog {
 
-  enum Severity{INFO, DEBG, WARN, ERRO};
-  enum TransportType{SCKT,CNSL};
+
+enum Severity{INFO, DEBG, WARN, ERRO};
+enum TransportType{SCKT,CNSL};
+
+private:
 
   struct message{
     time_t time;
