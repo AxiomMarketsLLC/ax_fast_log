@@ -1,17 +1,19 @@
 #ifndef __AXFASTLOG__
 #define __AXFASTLOG__
 #include "SafeQueue.hpp"
-#include "Transport.hpp"
+#include "TransportInterface.hpp"
 #include "FileTransport.hpp"
 #include <boost/thread.hpp>
 #include <time.h>
+#include <memory>
 
+namespace LogEnums {
+  enum Severity{INFO, DEBG, WARN, ERRO};
+  enum TransportType{FILE,SCKT,CNSL};
+}
 class AxFastLog {
 
-
-enum Severity{INFO, DEBG, WARN, ERRO};
-enum TransportType{SCKT,CNSL};
-
+/*
 private:
 
   struct message{
@@ -19,22 +21,23 @@ private:
     Severity sev;
     std::string body;
   };
-
-
-  private:
-  SafeQueue<std::pair<std::string,Severity>> safeQ;
-  std::unique_ptr<TransportInterface> transport;
-  void post();
-  boost::thread postThread;
+*/
 
   public:
-  AxFastLog(TransportType, const std::string&);
+  AxFastLog(LogEnums::TransportType, const std::string&);
   //void setTransportType(TransportType);
   //TransportType getTransportType();
-  void log(std::string, Severity);
+  void log(const std::string&, LogEnums::Severity);
 
-  ~AxFastLog()
+  ~AxFastLog();
 
+  private:
+  SafeQueue<std::pair<std::string,LogEnums::Severity>> safeQ;
+  std::unique_ptr<TransportInterface> transport;
+  void post();
+  std::unique_ptr<boost::thread> postThread;
+
+ 
 };
 
 #endif

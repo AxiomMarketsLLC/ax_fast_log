@@ -1,6 +1,6 @@
 #ifndef __FILETRANS__
 #define __FILETRANS__
-#include "Transport.hpp"
+#include "TransportInterface.hpp"
 
 
 class FileTransport:public TransportInterface{
@@ -12,3 +12,4 @@ class FileTransport:public TransportInterface{
   ~FileTransport();
 
 };
+#endif

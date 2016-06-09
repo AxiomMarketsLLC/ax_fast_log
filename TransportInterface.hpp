@@ -1,11 +1,13 @@
 #ifndef __TRANSPORT__
 #define __TRANSPORT__
 #include <string>
+#include <memory>
 
 class TransportInterface {
 
  public:
- virtual void write(const std::string&);
+ virtual int write(const std::string&);
+ virtual ~TransportInterface();
 };
 
 #endif

@@ -1,21 +1,22 @@
-#include <stdio.h>
+#include <iostream>
 #include "AxFastLog.hpp"
 
-AxFastLog::AxFaceLog(TransportType t, const std::string& address): safeQ() {
+AxFastLog::AxFastLog(LogEnums::TransportType t, const std::string& address): safeQ() {
 	 switch(t) {
-		 case FileTransport:
-		 transport = new FileTransport(address);
+		 case LogEnums::FILE:
+		 transport = std::unique_ptr<FileTransport>(new FileTransport(address));
 		 break;
-		 case SocketTransport:
+		 case LogEnums::SCKT:
 		 break;
-		 case ConsoleTransport:
+		 case LogEnums::CNSL:
 		 break;
 		 }
 
-		 postThread(boost::thread(&(this->post), this));
+	postThread = std::unique_ptr<boost::thread>(new boost::thread(&AxFastLog::post, this));
 }
+
 /*
-AxFastLog::setTransportType(TransportType t){
+AxFastLog::setTransportType(LogEnums::TransportType t){
 	if(safeQ.empty()){
 		switch(t) {
  		 case FileTransport:
@@ -34,17 +35,17 @@ AxFastLog::setTransportType(TransportType t){
 	}
 }
 */
-AxFastLog::log(std::string msg, Severity sev){
-	pair<std::string,Severity> msgPair = std::make_pair(msg,sev);
+void AxFastLog::log(const std::string& msg, LogEnums::Severity sev){
+	std::pair<std::string,LogEnums::Severity> msgPair = std::make_pair(msg,sev);
 	safeQ.enqueue(msgPair);
 }
 
-AxFastLog::post(){
+void AxFastLog::post(){
 	while(true){
 		while(!safeQ.empty()){
-			pair<std::string,Severity> sendPair = safeQ.dequeue();
+			std::pair<std::string,LogEnums::Severity> sendPair = safeQ.dequeue();
 			transport->write(sendPair.first);
 		}
-		std::cout << "LOGGER: Queue is empty" << << endl;
+		std::cout << "LOGGER: Queue is empty" << std::endl;
 	}
 }
