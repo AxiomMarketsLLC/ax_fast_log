@@ -35,7 +35,7 @@ AxFastLog::setTransportType(LogEnums::TransportType t){
 	}
 }
 */
-void AxFastLog::log(std::string msg, LogEnums::Severity sev){
+void AxFastLog::log(const std::string& msg, LogEnums::Severity sev){
 	std::pair<std::string,LogEnums::Severity> msgPair = std::make_pair(msg,sev);
 	safeQ.enqueue(msgPair);
 }
