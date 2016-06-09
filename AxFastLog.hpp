@@ -3,7 +3,7 @@
 #include "SafeQueue.hpp"
 #include "TransportInterface.hpp"
 #include "FileTransport.hpp"
-//#include <boost/thread.hpp>
+#include <boost/thread.hpp>
 #include <time.h>
 #include <memory>
 
@@ -33,10 +33,9 @@ private:
 
   private:
   SafeQueue<std::pair<std::string,LogEnums::Severity>> safeQ;
-  //TransportInterface* transport;
   std::unique_ptr<TransportInterface> transport;
   void post();
-  //boost::thread postThread;
+  std::unique_ptr<boost::thread> postThread;
 
  
 };

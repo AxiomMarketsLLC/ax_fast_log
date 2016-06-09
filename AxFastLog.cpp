@@ -12,7 +12,7 @@ AxFastLog::AxFastLog(LogEnums::TransportType t, const std::string& address): saf
 		 break;
 		 }
 
-		 //postThread(boost::thread(&(this->post), this));
+	postThread = std::unique_ptr<boost::thread>(new boost::thread(&AxFastLog::post, this));
 }
 
 /*
