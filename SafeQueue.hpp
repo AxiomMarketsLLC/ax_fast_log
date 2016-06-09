@@ -37,8 +37,12 @@ public:
     return val;
   }
 
-  size_type size(void){
+  size_t size(void){
     return q.size();
+  }
+
+  bool empty(void) {
+	return q.empty();
   }
 
 private:
