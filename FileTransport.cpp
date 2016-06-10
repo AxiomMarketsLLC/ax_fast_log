@@ -28,7 +28,3 @@ FileTransport::~FileTransport(){
        outStream->close();
    }
 }
-
-  std::unique_ptr<std::ofstream> FileTransport::getStream(){
-    return outStream;  
-  }
