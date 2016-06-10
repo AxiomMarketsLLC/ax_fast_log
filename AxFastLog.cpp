@@ -15,6 +15,8 @@ AxFastLog::AxFastLog(LogEnums::TransportType t, const std::string& address): saf
 	postThread = std::unique_ptr<boost::thread>(new boost::thread(&AxFastLog::post, this));
 }
 
+AxFastLog::~AxFastLog(){};
+
 /*
 AxFastLog::setTransportType(LogEnums::TransportType t){
 	if(safeQ.empty()){
