@@ -6,8 +6,8 @@
 class TransportInterface {
 
  public:
- virtual int write(const std::string&);
- virtual ~TransportInterface();
+ virtual int write(const std::string&) = 0;
+ virtual ~TransportInterface() = 0;
 };
-
+inline TransportInterface::~TransportInterface() { }
 #endif
