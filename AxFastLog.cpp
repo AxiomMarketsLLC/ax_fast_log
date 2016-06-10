@@ -15,7 +15,7 @@ AxFastLog::AxFastLog(LogEnums::TransportType t, const std::string& address): saf
 	postThread = std::unique_ptr<boost::thread>(new boost::thread(&AxFastLog::post, this));
 }
 
-AxFastLog::~AxFastLog(){};
+//AxFastLog::~AxFastLog(){};
 
 /*
 AxFastLog::setTransportType(LogEnums::TransportType t){
@@ -48,6 +48,5 @@ void AxFastLog::post(){
 			std::pair<std::string,LogEnums::Severity> sendPair = safeQ.dequeue();
 			transport->write(sendPair.first);
 		}
-		std::cout << "LOGGER: Queue is empty" << std::endl;
 	}
 }

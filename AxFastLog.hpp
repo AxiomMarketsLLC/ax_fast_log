@@ -29,7 +29,7 @@ private:
   //TransportType getTransportType();
   void log(const std::string&, LogEnums::Severity);
 
-  ~AxFastLog();
+  //~AxFastLog();
 
   private:
   SafeQueue<std::pair<std::string,LogEnums::Severity>> safeQ;
