@@ -31,7 +31,7 @@ BOOST_AUTO_TEST_CASE(axFastLogTest){
     }
   }
   myReadFile.close();
-  BOOST_CHECK_MESSAGE(std::strncmp(expectedString,calculatedString) == 0, "ERROR: Expected string not equal to calculated string" );
+  BOOST_CHECK_MESSAGE(std::strcmp(expectedString,calculatedString) == 0, "ERROR: Expected string not equal to calculated string" );
 
 }
 
