@@ -1,46 +1,23 @@
-SHELL = /bin/sh
-CC    = g++
+TOPDIR   := $(HOME)/ax_fast_log/
+LIBDIR   := $(TOPDIR)lib
+TARGET   := ax_fast_log_test
+CXXFLAGS  = -Wall -g -std=c++1y
+TFLAGS = -lpthread -lboost_system-mt -lboost_thread-mt -lboost_unit_test_framework-mt -L$(LIBDIR) -lax_fast_log 
 
-FLAGS       = -lpthread -Wl,--no-as-needed,--allow-multiple-definition -lrt
-CFLAGS      = -w -g -Ilibprod -Isrc/h -Iboost/include -DVERSION=\"$(GIT_VERSION)\"
-CFLAGS_T    = $(CFLAGS) --coverage
+CXX      := g++ 
 
-BUILD_DATE  = -Xlinker --defsym -Xlinker __BUILD_DATE=$$(date +'%Y%m%d')
-GIT_VERSION = $(shell git describe --abbrev=4 --dirty --always --tags)
+SOURCES = $(wildcard *.cpp)
+OBJECTS = $(SOURCES:.cpp=.o)
 
-BOO_32		= boost/lib32/
-BOO_64	    = boost/lib64/
-BOOST_32    = $(BOO_32)libboost_system.a $(BOO_32)libboost_thread.a $(BOO_32)libboost_chrono.a $(BOO_32)libboost_log.a $(BOO_32)libboost_log_setup.a $(BOO_32)libboost_filesystem.a
-BOOST_64    = $(BOO_64)libboost_system.a $(BOO_64)libboost_thread.a $(BOO_64)libboost_chrono.a $(BOO_64)libboost_log.a $(BOO_64)libboost_log_setup.a $(BOO_64)libboost_filesystem.a
-BOOST_32_T  = $(BOOST_32) $(BOO_32)libboost_unit_test_framework.a
-BOOST_64_T  = $(BOOST_64) $(BOO_64)libboost_unit_test_framework.a
+all:	$(TARGET)
 
-TARGEET = axlog.out
-SOURCES = $(shell echo src/*.cpp)
-OBJECTS = $(SOURCES:.c=.o)
+$(TARGET):	$(OBJECTS)
+	$(CXX) $(TFLAGS) -o $@ $^
 
-TARGET_T   = axlogtests
-SOURCES_T  = $(shell echo tests/*.cpp) $(SOURCES)
+$(SOURCES:.cpp=.d):%.d:%.cpp
+	$(CXX) $(CXXFLAGS) -MM $< >$@
+include $(SRCS:.cpp=.d)
 
-OBJECTS_T  = $(SOURCES_T:.c=.o)
-
-PREFIX = $(DESTDIR)/usr/local
-BINDIR = $(PREFIX)/bin
-
-all: $(TARGET)
-
-$(TARGET): $(OBJECTS)
-	$(CC) $(CFLAGS) $(LARGE_FILE) $(BUILD_DATE) -o $(TARGET) $(OBJECTS) $(FLAGS) $(BOOST_$(ARCH))
-
-release: $(SOURCES) $(HEADERS)
-	$(CC) $(CFLAGS) $(LARGE_FILE) $(BUILD_DATE) -o $(TARGET) $(SOURCES) $(FLAGS) $(BOOST_$(ARCH))
-
-test: $(OBJECTS_T)
-	$(CC) $(CFLAGS_T) $(LARGE_FILE) $(BUILD_DATE) -o $(TARGET_T) $(SOURCES_T) $(FLAGS) $(BOOST_$(ARCH)_T)
-
-profile: $(TARGET)
-
+.PHONY: clean
 clean:
-	rm -f *.o *.gcov *.gcda *.gcno
-distclean: clean
-	rm -f $(TARGET) $(TARGET_T)
+	rm -f $(OBJECTS) $(TARGET)
