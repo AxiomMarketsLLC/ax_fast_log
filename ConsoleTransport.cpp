@@ -1,16 +1,12 @@
 #include "ConsoleTransport.hpp"
 #include <iostream>
 
-ConsoleTranport::ConsoleTransport(std::ofstream& stream): outStream(stream){
-  if(!outStream->is_open()){
-      throw(std::runtime_error("LOGGER: Output stream could not be opened"));
-    }
-}
+ConsoleTranport::ConsoleTransport(){}
 
 int ConsoleTransport::write(const std::string& msg){
-  if (outStream->is_open())
+  if (cout.is_open())
   {
-    outStream << msg<<std::endl;
+    cout<<msg<<std::endl;
   }
   else{
      throw(std::runtime_error("LOGGER: Output stream is not open"));
@@ -19,9 +15,4 @@ int ConsoleTransport::write(const std::string& msg){
   return 0;
 }
 
-FileTransport::~FileTransport(){
-  if( outStream->is_open() )
-   {
-       outStream->close();
-   }
-}
+ConsoleTransport::~ConsoleTransport(){}

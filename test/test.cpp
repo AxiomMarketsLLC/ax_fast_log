@@ -33,7 +33,7 @@ expectedString(testString), transExpectedStr(testString), testSev(LogEnums::INFO
 BOOST_FIXTURE_TEST_SUITE(axFastLogSuite, axFastLogVars);
 
 BOOST_AUTO_TEST_CASE(axFastLogTest){
-  
+
   ax.log(testString, testSev);
   usleep(100); //wait 100 microseconds, avoid race condition with AxFastLog::post()
   //read from file and write to calculatedString
@@ -44,7 +44,7 @@ BOOST_AUTO_TEST_CASE(axFastLogTest){
       myReadFile>>calculatedString;
 
     }
-  } 
+  }
  myReadFile.close();
  BOOST_CHECK_MESSAGE(expectedString.compare(calculatedString) == 0, "ERROR: Expected string not equal to calculated string" );
 
@@ -66,5 +66,15 @@ BOOST_AUTO_TEST_CASE(fileTransportTester){
   BOOST_CHECK_MESSAGE(transCalcStr.compare(transExpectedStr)== 0, "ERROR: Expected string not equal to calculated string" );
 
 }
+
+BOOST_AUTO_TEST_CASE(consoleTranportTester){
+  std:string calcString = "";
+  ConsoleTransport consoleTrans();
+  consoleTrans.write(testString) >> calcString;
+  BOOST_CHECK_MESSAGE(testString.compater(calcString) == 0, "ERROR: Expectd string not equal to calculated string");
+
+
+}
+
 
 BOOST_AUTO_TEST_SUITE_END()

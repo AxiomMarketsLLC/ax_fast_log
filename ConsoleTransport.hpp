@@ -3,9 +3,8 @@
 #include "TransportInterface.hpp"
 
 class ConsoleTransport: public TransportInterface{
-  std::ofstream outStream;
   public:
-    ConsoleTransport(const std:: ofstream&);
+    ConsoleTransport();
     int write(const std:: string&);
     ~ConsoleTransport();
 
