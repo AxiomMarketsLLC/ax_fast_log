@@ -1,4 +1,5 @@
 #include <iostream>
+#include <unistd.h>
 #include "AxFastLog.hpp"
 
 AxFastLog::AxFastLog(LogEnums::TransportType t, const std::string& address): safeQ() {
@@ -39,15 +40,14 @@ AxFastLog::setTransportType(LogEnums::TransportType t){
 	}
 }
 */
+
 void AxFastLog::log(const std::string& msg, LogEnums::Severity sev) {
 	safeQ.enqueue(std::make_pair(msg, sev));
 }
 
 void AxFastLog::post(){
 	while(true){
-		while(!safeQ.empty()){
-			std::pair<std::string,LogEnums::Severity> sendPair = safeQ.dequeue();
-			transport->write(sendPair.first);
-		}
+		std::pair<std::string,LogEnums::Severity> sendPair = safeQ.dequeue();
+		transport->write(sendPair.first);
 	}
 }

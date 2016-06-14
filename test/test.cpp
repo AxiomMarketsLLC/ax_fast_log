@@ -23,9 +23,11 @@ std::string calculatedString;
 std::string transExpectedStr;
 std::string transCalcStr;
 AxFastLog ax;
-
+SafeQueue<std::string> testQueue;
+size_t queueSize;
+std::string dequeuedString;
 axFastLogVars() : axFilePath("data/axTest.txt"), transFilePath("data/transTest.txt"), transCalcStr(""), testString("TEST"), ax(LogEnums::FILE, axFilePath),
-expectedString(testString), transExpectedStr(testString), testSev(LogEnums::INFO) {}
+expectedString(testString), transExpectedStr(testString), dequeuedString(""), testSev(LogEnums::INFO), testQueue() {}
 
 };
 
@@ -33,18 +35,17 @@ expectedString(testString), transExpectedStr(testString), testSev(LogEnums::INFO
 BOOST_FIXTURE_TEST_SUITE(axFastLogSuite, axFastLogVars);
 
 BOOST_AUTO_TEST_CASE(axFastLogTest){
-  
+
   ax.log(testString, testSev);
-  usleep(100); //wait 100 microseconds, avoid race condition with AxFastLog::post()
+  usleep(1000); //wait 1000 microseconds, avoid race condition with AxFastLog::post()
   //read from file and write to calculatedString
   std::ifstream myReadFile;
   myReadFile.open(axFilePath.c_str());
   if(myReadFile.is_open()){
     while (!myReadFile.eof()) {
       myReadFile>>calculatedString;
-
     }
-  } 
+  }
  myReadFile.close();
  BOOST_CHECK_MESSAGE(expectedString.compare(calculatedString) == 0, "ERROR: Expected string not equal to calculated string" );
 
@@ -54,7 +55,7 @@ BOOST_AUTO_TEST_CASE(axFastLogTest){
 BOOST_AUTO_TEST_CASE(fileTransportTester){
   FileTransport fileTrans(transFilePath);
   fileTrans.write(testString);
-
+  usleep(1000);
   std::ifstream myReadFile;
   myReadFile.open(transFilePath.c_str());
   if(myReadFile.is_open()){
@@ -65,6 +66,14 @@ BOOST_AUTO_TEST_CASE(fileTransportTester){
   myReadFile.close();
   BOOST_CHECK_MESSAGE(transCalcStr.compare(transExpectedStr)== 0, "ERROR: Expected string not equal to calculated string" );
 
+}
+
+BOOST_AUTO_TEST_CASE(safeQueueTester){
+  testQueue.enqueue(testString);
+  queueSize= testQueue.size();
+  BOOST_CHECK_MESSAGE(queueSize == 1, "ERROR:Item not enqueued.");
+  dequeuedString = testQueue.dequeue();
+  BOOST_CHECK_MESSAGE(dequeuedString.compare(expectedString) == 0,"ERROR: The dequeued string is incorrect");
 }
 
 BOOST_AUTO_TEST_SUITE_END()
