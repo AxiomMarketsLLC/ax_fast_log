@@ -72,7 +72,8 @@ BOOST_AUTO_TEST_CASE(fileTransportTester){
 BOOST_AUTO_TEST_CASE(consoleTranportTester){
   std:string calcString = "";
   ConsoleTransport consoleTrans();
-  consoleTrans.write(testString) >> calcString;
+  consoleTrans.write(testString);
+  getline(cin, calcString);
   BOOST_CHECK_MESSAGE(testString.compater(calcString) == 0, "ERROR: Expectd string not equal to calculated string");
 
 
