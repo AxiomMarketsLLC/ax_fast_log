@@ -18,17 +18,19 @@ struct axFastLogVars {
 FILE* console;
 std::string axFilePath;
 std::string transFilePath;
+std::string consFilePath;
 std::string testString;
 LogEnums::Severity testSev;
 std::string expectedString;
 std::string calculatedString;
 std::string transExpectedStr;
 std::string transCalcStr;
+std::string consCalcStr;
 AxFastLog ax;
 SafeQueue<std::string> testQueue;
 size_t queueSize;
 std::string dequeuedString;
-axFastLogVars() : axFilePath("data/axTest.txt"), transFilePath("data/transTest.txt"), transCalcStr(""), testString("TEST"), ax(LogEnums::FILE, axFilePath),
+axFastLogVars() : axFilePath("data/axTest.txt"), transFilePath("data/transTest.txt"), consFilePath("data/consTest.txt"), transCalcStr(""), consCalcStr(""), testString("TEST"), ax(LogEnums::FILE, axFilePath),
 expectedString(testString), transExpectedStr(testString), dequeuedString(""), testSev(LogEnums::INFO), testQueue() {}
 
 };
@@ -50,7 +52,6 @@ BOOST_AUTO_TEST_CASE(axFastLogTest){
   }
  myReadFile.close();
  BOOST_CHECK_MESSAGE(expectedString.compare(calculatedString) == 0, "ERROR: Expected string not equal to calculated string" );
-
 }
 
 
@@ -67,20 +68,30 @@ BOOST_AUTO_TEST_CASE(fileTransportTester){
   }
   myReadFile.close();
   BOOST_CHECK_MESSAGE(transCalcStr.compare(transExpectedStr)== 0, "ERROR: Expected string not equal to calculated string" );
-
 }
 
 BOOST_AUTO_TEST_CASE(consoleTransportTester){
-  std::string calcString = "";
-  int bufSz = 256;
-  char buf[bufSz];
-  ConsoleTransport consoleTrans;  
+  ConsoleTransport consoleTrans(std::cout);
+  std::streambuf *psbuf, *backup;
+  std::ofstream myWriteFile;
+  myWriteFile.open(consFilePath.c_str());
+
+  backup = std::cout.rdbuf();     // back up cout's streambuf
+  psbuf = filestr.rdbuf();        // get file's streambuf
+  std::cout.rdbuf(psbuf);         // assign streambuf to cout
+
   consoleTrans.write(testString);
-std::cout.getline(buf, bufSz);  
-  calcString = std::string(buf);
-  BOOST_CHECK_MESSAGE(testString.compare(calcString) == 0, "ERROR: Expected string not equal to calculated string");
+  std::cout.rdbuf(backup);        // restore cout's original streambuf
+  myWriteFile.close();
 
-
+  myReadFile.open(consFilePath.c_str());
+  if(myReadFile.is_open()){
+    while (!myReadFile.eof()) {
+      myReadFile >> consCalcStr;
+    }
+  }
+  myReadFile.close();
+  BOOST_CHECK_MESSAGE(testString.compare(consCalcString) == 0, "ERROR: Expected string not equal to calculated string");
 }
 
 

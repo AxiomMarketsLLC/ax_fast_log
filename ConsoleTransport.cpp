@@ -1,14 +1,15 @@
 #include "ConsoleTransport.hpp"
 #include <iostream>
 
-ConsoleTransport::ConsoleTransport(){}
+ConsoleTransport::ConsoleTransport(std::ostream &stream):outStream(stream){
+}
 
 int ConsoleTransport::write(const std::string& msg){
   try
   {
-    std::cout<<msg<<std::endl;
+    outStream<<msg<<std::endl;
   }catch(...)
-  {  
+  {
      throw(std::runtime_error("LOGGER: Could not write to console stream!"));
      return -1;
   }
