@@ -11,7 +11,7 @@ AxFastLog::AxFastLog(LogEnums::TransportType t, const std::string& address): saf
        		 throw(std::runtime_error("LOGGER: Socket Transport not yet implemented"));
 		 break;
 		 case LogEnums::CNSL:
-		       transport = std::unique_ptr<ConsoleTransport>(new ConsoleTransport());
+		       transport = std::unique_ptr<ConsoleTransport>(new ConsoleTransport(std::cout));
 		 break;
 		 }
 

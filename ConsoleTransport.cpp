@@ -1,7 +1,6 @@
 #include "ConsoleTransport.hpp"
-#include <iostream>
 
-ConsoleTransport::ConsoleTransport(std::ostream &stream):outStream(stream){
+ConsoleTransport::ConsoleTransport(std::ostream& stream):outStream(stream){
 }
 
 int ConsoleTransport::write(const std::string& msg){

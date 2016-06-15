@@ -74,10 +74,11 @@ BOOST_AUTO_TEST_CASE(consoleTransportTester){
   ConsoleTransport consoleTrans(std::cout);
   std::streambuf *psbuf, *backup;
   std::ofstream myWriteFile;
+  std::ifstream myReadFile;
   myWriteFile.open(consFilePath.c_str());
 
   backup = std::cout.rdbuf();     // back up cout's streambuf
-  psbuf = filestr.rdbuf();        // get file's streambuf
+  psbuf = myWriteFile.rdbuf();        // get file's streambuf
   std::cout.rdbuf(psbuf);         // assign streambuf to cout
 
   consoleTrans.write(testString);
@@ -91,7 +92,7 @@ BOOST_AUTO_TEST_CASE(consoleTransportTester){
     }
   }
   myReadFile.close();
-  BOOST_CHECK_MESSAGE(testString.compare(consCalcString) == 0, "ERROR: Expected string not equal to calculated string");
+  BOOST_CHECK_MESSAGE(testString.compare(consCalcStr) == 0, "ERROR: Expected string not equal to calculated string");
 }
 
 
