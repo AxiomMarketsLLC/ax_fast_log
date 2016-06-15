@@ -21,17 +21,12 @@ std::string transFilePath;
 std::string consFilePath;
 std::string testString;
 LogEnums::Severity testSev;
-std::string expectedString;
-std::string calculatedString;
-std::string transExpectedStr;
-std::string transCalcStr;
-std::string consCalcStr;
+std::string calcString;
 AxFastLog ax;
 SafeQueue<std::string> testQueue;
 size_t queueSize;
-std::string dequeuedString;
-axFastLogVars() : axFilePath("data/axTest.txt"), transFilePath("data/transTest.txt"), consFilePath("data/consTest.txt"), transCalcStr(""), consCalcStr(""), testString("TEST"), ax(LogEnums::FILE, axFilePath),
-expectedString(testString), transExpectedStr(testString), dequeuedString(""), testSev(LogEnums::INFO), testQueue() {}
+axFastLogVars() : axFilePath("data/axTest.txt"), transFilePath("data/transTest.txt"), consFilePath("data/consTest.txt"), calcString(""), testString("TEST"), ax(LogEnums::FILE, axFilePath),
+ testSev(LogEnums::INFO), testQueue() {}
 
 };
 
@@ -39,7 +34,7 @@ expectedString(testString), transExpectedStr(testString), dequeuedString(""), te
 BOOST_FIXTURE_TEST_SUITE(axFastLogSuite, axFastLogVars);
 
 BOOST_AUTO_TEST_CASE(axFastLogTest){
-
+  calcString.erase();
   ax.log(testString, testSev);
   usleep(1000); //wait 1000 microseconds, avoid race condition with AxFastLog::post()
   //read from file and write to calculatedString
@@ -47,15 +42,16 @@ BOOST_AUTO_TEST_CASE(axFastLogTest){
   myReadFile.open(axFilePath.c_str());
   if(myReadFile.is_open()){
     while (!myReadFile.eof()) {
-      myReadFile>>calculatedString;
+      myReadFile>>calcString;
     }
   }
  myReadFile.close();
- BOOST_CHECK_MESSAGE(expectedString.compare(calculatedString) == 0, "ERROR: Expected string not equal to calculated string" );
+ BOOST_CHECK_MESSAGE(calcString.compare(testString) == 0, "ERROR: Expected string not equal to calculated string" );
 }
 
 
 BOOST_AUTO_TEST_CASE(fileTransportTester){
+  calcString.erase();
   FileTransport fileTrans(transFilePath);
   fileTrans.write(testString);
   usleep(1000);
@@ -63,14 +59,15 @@ BOOST_AUTO_TEST_CASE(fileTransportTester){
   myReadFile.open(transFilePath.c_str());
   if(myReadFile.is_open()){
     while (!myReadFile.eof()) {
-      myReadFile >> transCalcStr;
+      myReadFile >> calcString;
     }
   }
   myReadFile.close();
-  BOOST_CHECK_MESSAGE(transCalcStr.compare(transExpectedStr)== 0, "ERROR: Expected string not equal to calculated string" );
+  BOOST_CHECK_MESSAGE(calcString.compare(testString)== 0, "ERROR: Expected string not equal to calculated string" );
 }
 
 BOOST_AUTO_TEST_CASE(consoleTransportTester){
+  calcString.erase();
   ConsoleTransport consoleTrans(std::cout);
   std::streambuf *psbuf, *backup;
   std::ofstream myWriteFile;
@@ -88,20 +85,21 @@ BOOST_AUTO_TEST_CASE(consoleTransportTester){
   myReadFile.open(consFilePath.c_str());
   if(myReadFile.is_open()){
     while (!myReadFile.eof()) {
-      myReadFile >> consCalcStr;
+      myReadFile >> calcString;
     }
   }
   myReadFile.close();
-  BOOST_CHECK_MESSAGE(testString.compare(consCalcStr) == 0, "ERROR: Expected string not equal to calculated string");
+  BOOST_CHECK_MESSAGE(calcString.compare(testString) == 0, "ERROR: Expected string not equal to calculated string");
 }
 
 
 BOOST_AUTO_TEST_CASE(safeQueueTester){
+  calcString.erase();
   testQueue.enqueue(testString);
   queueSize= testQueue.size();
   BOOST_CHECK_MESSAGE(queueSize == 1, "ERROR:Item not enqueued.");
-  dequeuedString = testQueue.dequeue();
-  BOOST_CHECK_MESSAGE(dequeuedString.compare(expectedString) == 0,"ERROR: The dequeued string is incorrect");
+  calcString = testQueue.dequeue();
+  BOOST_CHECK_MESSAGE(calcString.compare(testString) == 0,"ERROR: The dequeued string is incorrect");
 }
 
 BOOST_AUTO_TEST_SUITE_END()
