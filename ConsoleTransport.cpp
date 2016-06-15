@@ -1,15 +1,15 @@
 #include "ConsoleTransport.hpp"
 #include <iostream>
 
-ConsoleTranport::ConsoleTransport(){}
+ConsoleTransport::ConsoleTransport(){}
 
 int ConsoleTransport::write(const std::string& msg){
-  if (cout.is_open())
+  try
   {
-    cout<<msg<<std::endl;
-  }
-  else{
-     throw(std::runtime_error("LOGGER: Output stream is not open"));
+    std::cout<<msg<<std::endl;
+  }catch(...)
+  {  
+     throw(std::runtime_error("LOGGER: Could not write to console stream!"));
      return -1;
   }
   return 0;

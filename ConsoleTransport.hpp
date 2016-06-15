@@ -1,4 +1,4 @@
-#ifdef __CONSOLETRANS__
+#ifndef __CONSOLETRANS__
 #define __CONSOLETRANS__
 #include "TransportInterface.hpp"
 

@@ -11,7 +11,7 @@ AxFastLog::AxFastLog(LogEnums::TransportType t, const std::string& address): saf
        		 throw(std::runtime_error("LOGGER: Socket Transport not yet implemented"));
 		 break;
 		 case LogEnums::CNSL:
-		       transport = std::unique_ptr<ConsoleTransport>(new ConsoleTranport());
+		       transport = std::unique_ptr<ConsoleTransport>(new ConsoleTransport());
 		 break;
 		 }
 
@@ -47,12 +47,7 @@ void AxFastLog::log(const std::string& msg, LogEnums::Severity sev) {
 
 void AxFastLog::post(){
 	while(true){
-<<<<<<< HEAD
-			std::pair<std::string,LogEnums::Severity> sendPair = safeQ.dequeue();
-			transport->write(sendPair.first);
-=======
 		std::pair<std::string,LogEnums::Severity> sendPair = safeQ.dequeue();
 		transport->write(sendPair.first);
->>>>>>> 2129887f7d6e96dd50d934b4209e9de28861e4a7
 	}
 }

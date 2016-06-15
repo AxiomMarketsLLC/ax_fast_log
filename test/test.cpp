@@ -2,6 +2,7 @@
 #include <sys/types.h>
 #include <fstream>
 #include <iostream>
+#include <stdio.h>
 #include <string>
 #include <unistd.h>
 #include "../AxFastLog.hpp"
@@ -14,6 +15,7 @@
 
 
 struct axFastLogVars {
+FILE* console;
 std::string axFilePath;
 std::string transFilePath;
 std::string testString;
@@ -68,19 +70,20 @@ BOOST_AUTO_TEST_CASE(fileTransportTester){
 
 }
 
-<<<<<<< HEAD
-BOOST_AUTO_TEST_CASE(consoleTranportTester){
-  std:string calcString = "";
-  ConsoleTransport consoleTrans();
+BOOST_AUTO_TEST_CASE(consoleTransportTester){
+  std::string calcString = "";
+  int bufSz = 256;
+  char buf[bufSz];
+  ConsoleTransport consoleTrans;  
   consoleTrans.write(testString);
-  getline(cin, calcString);
-  BOOST_CHECK_MESSAGE(testString.compater(calcString) == 0, "ERROR: Expectd string not equal to calculated string");
+std::cout.getline(buf, bufSz);  
+  calcString = std::string(buf);
+  BOOST_CHECK_MESSAGE(testString.compare(calcString) == 0, "ERROR: Expected string not equal to calculated string");
 
 
 }
 
 
-=======
 BOOST_AUTO_TEST_CASE(safeQueueTester){
   testQueue.enqueue(testString);
   queueSize= testQueue.size();
@@ -89,5 +92,4 @@ BOOST_AUTO_TEST_CASE(safeQueueTester){
   BOOST_CHECK_MESSAGE(dequeuedString.compare(expectedString) == 0,"ERROR: The dequeued string is incorrect");
 }
 
->>>>>>> 2129887f7d6e96dd50d934b4209e9de28861e4a7
 BOOST_AUTO_TEST_SUITE_END()

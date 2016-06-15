@@ -3,6 +3,7 @@
 #include "SafeQueue.hpp"
 #include "TransportInterface.hpp"
 #include "FileTransport.hpp"
+#include "ConsoleTransport.hpp"
 #include <boost/thread.hpp>
 #include <time.h>
 #include <memory>
