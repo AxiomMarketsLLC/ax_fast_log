@@ -2,30 +2,32 @@
 #include <sys/types.h>
 #include <fstream>
 #include <iostream>
-#include <stdio.h>
+#include <stdlib.h>
 #include <string>
 #include <unistd.h>
 #include "../AxFastLog.hpp"
+#include <future>
 #define BOOST_TEST_MAIN
 #define BOOST_TEST_DYN_LINK
 #define BOOST_TEST_MODULE AxFastLog test
 #include <boost/test/unit_test.hpp>
 #include <boost/test/included/unit_test.hpp>
-
-
+#define CLI_CMD "ncat -i 2 localhost "
+#define PORT 8000
 
 struct axFastLogVars {
 FILE* console;
 std::string axFilePath;
 std::string transFilePath;
 std::string consFilePath;
+std::string sockFilePath;
 std::string testString;
 LogEnums::Severity testSev;
 std::string calcString;
 AxFastLog ax;
 SafeQueue<std::string> testQueue;
 size_t queueSize;
-axFastLogVars() : axFilePath("data/axTest.txt"), transFilePath("data/transTest.txt"), consFilePath("data/consTest.txt"), calcString(""), testString("TEST"), ax(LogEnums::FILE, axFilePath),
+axFastLogVars() : axFilePath("data/axTest.txt"), transFilePath("data/transTest.txt"), consFilePath("data/consTest.txt"), sockFilePath("data/sockTest.txt"), calcString(""), testString("TEST"), ax(LogEnums::FILE, axFilePath),
  testSev(LogEnums::INFO), testQueue() {}
 
 };
@@ -105,16 +107,14 @@ BOOST_AUTO_TEST_CASE(safeQueueTester){
 BOOST_AUTO_TEST_CASE(socketTransportTester){
   //set up socketTranport object and sockets
   calcString.erase();
-  SocketTransport socketTransport();
-  socketTransport.listen(8000);
-  socketTransport.waitForConnection();
+  SocketTransport socketTransport;
+  socketTransport.startListen(PORT);
+  std::thread server(&SocketTransport::waitForConnection, &socketTransport);
+  std::ostringstream cmdStream;
+  cmdStream << CLI_CMD << PORT << " > " << sockFilePath << " &>/dev/null &";
+  system(cmdStream.str().c_str());
+  server.join();
   socketTransport.write(testString);
-
-  
-
-
-
-
 
 
 

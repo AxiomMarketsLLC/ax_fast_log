@@ -25,7 +25,7 @@ bool SocketTransport::clientConnected()
   return clientSocket > -1;
 }
 
-bool SocketTransport::listen(int port)
+bool SocketTransport::startListen(int port)
 {
   struct sockaddr_in serv_addr;
 
@@ -55,7 +55,7 @@ bool SocketTransport::listen(int port)
     //Here, we set the maximum size for the backlog queue to 5
     listen(listenSocket, 5);
 
-    std::cout << "Listening ..." << std::end;
+    std::cout << "Listening ..." << std::endl;
 
     return true;
 }
@@ -69,21 +69,24 @@ bool SocketTransport::waitForConnection()
 
   if (clientSocket < 0)
   {
-    std::cout << "Error during client connection." << std:endl;
+    std::cout << "Error during client connection." << std::endl;
     return false;
   }
   std::cout << "Client is connected." << std::endl;
   return true;
 }
-void SocketTransport::write(const std:: string& msg)
+int SocketTransport::write(const std:: string& msg)
 {
   //Send some data
-  if(send(clientSocket, msg, strlen(msg) , 0) < 0)
+  if(send(clientSocket, msg.c_str(), strlen(msg.c_str()) , 0) < 0)
   {
     // Send failed : connection assumed to be lost
 		close(clientSocket);
 		clientSocket = -1;
 		std::cout << "Error while sending data." << std::endl;
+		return -1;
   }
   std::cout << "Data sent." << std::endl;
+  return 0;
+
 }
