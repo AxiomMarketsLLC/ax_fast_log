@@ -11,12 +11,12 @@ class SocketTransport: public TransportInterface{
   int listenSocket, clientSocket;
 
 public:
-  ScktConnection(void);
-  ~ScktConnection(void);
+  SocketTransport(void);
+  ~SocketTransport(void);
 
-  bool ClientConnected();
-  bool Listen(int port);
-  bool WaitForConnection();
+  bool clientConnected();
+  bool listen(int port);
+  bool waitForConnection();
   int write(const std:: string&);
 };
 #endif

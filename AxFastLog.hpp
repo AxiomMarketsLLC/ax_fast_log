@@ -4,6 +4,7 @@
 #include "TransportInterface.hpp"
 #include "FileTransport.hpp"
 #include "ConsoleTransport.hpp"
+#include "SocketTransport.hpp"
 #include <boost/thread.hpp>
 #include <time.h>
 #include <memory>
@@ -38,7 +39,7 @@ private:
   void post();
   std::unique_ptr<boost::thread> postThread;
 
- 
+
 };
 
 #endif

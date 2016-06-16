@@ -20,12 +20,12 @@ SocketTransport::~SocketTransport(void)
   }
 }
 
-bool SocketTransport::ClientConnected()
+bool SocketTransport::clientConnected()
 {
   return clientSocket > -1;
 }
 
-bool SocketTransport::Listen(int port)
+bool SocketTransport::listen(int port)
 {
   struct sockaddr_in serv_addr;
 
@@ -60,7 +60,7 @@ bool SocketTransport::Listen(int port)
     return true;
 }
 
-bool SocketTransport::WaitForConnection()
+bool SocketTransport::waitForConnection()
 {
   struct sockaddr_in cli_addr;
   socklen_t clilen;

@@ -102,4 +102,22 @@ BOOST_AUTO_TEST_CASE(safeQueueTester){
   BOOST_CHECK_MESSAGE(calcString.compare(testString) == 0,"ERROR: The dequeued string is incorrect");
 }
 
+BOOST_AUTO_TEST_CASE(socketTransportTester){
+  //set up socketTranport object and sockets
+  calcString.erase();
+  SocketTransport socketTransport();
+  socketTransport.listen(8000);
+  socketTransport.waitForConnection();
+  socketTransport.write(testString);
+
+  
+
+
+
+
+
+
+
+}
+
 BOOST_AUTO_TEST_SUITE_END()
