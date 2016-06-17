@@ -3,13 +3,13 @@
 #include <iostream>
 
 FileTransport::FileTransport(const std::string& path) : outStream(new std::ofstream){
-  outStream->open(path.c_str(),std::ios_base::out|std::ios_base::app);
+  outStream->open(path.c_str(),std::ios_base::out|std::ios_base::trunc);
   if(!outStream->is_open()){
     throw(std::runtime_error("LOGGER: Output stream could not be opened"));
   }
 }
 
-int FileTransport::write(const std::string& msg){
+int FileTransport::write(const std::string& msg, LogEnums::Severity sev){
   //ofstream myfile (path);
   if (outStream->is_open())
   {

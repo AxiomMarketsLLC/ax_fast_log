@@ -8,7 +8,7 @@ class FileTransport:public TransportInterface{
 
   public:
   FileTransport(const std::string&);
-  int write(const std::string&);
+  int write(const std::string&, LogEnums::Severity = LogEnums::INFO);
   ~FileTransport();
 
 };

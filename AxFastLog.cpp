@@ -11,7 +11,7 @@ AxFastLog::AxFastLog(LogEnums::TransportType t, const std::string& address): saf
        		 transport = std::unique_ptr<SocketTransport>(new SocketTransport());
 		 break;
 		 case LogEnums::CNSL:
-		       transport = std::unique_ptr<ConsoleTransport>(new ConsoleTransport(std::cout));
+		       transport = std::unique_ptr<ConsoleTransport>(new ConsoleTransport());
 		 break;
 		 }
 
@@ -48,6 +48,6 @@ void AxFastLog::log(const std::string& msg, LogEnums::Severity sev) {
 void AxFastLog::post(){
 	while(true){
 		std::pair<std::string,LogEnums::Severity> sendPair = safeQ.dequeue();
-		transport->write(sendPair.first);
+		transport->write(sendPair.first,sendPair.second);
 	}
 }

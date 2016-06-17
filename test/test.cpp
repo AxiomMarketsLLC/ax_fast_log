@@ -12,7 +12,7 @@
 #define BOOST_TEST_MODULE AxFastLog test
 #include <boost/test/unit_test.hpp>
 #include <boost/test/included/unit_test.hpp>
-#define CLI_CMD "ncat -i 2 localhost "
+#define CLI_CMD "ncat localhost "
 #define PORT 8000
 
 struct axFastLogVars {
@@ -70,7 +70,7 @@ BOOST_AUTO_TEST_CASE(fileTransportTester){
 
 BOOST_AUTO_TEST_CASE(consoleTransportTester){
   calcString.erase();
-  ConsoleTransport consoleTrans(std::cout);
+  ConsoleTransport consoleTrans;
   std::streambuf *psbuf, *backup;
   std::ofstream myWriteFile;
   std::ifstream myReadFile;
@@ -111,7 +111,7 @@ BOOST_AUTO_TEST_CASE(socketTransportTester){
   socketTransport.startListen(PORT);
   std::thread server(&SocketTransport::waitForConnection, &socketTransport);
   std::ostringstream cmdStream;
-  cmdStream << CLI_CMD << PORT << " > " << sockFilePath << " &>/dev/null &";
+  cmdStream << CLI_CMD << PORT << " > " << sockFilePath << " &";
   system(cmdStream.str().c_str());
   server.join();
   socketTransport.write(testString);

@@ -2,11 +2,12 @@
 #define __CONSOLETRANS__
 #include "TransportInterface.hpp"
 #include <iostream>
+
 class ConsoleTransport: public TransportInterface{
   std::ostream& outStream;
   public:
-    ConsoleTransport(std::ostream&);
-    int write(const std:: string&);
+    ConsoleTransport();
+    int write(const std:: string&, LogEnums::Severity = LogEnums::INFO);
     ~ConsoleTransport();
 
 

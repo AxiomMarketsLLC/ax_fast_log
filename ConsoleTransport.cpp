@@ -1,9 +1,19 @@
 #include "ConsoleTransport.hpp"
 
-ConsoleTransport::ConsoleTransport(std::ostream& stream):outStream(stream){
+ConsoleTransport::ConsoleTransport():outStream(std::cout){
 }
 
-int ConsoleTransport::write(const std::string& msg){
+int ConsoleTransport::write(const std::string& msg, LogEnums::Severity sev){
+
+  switch(sev) {
+    case LogEnums::DEBG:
+    case LogEnums::INFO:
+      outStream.rdbuf(std::cout.rdbuf());
+      break;
+    case LogEnums::WARN:
+    case LogEnums::ERRO:
+      outStream.rdbuf(std::cerr.rdbuf());
+  }
   try
   {
     outStream<<msg<<std::endl;
@@ -14,5 +24,4 @@ int ConsoleTransport::write(const std::string& msg){
   }
   return 0;
 }
-
 ConsoleTransport::~ConsoleTransport(){}

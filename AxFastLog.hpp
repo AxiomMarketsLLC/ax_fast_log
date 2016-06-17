@@ -1,5 +1,8 @@
 #ifndef __AXFASTLOG__
 #define __AXFASTLOG__
+
+
+
 #include "SafeQueue.hpp"
 #include "TransportInterface.hpp"
 #include "FileTransport.hpp"
@@ -9,10 +12,6 @@
 #include <time.h>
 #include <memory>
 
-namespace LogEnums {
-  enum Severity{INFO, DEBG, WARN, ERRO};
-  enum TransportType{FILE,SCKT,CNSL};
-}
 class AxFastLog {
 
 /*

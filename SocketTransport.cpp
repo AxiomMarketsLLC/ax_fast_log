@@ -75,8 +75,7 @@ bool SocketTransport::waitForConnection()
   std::cout << "Client is connected." << std::endl;
   return true;
 }
-int SocketTransport::write(const std:: string& msg)
-{
+int SocketTransport::write(const std:: string& msg, LogEnums::Severity sev){
   //Send some data
   if(send(clientSocket, msg.c_str(), strlen(msg.c_str()) , 0) < 0)
   {
