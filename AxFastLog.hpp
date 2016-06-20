@@ -25,7 +25,7 @@ private:
 */
 
   public:
-  AxFastLog(LogEnums::TransportType, const std::string&);
+  AxFastLog(LogEnums::TransportType, const std::string& = NULL);
   //void setTransportType(TransportType);
   //TransportType getTransportType();
   void log(const std::string&, LogEnums::Severity);
