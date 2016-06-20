@@ -122,11 +122,11 @@ BOOST_AUTO_TEST_CASE(socketTransportTester){
   myReadFile.open(sockFilePath.c_str());
   if(myReadFile.is_open()){
     while(!myReadFile.eof()) {
-      myReadfile >> calcString;
+      myReadFile >> calcString;
     }
   }
   myReadFile.close();
-  BOOST_CHECK_MESSAGE(calcString.compare(testString) ==0, "ERRPR")
+  BOOST_CHECK_MESSAGE(calcString.compare(testString) ==0, "ERROR: Socket string is incorrect.");
 
 
 
