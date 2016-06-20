@@ -12,7 +12,7 @@ class SocketTransport: public TransportInterface{
   int listenSocket, clientSocket;
 
 public:
-  SocketTransport(void);
+  SocketTransport(const int port);
   ~SocketTransport(void);
 
   bool clientConnected();

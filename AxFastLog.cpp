@@ -2,13 +2,13 @@
 #include <unistd.h>
 #include "AxFastLog.hpp"
 
-AxFastLog::AxFastLog(LogEnums::TransportType t, const std::string& address): safeQ() {
+AxFastLog::AxFastLog(LogEnums::TransportType t, const std::string& address,const int port): safeQ() {
 	 switch(t) {
 		 case LogEnums::FILE:
 		      transport = std::unique_ptr<FileTransport>(new FileTransport(address));
 		 break;
 		 case LogEnums::SCKT:
-       		 transport = std::unique_ptr<SocketTransport>(new SocketTransport());
+       		 transport = std::unique_ptr<SocketTransport>(new SocketTransport(port));
 		 break;
 		 case LogEnums::CNSL:
 		       transport = std::unique_ptr<ConsoleTransport>(new ConsoleTransport());

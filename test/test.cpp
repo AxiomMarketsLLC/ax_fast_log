@@ -25,9 +25,11 @@ std::string testString;
 LogEnums::Severity testSev;
 std::string calcString;
 AxFastLog fileAx;
+AxFastLog consoleAx;
+AxFastLog socketAx;
 SafeQueue<std::string> testQueue;
 size_t queueSize;
-axFastLogVars() : axFilePath("data/axTest.txt"), transFilePath("data/transTest.txt"), consFilePath("data/consTest.txt"), sockFilePath("data/sockTest.txt"), calcString(""), testString("TEST"), fileAx(LogEnums::FILE, axFilePath), consoleAx(LogEnums: CNSL), socketAx(LogEnums: SCKT)
+axFastLogVars(): axFilePath("data/axTest.txt"), transFilePath("data/transTest.txt"), consFilePath("data/consTest.txt"), sockFilePath("data/sockTest.txt"), calcString(""), testString("TEST"), fileAx(LogEnums::FILE, axFilePath), consoleAx(LogEnums:: CNSL), socketAx(LogEnums:: SCKT,NULL,PORT),
  testSev(LogEnums::INFO), testQueue() {}
 
 };
@@ -87,8 +89,6 @@ BOOST_AUTO_TEST_CASE(socketAxFastLogTest){
   //read from file and write to calculatedString
   std::ifstream myReadFile;
 
-
-  socketAx.startListen(PORT);
   std::thread server(&SocketTransport::waitForConnection, &socketTransport);
   std::ostringstream cmdStream;
   cmdStream << CLI_CMD << PORT << " > " << sockFilePath << " &";
@@ -99,11 +99,11 @@ BOOST_AUTO_TEST_CASE(socketAxFastLogTest){
   myReadFile.open(sockFilePath.c_str());
   if(myReadFile.is_open()){
     while(!myReadFile.eof()) {
-      myReadfile >> calcString;
+      myReadFile >> calcString;
     }
   }
   myReadFile.close();
-  BOOST_CHECK_MESSAGE(calcString.compare(testString) ==0, "ERROR: Socket string incorrect")
+  BOOST_CHECK_MESSAGE(calcString.compare(testString) ==0, "ERROR: Socket string incorrect");
 }
 
 
@@ -162,11 +162,10 @@ BOOST_AUTO_TEST_CASE(safeQueueTester){
 BOOST_AUTO_TEST_CASE(socketTransportTester){
   //set up socketTranport object and sockets
   calcString.erase();
-  SocketTransport socketTransport;
+  SocketTransport socketTransport(PORT);
   std::ifstream myReadFile;
 
 
-  socketTransport.startListen(PORT);
   std::thread server(&SocketTransport::waitForConnection, &socketTransport);
   std::ostringstream cmdStream;
   cmdStream << CLI_CMD << PORT << " > " << sockFilePath << " &";
