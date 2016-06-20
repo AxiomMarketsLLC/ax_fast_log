@@ -181,7 +181,9 @@ BOOST_AUTO_TEST_CASE(socketTransportTester){
     }
   }
   myReadFile.close();
-  BOOST_CHECK_MESSAGE(calcString.compare(testString) ==0, "ERROR: Socket string error")
+
+  BOOST_CHECK_MESSAGE(calcString.compare(testString) ==0, "ERROR: Socket string is incorrect.");
+
 
 
 
