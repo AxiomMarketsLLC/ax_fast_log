@@ -24,10 +24,12 @@ std::string sockFilePath;
 std::string testString;
 LogEnums::Severity testSev;
 std::string calcString;
-AxFastLog ax;
+AxFastLog fileAx;
+AxFastLog consoleAx;
+AxFastLog socketAx;
 SafeQueue<std::string> testQueue;
 size_t queueSize;
-axFastLogVars() : axFilePath("data/axTest.txt"), transFilePath("data/transTest.txt"), consFilePath("data/consTest.txt"), sockFilePath("data/sockTest.txt"), calcString(""), testString("TEST"), ax(LogEnums::FILE, axFilePath),
+axFastLogVars(): axFilePath("data/axTest.txt"), transFilePath("data/transTest.txt"), consFilePath("data/consTest.txt"), sockFilePath("data/sockTest.txt"), calcString(""), testString("TEST"), fileAx(LogEnums::FILE, axFilePath), consoleAx(LogEnums:: CNSL), socketAx(LogEnums:: SCKT,NULL,PORT),
  testSev(LogEnums::INFO), testQueue() {}
 
 };
@@ -35,9 +37,9 @@ axFastLogVars() : axFilePath("data/axTest.txt"), transFilePath("data/transTest.t
 
 BOOST_FIXTURE_TEST_SUITE(axFastLogSuite, axFastLogVars);
 
-BOOST_AUTO_TEST_CASE(axFastLogTest){
+BOOST_AUTO_TEST_CASE(fileAxFastLogTest){
   calcString.erase();
-  ax.log(testString, testSev);
+  fileAx.log(testString, testSev);
   usleep(1000); //wait 1000 microseconds, avoid race condition with AxFastLog::post()
   //read from file and write to calculatedString
   std::ifstream myReadFile;
@@ -49,6 +51,59 @@ BOOST_AUTO_TEST_CASE(axFastLogTest){
   }
  myReadFile.close();
  BOOST_CHECK_MESSAGE(calcString.compare(testString) == 0, "ERROR: Expected string not equal to calculated string" );
+}
+
+BOOST_AUTO_TEST_CASE(consoleAxFastLogTest){
+  calcString.erase();
+
+  usleep(1000); //wait 1000 microseconds, avoid race condition with AxFastLog::post()
+  //read from file and write to calculatedString
+  std::streambuf *psbuf, *backup;
+  std::ofstream myWriteFile;
+  std::ifstream myReadFile;
+  myWriteFile.open(consFilePath.c_str());
+
+  backup = std::cout.rdbuf();     // back up cout's streambuf
+  psbuf = myWriteFile.rdbuf();        // get file's streambuf
+  std::cout.rdbuf(psbuf);         // assign psbuf to cout
+
+  consoleAx.log(testString, testSev);
+  std::cout.rdbuf(backup);        // restore cout's original streambuf
+  myWriteFile.close();
+
+  myReadFile.open(consFilePath.c_str());
+  if(myReadFile.is_open()){
+    while (!myReadFile.eof()) {
+      myReadFile >> calcString;
+    }
+  }
+  myReadFile.close();
+
+
+ BOOST_CHECK_MESSAGE(calcString.compare(testString) == 0, "ERROR: Expected string not equal to calculated string" );
+}
+
+BOOST_AUTO_TEST_CASE(socketAxFastLogTest){
+  calcString.erase();
+  usleep(1000); //wait 1000 microseconds, avoid race condition with AxFastLog::post()
+  //read from file and write to calculatedString
+  std::ifstream myReadFile;
+
+  std::thread server(&SocketTransport::waitForConnection, &socketTransport);
+  std::ostringstream cmdStream;
+  cmdStream << CLI_CMD << PORT << " > " << sockFilePath << " &";
+  system(cmdStream.str().c_str());
+  server.join();
+  socketAx.log(testString, testSev);
+
+  myReadFile.open(sockFilePath.c_str());
+  if(myReadFile.is_open()){
+    while(!myReadFile.eof()) {
+      myReadFile >> calcString;
+    }
+  }
+  myReadFile.close();
+  BOOST_CHECK_MESSAGE(calcString.compare(testString) ==0, "ERROR: Socket string incorrect");
 }
 
 
@@ -118,11 +173,13 @@ BOOST_AUTO_TEST_CASE(socketTransportTester){
   myReadFile.open(sockFilePath.c_str());
   if(myReadFile.is_open()){
     while(!myReadFile.eof()) {
-      myReadfile >> calcString;
+      myReadFile >> calcString;
     }
   }
   myReadFile.close();
-  BOOST_CHECK_MESSAGE(calcString.compare(testString) ==0, "ERRPR")
+
+  BOOST_CHECK_MESSAGE(calcString.compare(testString) ==0, "ERROR: Socket string is incorrect.");
+
 
 
 

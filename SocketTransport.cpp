@@ -4,7 +4,7 @@
 
 SocketTransport::SocketTransport(const int port)
 {
-  if (port < 1025 | port > 65535){
+  if (port < 1025 || port > 65535){
       throw std::invalid_argument("Incorrect argument port: must enter an integer between 1025-65535");
   }
   listenSocket = -1;
