@@ -78,7 +78,7 @@ BOOST_AUTO_TEST_CASE(consoleTransportTester){
 
   backup = std::cout.rdbuf();     // back up cout's streambuf
   psbuf = myWriteFile.rdbuf();        // get file's streambuf
-  std::cout.rdbuf(psbuf);         // assign streambuf to cout
+  std::cout.rdbuf(psbuf);         // assign psbuf to cout
 
   consoleTrans.write(testString);
   std::cout.rdbuf(backup);        // restore cout's original streambuf
@@ -108,6 +108,9 @@ BOOST_AUTO_TEST_CASE(socketTransportTester){
   //set up socketTranport object and sockets
   calcString.erase();
   SocketTransport socketTransport;
+  std::ifstream myReadFile;
+
+
   socketTransport.startListen(PORT);
   std::thread server(&SocketTransport::waitForConnection, &socketTransport);
   std::ostringstream cmdStream;
@@ -115,6 +118,15 @@ BOOST_AUTO_TEST_CASE(socketTransportTester){
   system(cmdStream.str().c_str());
   server.join();
   socketTransport.write(testString);
+
+  myReadFile.open(sockFilePath.c_str());
+  if(myReadFile.is_open()){
+    while(!myReadFile.eof()) {
+      myReadfile >> calcString;
+    }
+  }
+  myReadFile.close();
+  BOOST_CHECK_MESSAGE(calcString.compare(testString) ==0, "ERRPR")
 
 
 
