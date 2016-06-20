@@ -1,10 +1,18 @@
 #include "SocketTransport.hpp"
 #include <unistd.h>
+#include <stdexcept>
 
-SocketTransport::SocketTransport(void)
+SocketTransport::SocketTransport(const int port)
 {
+  if (port < 1025 | port > 65535){
+      throw std::invalid_argument("Incorrect argument port: must enter an integer between 1025-65535");
+  }
   listenSocket = -1;
   clientSocket= -1;
+  if(!this.startListen(port)) {
+    throw std::runtime_error("LOGGER: Couldn't start listen on port");
+  }
+  serveThread = std::unique_ptr<boost::thread>(new boost::thread(&SocketTransport::waitForConnection, this));
 }
 
 SocketTransport::~SocketTransport(void)
@@ -25,7 +33,7 @@ bool SocketTransport::clientConnected()
   return clientSocket > -1;
 }
 
-bool SocketTransport::startListen(int port)
+bool SocketTransport::startListen(const int port)
 {
   struct sockaddr_in serv_addr;
 
@@ -38,6 +46,7 @@ bool SocketTransport::startListen(int port)
     {
       return false;
     }
+
   }
 
   //clear address structure (copies zeros into serv_addr)
@@ -55,27 +64,32 @@ bool SocketTransport::startListen(int port)
     //Here, we set the maximum size for the backlog queue to 5
     listen(listenSocket, 5);
 
-    std::cout << "Listening ..." << std::endl;
+    std::cout << "LOGGER: Listening ..." << std::endl;
 
     return true;
 }
 
-bool SocketTransport::waitForConnection()
+void SocketTransport::waitForConnection()
 {
   struct sockaddr_in cli_addr;
   socklen_t clilen;
   clilen = sizeof(cli_addr);
+
   clientSocket = accept(listenSocket, (struct sockaddr *) &cli_addr, &clilen);
 
   if (clientSocket < 0)
   {
-    std::cout << "Error during client connection." << std::endl;
-    return false;
+    std::cout << "LOGGER: Error during client connection." << std::endl;
+
   }
-  std::cout << "Client is connected." << std::endl;
-  return true;
+  std::cout << "LOGGER: Client is connected." << std::endl;
 }
 int SocketTransport::write(const std:: string& msg, LogEnums::Severity sev){
+  if (!serveThread->timed_join(1)) {
+    std::cout << "LOGGER: No client connected for write" <<std::endl;
+    return -1;
+  }
+
   //Send some data
   if(send(clientSocket, msg.c_str(), strlen(msg.c_str()) , 0) < 0)
   {

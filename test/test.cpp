@@ -107,12 +107,8 @@ BOOST_AUTO_TEST_CASE(safeQueueTester){
 BOOST_AUTO_TEST_CASE(socketTransportTester){
   //set up socketTranport object and sockets
   calcString.erase();
-  SocketTransport socketTransport;
+  SocketTransport socketTransport(PORT);
   std::ifstream myReadFile;
-
-
-  socketTransport.startListen(PORT);
-  std::thread server(&SocketTransport::waitForConnection, &socketTransport);
   std::ostringstream cmdStream;
   cmdStream << CLI_CMD << PORT << " > " << sockFilePath << " &";
   system(cmdStream.str().c_str());

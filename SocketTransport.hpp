@@ -7,16 +7,17 @@
 #include<arpa/inet.h>
 #include<netdb.h>
 #include <iostream>
+#include <boost/thread.hpp>
 
 class SocketTransport: public TransportInterface{
   int listenSocket, clientSocket;
-
+  std::unique_ptr<boost::thread> serveThread;
 public:
-  SocketTransport(void);
+  SocketTransport(const int port);
   ~SocketTransport(void);
 
   bool clientConnected();
-  bool startListen(int port);
+  bool startListen(const int port);
   bool waitForConnection();
   int write(const std:: string&, LogEnums::Severity = LogEnums::INFO);
 };
