@@ -1,6 +1,7 @@
 TOPDIR   := $(HOME)/dev/ax_fast_log/
 SRCDIR	 := $(TOPDIR)src/
 TESTDIR  := $(TOPDIR)test/
+PERFDIR	 := $(TOPDIR)perf/
 LIBDIR   := $(TOPDIR)lib/
 SONAME	 := libax_fast_log.so
 SOTARGET := $(LIBDIR)$(SONAME)
@@ -21,7 +22,8 @@ archive:	$(ATARGET)
 
 test:	$(SOTARGET)	
 	cd $(TESTDIR); make
- 
+perf:	$(SOTARGET)
+	cd $(PERFDIR); make 
 $(SOTARGET):	$(OBJECTS)
 	$(CXX) $(SOLDFLAGS) -o $@ $^
 
