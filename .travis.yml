@@ -1,0 +1,14 @@
+# .travis.yml
+# sudo: false
+language: cpp
+
+
+compiler:
+  -g++
+
+before_install:
+
+
+script:
+  - make test
+  - ./test.sh --log_level=test_suite
