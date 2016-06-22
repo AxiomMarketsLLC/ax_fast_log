@@ -35,7 +35,6 @@ axFastConsLogVars():consAxFilePath("data/axTransTest.txt"),consoleAx(LogEnums::C
 };
 
 struct axFastSockLogVars{
-std::string sockAxFilePath;
 AxFastLog socketAx;
 std::string testString;
 LogEnums::Severity testSev;
@@ -46,7 +45,6 @@ axFastSockLogVars():sockAxFilePath("data/axSockTest.txt"),socketAx(LogEnums::SCK
 struct axFastLogVars{
 std::string transFilePath;
 std::string consFilePath;
-std::string sockFilePath;
 std::string testString;
 LogEnums::Severity testSev;
 std::string calcString;
