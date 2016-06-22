@@ -84,7 +84,7 @@ BOOST_FIXTURE_TEST_SUITE(consoleAxLogSuite, axFastConsLogVars);
 
 BOOST_AUTO_TEST_CASE(consoleAxFastLogTest){
   calcString.erase();
-  usleep(1000); //wait 1000 microseconds, avoid race condition with AxFastLog::post()
+
   //read from file and write to calculatedString
   std::streambuf *psbuf, *backup;
   std::ofstream myWriteFile;
