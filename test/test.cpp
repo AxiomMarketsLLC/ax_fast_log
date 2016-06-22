@@ -7,16 +7,16 @@
 #include <unistd.h>
 #include "../AxFastLog.hpp"
 #include "tcp_client.hpp"
+#include <boost/test/unit_test.hpp>
+#include <boost/test/included/unit_test.hpp>
+
 #define BOOST_TEST_MAIN
 #define BOOST_TEST_DYN_LINK
 #define BOOST_TEST_MODULE AxFastLog test
-#include <boost/test/unit_test.hpp>
-#include <boost/test/included/unit_test.hpp>
-#define CLI_CMD "ncat localhost "
+
 #define HOST "localhost"
 #define PORT 63000
 #define TIMEOUT_MS 1
-
 
 struct axFastFileLogVars{
 std:: string axFilePath;
@@ -111,34 +111,23 @@ BOOST_AUTO_TEST_CASE(consoleAxFastLogTest){
  BOOST_CHECK_MESSAGE(calcString.compare(testString) == 0, "ERROR: Expected string not equal to calculated string" );
 }
 BOOST_AUTO_TEST_SUITE_END()
-/*
+
 BOOST_FIXTURE_TEST_SUITE(socketAxFastLogSuite, axFastSockLogVars);
 
 
 BOOST_AUTO_TEST_CASE(socketAxFastLogTest){
-  std::ifstream myReadFile;
-  //std::ostringstream cmdStream;
-  std::string testStringCpy = testString;
-  
-  //cmdStream << CLI_CMD << PORT << " > " << sockAxFilePath << " &";
-  //system(cmdStream.str().c_str());
-  
-  socketAx.log(testString,testSev);
-  usleep(TIMEOUT_MS*1000); //wait 1000 microseconds
-  myReadFile.open(sockAxFilePath.c_str());
-  if(myReadFile.is_open()){
-    while(!myReadFile.eof()) {
-      myReadFile >> calcString;
-    }
-  }
-  myReadFile.close();
 
-  std::cout << calcString << std::endl;
+  std::string testStringCpy = testString;
+  tcp_client cli; 
+  cli.conn(HOST, (PORT));
+  socketAx.log(testString,testSev);
+  calcString = cli.receive(1024);
+  usleep(TIMEOUT_MS*1000); //wait 1000 microseconds
   BOOST_CHECK_MESSAGE(calcString.compare(testStringCpy)==0, "ERROR: Socket string incorrect");
 }
 
 BOOST_AUTO_TEST_SUITE_END()
-*/
+
 BOOST_FIXTURE_TEST_SUITE(fileTransportSuite, axFastLogVars);
 
 
@@ -146,7 +135,7 @@ BOOST_AUTO_TEST_CASE(fileTransportTester){
   calcString.erase();
   FileTransport fileTrans(transFilePath);
   fileTrans.write(testString);
-  usleep(1000);
+  usleep(TIMEOUT_MS*1000);
   std::ifstream myReadFile;
   
   myReadFile.open(transFilePath.c_str());
@@ -212,12 +201,8 @@ BOOST_AUTO_TEST_CASE(socketTransportTester){
   std::string testStringCpy = testString;
   calcString.erase();
   tcp_client cli;
-  int err;
+  int err=0;
   SocketTransport socketTransport(PORT+1);
-
- 
-  usleep(TIMEOUT_MS*1000);
-    
   cli.conn(HOST, (PORT+1));
   
   while(!socketTransport.clientConnected() && err < 3) {
@@ -226,9 +211,7 @@ BOOST_AUTO_TEST_CASE(socketTransportTester){
   }
    
   socketTransport.write(testString);
-  
   calcString = cli.receive(1024);
-  
   BOOST_CHECK_MESSAGE(calcString.compare(testStringCpy) ==0, "ERROR: Socket string is incorrect.");
 
 }
