@@ -6,13 +6,15 @@
 #include <string>
 #include <unistd.h>
 #include "../AxFastLog.hpp"
+#include "tcp_client.hpp"
 #define BOOST_TEST_MAIN
 #define BOOST_TEST_DYN_LINK
 #define BOOST_TEST_MODULE AxFastLog test
 #include <boost/test/unit_test.hpp>
 #include <boost/test/included/unit_test.hpp>
 #define CLI_CMD "ncat localhost "
-#define PORT 8001
+#define HOST "localhost"
+#define PORT 63000
 #define TIMEOUT_MS 1
 
 
@@ -115,11 +117,11 @@ BOOST_FIXTURE_TEST_SUITE(socketAxFastLogSuite, axFastSockLogVars);
 
 BOOST_AUTO_TEST_CASE(socketAxFastLogTest){
   std::ifstream myReadFile;
-  std::ostringstream cmdStream;
+  //std::ostringstream cmdStream;
   std::string testStringCpy = testString;
   
-  cmdStream << CLI_CMD << PORT << " > " << sockAxFilePath << " &";
-  system(cmdStream.str().c_str());
+  //cmdStream << CLI_CMD << PORT << " > " << sockAxFilePath << " &";
+  //system(cmdStream.str().c_str());
   
   socketAx.log(testString,testSev);
   usleep(TIMEOUT_MS*1000); //wait 1000 microseconds
@@ -209,25 +211,24 @@ BOOST_AUTO_TEST_CASE(socketTransportTester){
   //set up socketTranport object and sockets
   std::string testStringCpy = testString;
   calcString.erase();
-  int port = PORT+1;
-  std::cout << port << std::endl;
-  SocketTransport socketTransport(port);
-  usleep(1000);
-  std::ifstream myReadFile;
-  std::ostringstream cmdStream;
-  cmdStream << CLI_CMD << port << " > " << sockFilePath << " &";
-  std::cout << cmdStream.str().c_str() << std::endl;
-  system(cmdStream.str().c_str());
-  usleep(TIMEOUT_MS*1000);
-  socketTransport.write(testString);
-  myReadFile.open(sockFilePath.c_str());
-  if(myReadFile.is_open()){
-    while(!myReadFile.eof()) {
-      myReadFile >> calcString;
-    }
-  }
-  myReadFile.close();
+  tcp_client cli;
+  int err;
+  SocketTransport socketTransport(PORT+1);
 
+ 
+  usleep(TIMEOUT_MS*1000);
+    
+  cli.conn(HOST, (PORT+1));
+  
+  while(!socketTransport.clientConnected() && err < 3) {
+   usleep(TIMEOUT_MS*1000);
+   err++;
+  }
+   
+  socketTransport.write(testString);
+  
+  calcString = cli.receive(1024);
+  
   BOOST_CHECK_MESSAGE(calcString.compare(testStringCpy) ==0, "ERROR: Socket string is incorrect.");
 
 }

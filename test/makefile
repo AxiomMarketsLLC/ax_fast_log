@@ -1,4 +1,4 @@
-TOPDIR   := $(HOME)/ax_fast_log/
+TOPDIR   := $(HOME)/dev/ax_fast_log/
 LIBDIR   := $(TOPDIR)lib
 TARGET   := ax_fast_log_test
 CXXFLAGS  = -Wall -g -std=c++1y

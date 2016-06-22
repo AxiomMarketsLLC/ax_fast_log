@@ -1,4 +1,4 @@
-TOPDIR   := $(HOME)/ax_fast_log/
+TOPDIR   := $(HOME)/dev/ax_fast_log/
 SRCDIR	 := $(TOPDIR)src/
 TESTDIR  := $(TOPDIR)test/
 LIBDIR   := $(TOPDIR)lib/

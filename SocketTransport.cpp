@@ -12,9 +12,8 @@ SocketTransport::SocketTransport(const int port)
   if(!this->startListen(port)) {
     throw std::runtime_error("LOGGER: Couldn't start listen on port");
   }
-  //serveThread = std::unique_ptr<boost::thread>(new boost::thread(&SocketTransport::waitForConnection, this));
-  //serveThread->detach();
-  this->waitForConnection();
+  serveThread = std::unique_ptr<boost::thread>(new boost::thread(&SocketTransport::waitForConnection, this));
+  
 }
 
 SocketTransport::~SocketTransport(void)
@@ -63,8 +62,6 @@ bool SocketTransport::startListen(const int port)
     {
       return false;
     }
-
-    this->setNonBlocking(listenSocket);
     //Here, we set the maximum size for the backlog queue to 5
     listen(listenSocket, 5);
 
@@ -77,39 +74,22 @@ void SocketTransport::waitForConnection()
 {
   struct sockaddr_in cli_addr;
   socklen_t clilen;
- /* int ready;  
-fd_set f_dirs;
-	
-	ready = select(1, &f_dirs, NULL, NULL, NULL);
-                printf("Selected..\n");
-
-		if (FD_ISSET(listenSocket, &f_dirs)) {	// new client connection 
-			printf("listening socket readable\n");
-			printf("sleeping 5 \n");
-			sleep(5);
-			cli_len = sizeof(cli_addr);
-			if ( (clientSocket = accept(listenSocket, (struct sockaddr *) &cli_addr, &cli_len)) <0) {
-                            perror("accept error");
-                        }
-
-			printf("Accepted\n");
-		}
-  */clientSocket = accept(listenSocket, (struct sockaddr *) &cli_addr, &clilen);
+  clilen=sizeof(cli_addr);
+  clientSocket = accept(listenSocket, (struct sockaddr *) &cli_addr, &clilen);
 
   if (clientSocket < 0)
   {
-    std::cout << "LOGGER: Error during client connection." << std::endl;
+   std::cout << "LOGGER: Error during client connection." << std::endl;
 
   } else {
-  	std::cout << "LOGGER: Client is connected." << std::endl;
+   std::cout << "LOGGER: Client is connected." << std::endl;
   }
 }
 int SocketTransport::write(const std:: string& msg, LogEnums::Severity sev){
 
-	/*if (serveThread->timed_join(boost::posix_time::milliseconds(3))) {
+ if (!serveThread->timed_join(boost::posix_time::milliseconds(8000))) {
 	std::cout << "LOGGER: Connection timeout" << std::endl;
-	return -1;
-	}*/
+	}
   //Send some data
   if(send(clientSocket, msg.c_str(), strlen(msg.c_str()) , 0) < 0)
   {
