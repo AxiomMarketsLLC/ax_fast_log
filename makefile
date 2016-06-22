@@ -10,7 +10,7 @@ CXXFLAGS  = -fPIC -g -Wall -std=c++1y
 SOLDFLAGS = -shared -lboost_thread-mt
 ALDFLAGS = -lboost_thread-mt
 
-CXX      := g++ -Wall
+CXX      := g++
 
 SOURCES = $(wildcard *.cpp)
 OBJECTS = $(SOURCES:.cpp=.o)

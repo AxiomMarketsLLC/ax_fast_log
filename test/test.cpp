@@ -201,12 +201,13 @@ BOOST_AUTO_TEST_CASE(socketTransportTester){
   //set up socketTranport object and sockets
   calcString.erase();
   tcp_client cli;
-  int err=0;
   SocketTransport socketTransport(PORT+1);
   cli.conn(HOST, (PORT+1));
+  usleep(TIMEOUT_MS*1000);
+  BOOST_CHECK_MESSAGE(socketTransport.clientConnected(), "ERROR: Client connection.");
   socketTransport.write(testString);
   calcString = cli.receive(1024);
-  BOOST_CHECK_MESSAGE(calcString.compare(testString) ==0, "ERROR: Socket string is incorrect.");
+  BOOST_CHECK_MESSAGE(calcString.compare(testString)==0, "ERROR: Socket string is incorrect.");
 
 }
 
