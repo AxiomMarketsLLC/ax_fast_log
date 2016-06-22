@@ -53,7 +53,4 @@ void AxFastLog::post(){
 				std::pair<std::string,LogEnums::Severity> sendPair = safeQ.dequeue(m_timeout_ms);
 				transport->write(sendPair.first,sendPair.second);
 			}
-		} catch (boost::thread_interrupted&) {
-			std::cout<<"LOGGER: POST THREAD INTERRUPTED" << std::endl; return;}	
-	
-}
+		} catch (boost::thread_interrupted&) {	}
