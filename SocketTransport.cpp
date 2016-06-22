@@ -9,7 +9,7 @@ SocketTransport::SocketTransport(const int port)
   }
   listenSocket = -1;
   clientSocket= -1;
-  if(!this.startListen(port)) {
+  if(!this->startListen(port)) {
     throw std::runtime_error("LOGGER: Couldn't start listen on port");
   }
   serveThread = std::unique_ptr<boost::thread>(new boost::thread(&SocketTransport::waitForConnection, this));
@@ -85,7 +85,7 @@ void SocketTransport::waitForConnection()
   std::cout << "LOGGER: Client is connected." << std::endl;
 }
 int SocketTransport::write(const std:: string& msg, LogEnums::Severity sev){
-  if (!serveThread->timed_join(1)) {
+  if (!serveThread->timed_join(boost::posix_time::milliseconds(1))) {
     std::cout << "LOGGER: No client connected for write" <<std::endl;
     return -1;
   }

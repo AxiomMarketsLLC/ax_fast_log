@@ -18,7 +18,7 @@ public:
 
   bool clientConnected();
   bool startListen(const int port);
-  bool waitForConnection();
+  void waitForConnection();
   int write(const std:: string&, LogEnums::Severity = LogEnums::INFO);
 };
 #endif

@@ -22,7 +22,6 @@ public:
   {
     std::lock_guard<std::mutex> lock(m);
     q.push(t);
-    m.unlock();
     c.notify_one();
   }
 
@@ -41,17 +40,7 @@ public:
   size_t size(void){
     	std::lock_guard<std::mutex> lock(m);
 	int sz =  q.size();
-	m.unlock();
-	c.notify_one();
 	return sz;
-  }
-
-  bool empty(void) {
-	std::lock_guard<std::mutex> lock(m);
-	bool isEmpty = q.empty();
-	m.unlock();
-	c.notify_one();
-	return isEmpty;
   }
 
 private:
