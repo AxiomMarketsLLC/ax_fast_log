@@ -6,6 +6,7 @@
 #include<arpa/inet.h> //inet_addr
 #include<netdb.h> //hostent
 
+//simple tcp client class used for testing SocketTransport.  source: http://www.binarytides.com/code-a-simple-socket-client-class-in-c/
 using namespace std;
 
 class tcp_client
@@ -42,10 +43,10 @@ bool tcp_client::conn(string address , int port)
         sock = socket(AF_INET , SOCK_STREAM , 0);
         if (sock == -1)
         {
-            perror("Could not create socket");
+            perror("TCP_CLIENT: Could not create socket");
         }
 
-        cout<<"Socket created\n";
+        cout<<"TCP_CLIENT: Socket created\n";
     }
 
 
@@ -60,7 +61,7 @@ bool tcp_client::conn(string address , int port)
         {
             //gethostbyname failed
             herror("gethostbyname");
-            cout<<"Failed to resolve hostname\n";
+            cout<<"TCP_CLIENT: Failed to resolve hostname\n";
 
             return false;
         }
@@ -73,7 +74,7 @@ bool tcp_client::conn(string address , int port)
             //strcpy(ip , inet_ntoa(*addr_list[i]) );
             server.sin_addr = *addr_list[i];
 
-            cout<<address<<" resolved to "<<inet_ntoa(*addr_list[i])<<endl;
+            cout<<"TCP CLIENT: " << address<<" resolved to "<<inet_ntoa(*addr_list[i])<<endl;
 
             break;
         }
@@ -91,11 +92,11 @@ bool tcp_client::conn(string address , int port)
     //Connect to remote server
     if (connect(sock , (struct sockaddr *)&server , sizeof(server)) < 0)
     {
-        perror("connect failed. Error");
+        perror("TCP_CLIENT: connect failed. Error");
         return 1;
     }
 
-    cout<<"Connected\n";
+    cout<<"TCP_CLIENT: Connected\n";
     return true;
 }
 
@@ -107,7 +108,7 @@ bool tcp_client::send_data(string data)
     //Send some data
     if( send(sock , data.c_str() , strlen( data.c_str() ) , 0) < 0)
     {
-        perror("Send failed : ");
+        perror("TCP_CLIENT: Send failed : ");
         return false;
     }
     cout<<"Data send\n";
@@ -126,7 +127,7 @@ string tcp_client::receive(int size=512)
     //Receive a reply from the server
     if( recv(sock , buffer , sizeof(buffer) , 0) < 0)
     {
-        puts("Receive failed");
+        puts("TCP_CLIENT: Receive failed");
     }
 
     reply = buffer;

@@ -7,12 +7,15 @@
 #include <unistd.h>
 #include "../AxFastLog.hpp"
 #include "tcp_client.hpp"
-#include <boost/test/unit_test.hpp>
-#include <boost/test/included/unit_test.hpp>
+
 
 #define BOOST_TEST_MAIN
 #define BOOST_TEST_DYN_LINK
 #define BOOST_TEST_MODULE AxFastLog test
+
+#include <boost/test/unit_test.hpp>
+#include <boost/test/included/unit_test.hpp>
+
 
 #define HOST "localhost"
 #define PORT 63000
@@ -42,7 +45,7 @@ AxFastLog socketAx;
 std::string testString;
 LogEnums::Severity testSev;
 std::string calcString;
-axFastSockLogVars():sockAxFilePath("data/axSockTest.txt"),socketAx(LogEnums::SCKT, PORT, TIMEOUT_MS), testString("TEST"), testSev(LogEnums::INFO),calcString(""){}
+axFastSockLogVars():socketAx(LogEnums::SCKT, PORT, TIMEOUT_MS), testString("TEST"), testSev(LogEnums::INFO), calcString(""){}
 };
 
 struct axFastLogVars{
@@ -54,7 +57,7 @@ LogEnums::Severity testSev;
 std::string calcString;
 SafeQueue<std::string> testQueue;
 size_t queueSize;
-axFastLogVars():transFilePath("data/transTest.txt"),consFilePath("data/consTest.txt"),sockFilePath("data/sockTest.txt"),testQueue(), testString("TEST"), testSev(LogEnums::INFO),calcString(""){}
+axFastLogVars():transFilePath("data/transTest.txt"),consFilePath("data/consTest.txt"), testQueue(), testString("TEST"), testSev(LogEnums::INFO),calcString(""){}
 };
 
 
@@ -116,14 +119,12 @@ BOOST_FIXTURE_TEST_SUITE(socketAxFastLogSuite, axFastSockLogVars);
 
 
 BOOST_AUTO_TEST_CASE(socketAxFastLogTest){
-
-  std::string testStringCpy = testString;
-  tcp_client cli; 
+  tcp_client cli;
   cli.conn(HOST, (PORT));
   socketAx.log(testString,testSev);
   calcString = cli.receive(1024);
   usleep(TIMEOUT_MS*1000); //wait 1000 microseconds
-  BOOST_CHECK_MESSAGE(calcString.compare(testStringCpy)==0, "ERROR: Socket string incorrect");
+  BOOST_CHECK_MESSAGE(calcString.compare(testString)==0, "ERROR: Socket string incorrect");
 }
 
 BOOST_AUTO_TEST_SUITE_END()
@@ -198,21 +199,14 @@ BOOST_FIXTURE_TEST_SUITE(socketTransportSuite, axFastLogVars);
 
 BOOST_AUTO_TEST_CASE(socketTransportTester){
   //set up socketTranport object and sockets
-  std::string testStringCpy = testString;
   calcString.erase();
   tcp_client cli;
   int err=0;
   SocketTransport socketTransport(PORT+1);
   cli.conn(HOST, (PORT+1));
-  
-  while(!socketTransport.clientConnected() && err < 3) {
-   usleep(TIMEOUT_MS*1000);
-   err++;
-  }
-   
   socketTransport.write(testString);
   calcString = cli.receive(1024);
-  BOOST_CHECK_MESSAGE(calcString.compare(testStringCpy) ==0, "ERROR: Socket string is incorrect.");
+  BOOST_CHECK_MESSAGE(calcString.compare(testString) ==0, "ERROR: Socket string is incorrect.");
 
 }
 

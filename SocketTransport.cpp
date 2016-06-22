@@ -96,10 +96,11 @@ int SocketTransport::write(const std:: string& msg, LogEnums::Severity sev){
     // Send failed : connection assumed to be lost
 		close(clientSocket);
 		clientSocket = -1;
-		std::cout << "LOGGER Error while sending data." << std::endl;
+		std::cout << "LOGGER: Error while sending data." << std::endl;
 		return -1;
   }
-  std::cout << "Data sent." << std::endl;
+  std::cout << "LOGGER: Data sent." << std::endl;
+
   return 0;
 
 }

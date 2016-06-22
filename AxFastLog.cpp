@@ -54,3 +54,4 @@ void AxFastLog::post(){
 				transport->write(sendPair.first,sendPair.second);
 			}
 		} catch (boost::thread_interrupted&) {	}
+}
