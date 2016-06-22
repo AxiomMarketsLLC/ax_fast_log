@@ -6,14 +6,14 @@
 #include <string>
 #include <unistd.h>
 #include "../AxFastLog.hpp"
-#include <future>
 #define BOOST_TEST_MAIN
 #define BOOST_TEST_DYN_LINK
 #define BOOST_TEST_MODULE AxFastLog test
 #include <boost/test/unit_test.hpp>
 #include <boost/test/included/unit_test.hpp>
-#define CLI_CMD "ncat -i 2 localhost "
+#define CLI_CMD "ncat localhost "
 #define PORT 8001
+#define TIMEOUT_MS 1
 
 
 struct axFastFileLogVars{
@@ -22,7 +22,7 @@ AxFastLog fileAx;
 std::string testString;
 LogEnums::Severity testSev;
 std::string calcString;
-axFastFileLogVars():axFilePath("data/axTest.txt"),fileAx(LogEnums::FILE, axFilePath),testString("TEST"), testSev(LogEnums::INFO),calcString(""){}
+axFastFileLogVars():axFilePath("data/axTest.txt"),fileAx(LogEnums::FILE, axFilePath, TIMEOUT_MS),testString("TEST"), testSev(LogEnums::INFO),calcString(""){}
 };
 
 struct axFastConsLogVars{
@@ -31,7 +31,7 @@ AxFastLog consoleAx;
 std::string testString;
 LogEnums::Severity testSev;
 std::string calcString;
-axFastConsLogVars():consAxFilePath("data/axTransTest.txt"),consoleAx(LogEnums::CNSL), testString("TEST"), testSev(LogEnums::INFO),calcString(""){}
+axFastConsLogVars():consAxFilePath("data/axTransTest.txt"),consoleAx(LogEnums::CNSL, 0, TIMEOUT_MS), testString("TEST"), testSev(LogEnums::INFO),calcString(""){}
 };
 
 struct axFastSockLogVars{
@@ -40,7 +40,7 @@ AxFastLog socketAx;
 std::string testString;
 LogEnums::Severity testSev;
 std::string calcString;
-axFastSockLogVars():sockAxFilePath("data/axSockTest.txt"),socketAx(LogEnums::SCKT, PORT), testString("TEST"), testSev(LogEnums::INFO),calcString(""){}
+axFastSockLogVars():sockAxFilePath("data/axSockTest.txt"),socketAx(LogEnums::SCKT, PORT, TIMEOUT_MS), testString("TEST"), testSev(LogEnums::INFO),calcString(""){}
 };
 
 struct axFastLogVars{
@@ -109,7 +109,7 @@ BOOST_AUTO_TEST_CASE(consoleAxFastLogTest){
  BOOST_CHECK_MESSAGE(calcString.compare(testString) == 0, "ERROR: Expected string not equal to calculated string" );
 }
 BOOST_AUTO_TEST_SUITE_END()
-
+/*
 BOOST_FIXTURE_TEST_SUITE(socketAxFastLogSuite, axFastSockLogVars);
 
 
@@ -117,13 +117,12 @@ BOOST_AUTO_TEST_CASE(socketAxFastLogTest){
   std::ifstream myReadFile;
   std::ostringstream cmdStream;
   std::string testStringCpy = testString;
-  usleep(1000); //wait 1000 microseconds
   
   cmdStream << CLI_CMD << PORT << " > " << sockAxFilePath << " &";
   system(cmdStream.str().c_str());
   
   socketAx.log(testString,testSev);
-
+  usleep(TIMEOUT_MS*1000); //wait 1000 microseconds
   myReadFile.open(sockAxFilePath.c_str());
   if(myReadFile.is_open()){
     while(!myReadFile.eof()) {
@@ -137,7 +136,7 @@ BOOST_AUTO_TEST_CASE(socketAxFastLogTest){
 }
 
 BOOST_AUTO_TEST_SUITE_END()
-
+*/
 BOOST_FIXTURE_TEST_SUITE(fileTransportSuite, axFastLogVars);
 
 
@@ -198,26 +197,29 @@ BOOST_AUTO_TEST_CASE(safeQueueTester){
   testQueue.enqueue(testString);
   queueSize= testQueue.size();
   BOOST_CHECK_MESSAGE(queueSize == 1, "ERROR:Item not enqueued.");
-  calcString = testQueue.dequeue();
+  calcString = testQueue.dequeue(TIMEOUT_MS);
   BOOST_CHECK_MESSAGE(calcString.compare(testString) == 0,"ERROR: The dequeued string is incorrect");
 }
 
 BOOST_AUTO_TEST_SUITE_END()
 
-/*BOOST_FIXTURE_TEST_SUITE(socketTransportSuite, axFastLogVars);
+BOOST_FIXTURE_TEST_SUITE(socketTransportSuite, axFastLogVars);
 
 BOOST_AUTO_TEST_CASE(socketTransportTester){
   //set up socketTranport object and sockets
   std::string testStringCpy = testString;
   calcString.erase();
   int port = PORT+1;
+  std::cout << port << std::endl;
   SocketTransport socketTransport(port);
+  usleep(1000);
   std::ifstream myReadFile;
   std::ostringstream cmdStream;
   cmdStream << CLI_CMD << port << " > " << sockFilePath << " &";
+  std::cout << cmdStream.str().c_str() << std::endl;
   system(cmdStream.str().c_str());
+  usleep(TIMEOUT_MS*1000);
   socketTransport.write(testString);
-  usleep(1000);
   myReadFile.open(sockFilePath.c_str());
   if(myReadFile.is_open()){
     while(!myReadFile.eof()) {
@@ -230,4 +232,4 @@ BOOST_AUTO_TEST_CASE(socketTransportTester){
 
 }
 
-BOOST_AUTO_TEST_SUITE_END()*/
+BOOST_AUTO_TEST_SUITE_END()

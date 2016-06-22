@@ -3,7 +3,8 @@
 #include "TransportInterface.hpp"
 #include<stdio.h>
 #include<string.h>
-#include<sys/socket.h>
+#include <sys/socket.h>
+#include <sys/fcntl.h>
 #include<arpa/inet.h>
 #include<netdb.h>
 #include <iostream>
@@ -11,7 +12,8 @@
 
 class SocketTransport: public TransportInterface{
   int listenSocket, clientSocket;
-  std::unique_ptr<boost::thread> serveThread;
+  //std::unique_ptr<boost::thread> serveThread;
+  int setNonBlocking(int fd);
 public:
   SocketTransport(const int port);
   ~SocketTransport(void);

@@ -9,10 +9,10 @@
 #include "ConsoleTransport.hpp"
 #include "SocketTransport.hpp"
 #include <boost/thread.hpp>
-#include <boost/lockfree/queue.hpp>
+#include <boost/date_time/posix_time/posix_time_types.hpp>
 #include <time.h>
 #include <memory>
-#define DEFAULT_QUEUE_SZ 8
+
 
 class AxFastLog {
 
@@ -27,20 +27,18 @@ private:
 */
 
   public:
-  AxFastLog(LogEnums::TransportType, const std::string&);
-  AxFastLog(LogEnums::TransportType t, const int port=8000);
-  //void setTransportType(TransportType);
-  //TransportType getTransportType();
+  AxFastLog(LogEnums::TransportType t, const std::string&, const int timeout_ms);
+  AxFastLog(LogEnums::TransportType t, const int port, const int timeout_ms);
   void log(const std::string&, LogEnums::Severity);
 
   ~AxFastLog();
 
   private:
   SafeQueue<std::pair<std::string,LogEnums::Severity>> safeQ;
-  //boost::lockfree::queue<std::pair<std::string,LogEnums::Severity>> safeQ{DEFAULT_QUEUE_SZ};
-  std::unique_ptr<TransportInterface> transport;
   void post();
+  std::unique_ptr<TransportInterface> transport;
   std::unique_ptr<boost::thread> postThread;
+  const int m_timeout_ms;
 
 
 };

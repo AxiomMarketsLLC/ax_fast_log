@@ -12,7 +12,9 @@ SocketTransport::SocketTransport(const int port)
   if(!this->startListen(port)) {
     throw std::runtime_error("LOGGER: Couldn't start listen on port");
   }
-  serveThread = std::unique_ptr<boost::thread>(new boost::thread(&SocketTransport::waitForConnection, this));
+  //serveThread = std::unique_ptr<boost::thread>(new boost::thread(&SocketTransport::waitForConnection, this));
+  //serveThread->detach();
+  this->waitForConnection();
 }
 
 SocketTransport::~SocketTransport(void)
@@ -26,6 +28,7 @@ SocketTransport::~SocketTransport(void)
   {
     close(listenSocket);
   }
+  
 }
 
 bool SocketTransport::clientConnected()
@@ -61,6 +64,7 @@ bool SocketTransport::startListen(const int port)
       return false;
     }
 
+    this->setNonBlocking(listenSocket);
     //Here, we set the maximum size for the backlog queue to 5
     listen(listenSocket, 5);
 
@@ -73,33 +77,75 @@ void SocketTransport::waitForConnection()
 {
   struct sockaddr_in cli_addr;
   socklen_t clilen;
-  clilen = sizeof(cli_addr);
+ /* int ready;  
+fd_set f_dirs;
+	
+	ready = select(1, &f_dirs, NULL, NULL, NULL);
+                printf("Selected..\n");
 
-  clientSocket = accept(listenSocket, (struct sockaddr *) &cli_addr, &clilen);
+		if (FD_ISSET(listenSocket, &f_dirs)) {	// new client connection 
+			printf("listening socket readable\n");
+			printf("sleeping 5 \n");
+			sleep(5);
+			cli_len = sizeof(cli_addr);
+			if ( (clientSocket = accept(listenSocket, (struct sockaddr *) &cli_addr, &cli_len)) <0) {
+                            perror("accept error");
+                        }
+
+			printf("Accepted\n");
+		}
+  */clientSocket = accept(listenSocket, (struct sockaddr *) &cli_addr, &clilen);
 
   if (clientSocket < 0)
   {
     std::cout << "LOGGER: Error during client connection." << std::endl;
 
+  } else {
+  	std::cout << "LOGGER: Client is connected." << std::endl;
   }
-  std::cout << "LOGGER: Client is connected." << std::endl;
 }
 int SocketTransport::write(const std:: string& msg, LogEnums::Severity sev){
-  if (!serveThread->timed_join(boost::posix_time::milliseconds(1))) {
-    std::cout << "LOGGER: No client connected for write" <<std::endl;
-    return -1;
-  }
 
+	/*if (serveThread->timed_join(boost::posix_time::milliseconds(3))) {
+	std::cout << "LOGGER: Connection timeout" << std::endl;
+	return -1;
+	}*/
   //Send some data
   if(send(clientSocket, msg.c_str(), strlen(msg.c_str()) , 0) < 0)
   {
     // Send failed : connection assumed to be lost
 		close(clientSocket);
 		clientSocket = -1;
-		std::cout << "Error while sending data." << std::endl;
+		std::cout << "LOGGER Error while sending data." << std::endl;
 		return -1;
   }
   std::cout << "Data sent." << std::endl;
   return 0;
 
 }
+
+/*----------------------------------------------------------------------
+ Portable function to set a socket into nonblocking mode.
+ Calling this on a socket causes all future read() and write() calls on
+ that socket to do only as much as they can immediately, and return 
+ without waiting.
+ If no data can be read or written, they return -1 and set errno
+ to EAGAIN (or EWOULDBLOCK).
+ Thanks to Bjorn Reese for this code.
+----------------------------------------------------------------------*/
+int SocketTransport::setNonBlocking(int fd)
+{
+    int flags;
+
+    /* If they have O_NONBLOCK, use the Posix way to do it */
+#if defined(O_NONBLOCK)
+    /* Fixme: O_NONBLOCK is defined but broken on SunOS 4.1.x and AIX 3.2.5. */
+    if (-1 == (flags = fcntl(fd, F_GETFL, 0)))
+        flags = 0;
+    return fcntl(fd, F_SETFL, flags | O_NONBLOCK);
+#else
+    /* Otherwise, use the old way of doing it */
+    flags = 1;
+    return ioctl(fd, FIOBIO, &flags);
+#endif
+}     

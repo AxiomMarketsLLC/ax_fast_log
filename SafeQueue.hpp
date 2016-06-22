@@ -4,6 +4,8 @@
 #include <queue>
 #include <mutex>
 #include <condition_variable>
+#include <chrono>
+#include <boost/thread.hpp>
 
 template <class T>
 class SafeQueue
@@ -25,12 +27,12 @@ public:
     c.notify_one();
   }
 
-  T dequeue(void)
+  T dequeue(const int timeout_ms)
   {
     std::unique_lock<std::mutex> lock(m);
-    while(q.empty())
-    {
-      c.wait(lock);
+    while(q.empty()){
+	boost::this_thread::interruption_point(); 
+     	c.wait_for(lock,std::chrono::milliseconds(timeout_ms));
     }
     T val = q.front();
     q.pop();
