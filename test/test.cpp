@@ -121,7 +121,6 @@ BOOST_AUTO_TEST_CASE(socketAxFastLogTest){
   cli.conn(HOST, (PORT));
   socketAx.log(testString,testSev);
   calcString = cli.receive(1024);
-  usleep(TIMEOUT_MS*1000); //wait 1000 microseconds
   BOOST_CHECK_MESSAGE(calcString.compare(testString)==0, "ERROR: Socket string incorrect");
 }
 
