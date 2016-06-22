@@ -1,4 +1,4 @@
-TOPDIR   := $(HOME)/ax_fast_log/
+TOPDIR   := $(HOME)/dev/ax_fast_log/
 SRCDIR	 := $(TOPDIR)src/
 TESTDIR  := $(TOPDIR)test/
 LIBDIR   := $(TOPDIR)lib/
@@ -10,7 +10,7 @@ CXXFLAGS  = -fPIC -g -Wall -std=c++1y
 SOLDFLAGS = -shared -lboost_thread-mt
 ALDFLAGS = -lboost_thread-mt
 
-CXX      := g++ -Wall
+CXX      := g++
 
 SOURCES = $(wildcard *.cpp)
 OBJECTS = $(SOURCES:.cpp=.o)
