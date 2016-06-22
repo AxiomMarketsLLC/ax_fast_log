@@ -2,7 +2,7 @@ TOPDIR   := $(HOME)/dev/ax_fast_log/
 LIBDIR   := $(TOPDIR)lib
 TARGET   := ax_fast_log_perf
 CXXFLAGS  = -Wall -std=c++1y
-TFLAGS = -lpthread -L$(LIBDIR) -lax_fast_log 
+TFLAGS = -lpthread -lboost_system-mt -lboost_thread-mt -L$(LIBDIR) -lax_fast_log 
 
 CXX      := g++ 
 
