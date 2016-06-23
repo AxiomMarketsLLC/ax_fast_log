@@ -2,8 +2,13 @@
 #include <stdint.h>
 #include <string>
 #include <iostream>
+#include <cmath>
 #include "../AxFastLog.hpp"
+#include "tcp_client.hpp"
 
+#define AX_FPATH "test.txt"
+#define AX_SPORT 9000
+#define TEST_ITERS 1
 //from intel devel guide: indirect: http://stackoverflow.com/questions/459691/best-timing-method-in-ci
 
 inline uint64_t rdtsc() {
@@ -20,54 +25,72 @@ inline uint64_t rdtsc() {
 
 
 
-void test_printf_cycles(std::string testString) {
+unsigned long long test_printf_cycles(std::string testString, const int iter) {
+   
     unsigned long long x;
     unsigned long long y;
+    unsigned long long sum=0;
     const char* testChars = testString.c_str();
-    x = rdtsc();
-    printf(testChars);
-    y = rdtsc();
-    printf("\n");
-
-    printf("PERF: CYCLES: printf: %lld\n",y-x);
+    for(int i =0; i<=iter;++i) {
+    	x = rdtsc();
+    	printf(testChars);
+    	y = rdtsc();
+    	sum+=(y-x);
+   	printf("\n");
+    }
+    return sum/iter;
 }
 
-void test_cout_cycles(std::string testString) {
+unsigned long long test_cout_cycles(std::string testString, const int iter) {
 
     unsigned long long x;
     unsigned long long y;
-    x = rdtsc();
-    std::cout << testString << std::endl;
-    y = rdtsc();
-    printf("PERF: CYCLES: cout: %lld\n",y-x);
+    unsigned long long sum=0;
+    for(int i =0; i<=iter;++i) {
+    	x = rdtsc();
+    	std::cout << testString << std::endl;
+    	y = rdtsc();
+    	sum+=(y-x);
+    }
+    return sum/iter;
+
 }
 
-void test_axlog_cycles(std::string testString) {
+unsigned long long test_axlog_cycles(AxFastLog& ax, std::string testString, const int iter) {
     
     unsigned long long x;
     unsigned long long y;
-    AxFastLog ax(LogEnums::FILE, "test.txt");
-    x = rdtsc();
-    ax.log(testString, LogEnums::INFO);
-    y = rdtsc();
-    printf("PERF: CYCLES: ax_log (file): %lld\n",y-x);
-
-    AxFastLog axc(LogEnums::CNSL);
-    x = rdtsc();
-    axc.log(testString, LogEnums::INFO);
-    y = rdtsc();
-    printf("PERF: CYCLES: ax_log (cons): %lld\n",y-x);
+    unsigned long long sum=0;
+    
+    for(int i =0; i<=iter;++i) {
+    	x = rdtsc();
+    	ax.log(testString, LogEnums::INFO);
+    	y = rdtsc();
+    	sum+=(y-x);
+    }
+    return sum/iter;
 }
 
 int main()
 {
 
-   
-    std::string testString = "TESTING 1, 2, 3"; 
-    test_printf_cycles(testString);
-    test_cout_cycles(testString);
-    test_axlog_cycles(testString);
+    AxFastLog axf (LogEnums::FILE, AX_FPATH);
+    AxFastLog axs (LogEnums::SCKT, AX_SPORT);
+    AxFastLog axc (LogEnums::CNSL);
+	 
+    tcp_client cli;
 
+    unsigned long long avg;
+
+    std::string testString = "TESTING 1, 2, 3"; 
+    avg = test_printf_cycles(testString, TEST_ITERS);
+    printf("PERF: AVG CYCLES OVER %d ITERS: printf: %llu\n",TEST_ITERS,avg);
+    avg = test_cout_cycles(testString, TEST_ITERS);
+    printf("PERF: AVG CYCLES OVER %d ITERS: cout: %llu\n",TEST_ITERS,avg);
+    avg = test_axlog_cycles(axf, testString, TEST_ITERS); 
+    printf("PERF: AVG CYCLES OVER %d ITERS: axf: %llu\n",TEST_ITERS,avg);
+    avg = test_axlog_cycles(axc, testString, TEST_ITERS);
+    printf("PERF: AVG CYCLES OVER %d ITERS: axc: %llu\n",TEST_ITERS,avg);
     
   
  

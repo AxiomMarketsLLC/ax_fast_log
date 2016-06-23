@@ -39,3 +39,4 @@ include $(SRCS:.cpp=.d)
 clean:
 	rm -f $(OBJECTS) $(TARGET)
 	cd $(TESTDIR); make clean
+	cd $(PERFDIR); make clean
