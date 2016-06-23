@@ -2,7 +2,7 @@
 #include <unistd.h>
 #include "AxFastLog.hpp"
 
-AxFastLog::AxFastLog(LogEnums::TransportType t, const std::string& address, const int timeout_ms):  m_timeout_ms(timeout_ms),safeQ() {
+AxFastLog::AxFastLog(LogEnums::TransportType t, const std::string& address):  m_timeout_us(TIMEOUT_US),safeQ() {
 	 switch(t) {
 		 case LogEnums::FILE:
 		      transport = std::unique_ptr<FileTransport>(new FileTransport(address));
@@ -18,7 +18,7 @@ AxFastLog::AxFastLog(LogEnums::TransportType t, const std::string& address, cons
 	postThread = std::unique_ptr<boost::thread>(new boost::thread(&AxFastLog::post, this));
 }
 
-AxFastLog::AxFastLog(LogEnums::TransportType t, const int port, const int timeout_ms): m_timeout_ms(timeout_ms), safeQ() {
+AxFastLog::AxFastLog(LogEnums::TransportType t, const int port): m_timeout_us(TIMEOUT_US), safeQ() {
 
 	postThread = std::unique_ptr<boost::thread>(new boost::thread(&AxFastLog::post, this));
 
@@ -38,7 +38,7 @@ AxFastLog::AxFastLog(LogEnums::TransportType t, const int port, const int timeou
 
 AxFastLog::~AxFastLog(){
  postThread->interrupt();
- postThread->timed_join(boost::posix_time::milliseconds(m_timeout_ms));
+ postThread->timed_join(boost::posix_time::microseconds(TIMEOUT_US*2));
 };
 
 
@@ -50,7 +50,7 @@ void AxFastLog::post(){
 		try {
 			while(true){
 				boost::this_thread::interruption_point();
-				std::pair<std::string,LogEnums::Severity> sendPair = safeQ.dequeue(m_timeout_ms);
+				std::pair<std::string,LogEnums::Severity> sendPair = safeQ.dequeue(m_timeout_us);
 				transport->write(sendPair.first,sendPair.second);
 			}
 		} catch (boost::thread_interrupted&) {	}

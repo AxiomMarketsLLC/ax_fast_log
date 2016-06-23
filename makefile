@@ -1,4 +1,4 @@
-TOPDIR   := $(HOME)/dev/ax_fast_log/
+TOPDIR   := $(PWD)/
 SRCDIR	 := $(TOPDIR)src/
 TESTDIR  := $(TOPDIR)test/
 PERFDIR	 := $(TOPDIR)perf/

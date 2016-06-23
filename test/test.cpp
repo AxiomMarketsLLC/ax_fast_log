@@ -27,7 +27,7 @@ AxFastLog fileAx;
 std::string testString;
 LogEnums::Severity testSev;
 std::string calcString;
-axFastFileLogVars():axFilePath("data/axTest.txt"),fileAx(LogEnums::FILE, axFilePath, TIMEOUT_MS),testString("TEST"), testSev(LogEnums::INFO),calcString(""){}
+axFastFileLogVars():axFilePath("data/axTest.txt"),fileAx(LogEnums::FILE, axFilePath),testString("TEST"), testSev(LogEnums::INFO),calcString(""){}
 };
 
 struct axFastConsLogVars{
@@ -36,7 +36,7 @@ AxFastLog consoleAx;
 std::string testString;
 LogEnums::Severity testSev;
 std::string calcString;
-axFastConsLogVars():consAxFilePath("data/axTransTest.txt"),consoleAx(LogEnums::CNSL, 0, TIMEOUT_MS), testString("TEST"), testSev(LogEnums::INFO),calcString(""){}
+axFastConsLogVars():consAxFilePath("data/axTransTest.txt"),consoleAx(LogEnums::CNSL, 0), testString("TEST"), testSev(LogEnums::INFO),calcString(""){}
 };
 
 struct axFastSockLogVars{
@@ -44,7 +44,7 @@ AxFastLog socketAx;
 std::string testString;
 LogEnums::Severity testSev;
 std::string calcString;
-axFastSockLogVars():socketAx(LogEnums::SCKT, PORT, TIMEOUT_MS), testString("TEST"), testSev(LogEnums::INFO), calcString(""){}
+axFastSockLogVars():socketAx(LogEnums::SCKT, PORT), testString("TEST"), testSev(LogEnums::INFO), calcString(""){}
 };
 
 struct axFastLogVars{
@@ -65,7 +65,7 @@ BOOST_AUTO_TEST_CASE(fileAxFastLogTest){
 
   calcString.erase();
   fileAx.log(testString,testSev);
-  usleep(1000); //wait 1000 microseconds, avoid race condition with AxFastLog::post()
+  usleep(TIMEOUT_MS*1000); //wait 1000 microseconds
   //read from file and write to calculatedString
   std::ifstream myReadFile;
   myReadFile.open(axFilePath.c_str());

@@ -3,7 +3,7 @@
 #include <string>
 #include <iostream>
 #include "../AxFastLog.hpp"
-#define AX_THREAD_TIMEOUT_MS 1
+
 //from intel devel guide: indirect: http://stackoverflow.com/questions/459691/best-timing-method-in-ci
 
 inline uint64_t rdtsc() {
@@ -46,7 +46,7 @@ void test_axlog_cycles(std::string testString) {
     
     unsigned long long x;
     unsigned long long y;
-    AxFastLog ax(LogEnums::FILE, "test.txt", AX_THREAD_TIMEOUT_MS);
+    AxFastLog ax(LogEnums::FILE, "test.txt");
     x = rdtsc();
     ax.log(testString, LogEnums::INFO);
     y = rdtsc();

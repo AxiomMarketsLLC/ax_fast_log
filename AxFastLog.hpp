@@ -13,6 +13,16 @@
 #include <time.h>
 #include <memory>
 
+/*
+*
+*	OPTIONS
+*
+*
+*
+*/
+
+
+#define TIMEOUT_US 200
 
 class AxFastLog {
 
@@ -27,8 +37,8 @@ private:
 */
 
   public:
-  AxFastLog(LogEnums::TransportType t, const std::string&, const int timeout_ms);
-  AxFastLog(LogEnums::TransportType t, const int port, const int timeout_ms);
+  AxFastLog(LogEnums::TransportType t, const std::string&);
+  AxFastLog(LogEnums::TransportType t, const int port);
   void log(const std::string&, LogEnums::Severity);
 
   ~AxFastLog();
@@ -38,7 +48,7 @@ private:
   void post();
   std::unique_ptr<TransportInterface> transport;
   std::unique_ptr<boost::thread> postThread;
-  const int m_timeout_ms;
+  const int m_timeout_us;
 
 
 };
