@@ -12,7 +12,7 @@ env:
     - export CLI_HOME=`pwd`/$REPO
 
 compiler:
-  - g++
+  - g++-4.8
 
 before_install:
  
