@@ -22,7 +22,7 @@
 */
 
 
-#define TIMEOUT_US 200
+#define TIMEOUT_US 800
 
 class AxFastLog {
 

@@ -16,6 +16,7 @@ int ConsoleTransport::write(const std::string& msg, LogEnums::Severity sev){
   }
   try
   {
+    //fprintf(stdout, msg.c_str());
     outStream<<msg<<std::endl;
   }catch(...)
   {

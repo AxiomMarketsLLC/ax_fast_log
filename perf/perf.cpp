@@ -8,8 +8,9 @@
 #include <omp.h>
 
 #define AX_FPATH "test.txt"
+#define TEST_STR "TESTING 1, 2, 3"
 #define AX_SPORT 9000
-#define TEST_ITERS 1
+#define TEST_ITERS 50
 #define MS_MULTI 1000
 #define US_MULTI 1000000
 //from intel devel guide: indirect: http://stackoverflow.com/questions/459691/best-timing-method-in-ci
