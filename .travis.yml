@@ -2,13 +2,25 @@
 # sudo: false
 language: cpp
 
+notifications:
+  email: false
+  slack: axiommarkets:uQPCDh2hZ26jzOx3TyWEnpDe
 
 compiler:
-  -g++
+  - g++
 
 before_install:
+  - pwd
+  - ls
 
-
+install:
+  - ulimit -c unlimited -S
+  
 script:
-  - make test
-  - ./test.sh --log_level=test_suite
+  - ./test --log_level=test_suite
+
+after_failure:
+
+  
+after_success:
+  - coveralls --exclude boost --exclude tests --gcov-options 'src/*.cpp -o'
