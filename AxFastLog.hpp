@@ -22,7 +22,7 @@
 */
 
 
-#define TIMEOUT_US 800
+#define TIMEOUT_US 200
 
 class AxFastLog {
 
@@ -49,8 +49,6 @@ private:
   void post();
   std::unique_ptr<TransportInterface> transport;
   std::unique_ptr<boost::thread> postThread;
-  const int m_timeout_us;
-
 
 };
 

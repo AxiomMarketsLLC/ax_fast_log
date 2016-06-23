@@ -6,7 +6,8 @@
 #include <condition_variable>
 #include <chrono>
 #include <boost/thread.hpp>
-
+#include <boost/thread/locks.hpp>
+#include <boost/thread/lock_guard.hpp>
 template <class T>
 class SafeQueue
 {
@@ -22,17 +23,17 @@ public:
 
   void enqueue(T t)
   {
-    std::lock_guard<std::mutex> lock(m);
+    boost::lock_guard<boost::mutex> lock(m);
     q.push(t);
     c.notify_one();
   }
 
-  T dequeue(const int timeout_ms)
+  T dequeue()
   {
-    std::unique_lock<std::mutex> lock(m);
+    boost::unique_lock<boost::mutex> lock(m);
+    
     while(q.empty()){
-	boost::this_thread::interruption_point(); 
-     	c.wait_for(lock,std::chrono::milliseconds(timeout_ms));
+          c.wait(lock);
     }
     T val = q.front();
     q.pop();
@@ -40,14 +41,14 @@ public:
   }
 
   size_t size(void){
-    	std::lock_guard<std::mutex> lock(m);
+    	boost::lock_guard<boost::mutex> lock(m);
 	int sz =  q.size();
 	return sz;
   }
 
 private:
   std::queue<T> q;
-  mutable std::mutex m;
-  std::condition_variable c;
+  mutable boost::mutex m;
+  boost::condition_variable c;
 };
 #endif

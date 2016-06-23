@@ -5,22 +5,23 @@ ConsoleTransport::ConsoleTransport():outStream(std::cout){
 
 int ConsoleTransport::write(const std::string& msg, LogEnums::Severity sev){
 
-  switch(sev) {
-    case LogEnums::DEBG:
-    case LogEnums::INFO:
-      outStream.rdbuf(std::cout.rdbuf());
-      break;
-    case LogEnums::WARN:
-    case LogEnums::ERRO:
-      outStream.rdbuf(std::cerr.rdbuf());
-  }
   try
   {
-    //fprintf(stdout, msg.c_str());
-    outStream<<msg<<std::endl;
+    switch(sev) {
+    	case LogEnums::DEBG:
+    	case LogEnums::INFO:
+      		std::cout << msg << std::endl;
+      		break;
+   	case LogEnums::WARN:
+    	case LogEnums::ERRO:
+            	std::cerr <<  msg << std::endl;
+		break;
+  }
+    
+    
   }catch(...)
   {
-     throw(std::runtime_error("LOGGER: Could not write to console stream!"));
+     fprintf(stderr,"LOGGER: Could not write to console stream!");
      return -1;
   }
   return 0;

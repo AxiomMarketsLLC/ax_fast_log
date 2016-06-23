@@ -1,9 +1,10 @@
 TOPDIR   := $(PWD)/../
 LIBDIR   := $(TOPDIR)lib/
+LIBSDIR  := $(TOPDIR)/libs/
 INCDIR	 := $(TOPDIR)include/
 TARGET   := ax_fast_log_test
 CXXFLAGS  = -Wall -g -std=c++1y -I$(INCDIR)
-TFLAGS = -lpthread -lboost_system-mt -lboost_thread-mt -lboost_unit_test_framework-mt -L$(LIBDIR) -lax_fast_log 
+TFLAGS = -lpthread -L$(LIBSDIR) -lboost_system-mt -lboost_thread-mt -lboost_unit_test_framework-mt -L$(LIBDIR) -lax_fast_log 
 
 CXX      := g++ 
 

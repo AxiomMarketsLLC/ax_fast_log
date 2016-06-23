@@ -2,7 +2,7 @@
 #include <unistd.h>
 #include "AxFastLog.hpp"
 
-AxFastLog::AxFastLog(LogEnums::TransportType t, const std::string& address):  m_timeout_us(TIMEOUT_US),safeQ() {
+AxFastLog::AxFastLog(LogEnums::TransportType t, const std::string& address): safeQ() {
 	if (t != LogEnums::FILE) {
 		throw std::runtime_error("Illegal arguments to AxFastLog(File) constructor");
  	}
@@ -10,7 +10,7 @@ AxFastLog::AxFastLog(LogEnums::TransportType t, const std::string& address):  m_
 	postThread = std::unique_ptr<boost::thread>(new boost::thread(&AxFastLog::post, this));
 }
 
-AxFastLog::AxFastLog(LogEnums::TransportType t, const int port): m_timeout_us(TIMEOUT_US), safeQ() {
+AxFastLog::AxFastLog(LogEnums::TransportType t, const int port): safeQ() {
 	if (t != LogEnums::SCKT) {
 		throw std::runtime_error("Illegal arguments to AxFastLog(Socket) constructor");
  	}
@@ -18,7 +18,7 @@ AxFastLog::AxFastLog(LogEnums::TransportType t, const int port): m_timeout_us(TI
 	postThread = std::unique_ptr<boost::thread>(new boost::thread(&AxFastLog::post, this));
 }
 
-AxFastLog::AxFastLog(LogEnums::TransportType t): m_timeout_us(TIMEOUT_US), safeQ() {
+AxFastLog::AxFastLog(LogEnums::TransportType t): safeQ() {
 	if (t != LogEnums::CNSL) {
 		throw std::runtime_error("Illegal arguments to AxFastLog(Console) constructor");
  	}
@@ -29,7 +29,7 @@ AxFastLog::AxFastLog(LogEnums::TransportType t): m_timeout_us(TIMEOUT_US), safeQ
 
 AxFastLog::~AxFastLog(){
  postThread->interrupt();
- postThread->timed_join(boost::posix_time::microseconds(TIMEOUT_US*2));
+ postThread->timed_join(boost::posix_time::microseconds(TIMEOUT_US));
 };
 
 
@@ -41,7 +41,7 @@ void AxFastLog::post(){
 		try {
 			while(true){
 				boost::this_thread::interruption_point();
-				std::pair<std::string,LogEnums::Severity> sendPair = safeQ.dequeue(m_timeout_us);
+				std::pair<std::string,LogEnums::Severity> sendPair = safeQ.dequeue();
 				transport->write(sendPair.first,sendPair.second);
 			}
 		} catch (boost::thread_interrupted&) {	}

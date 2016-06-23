@@ -4,12 +4,13 @@ INCDIR	 := $(TOPDIR)include
 TESTDIR  := $(TOPDIR)test/
 PERFDIR	 := $(TOPDIR)perf/
 LIBDIR   := $(TOPDIR)lib/
+LIBSDIR  := $(TOPDIR)libs/
 SONAME	 := libax_fast_log.so
 SOTARGET := $(LIBDIR)$(SONAME)
 ANAME	 := libax_fast_log.a
 ATARGET  := $(LIBDIR)$(ANAME)
-CXXFLAGS  = -fPIC -O2 -Wall -std=c++1y -I$(INCDIR)
-SOLDFLAGS = -shared -lboost_thread-mt
+CXXFLAGS  = -fPIC -O0 -Wall -std=c++1y -I$(INCDIR) -L$(LIBSDIR)
+SOLDFLAGS = -shared -lboost_system-mt -lboost_thread-mt
 ALDFLAGS = -lboost_thread-mt
 
 CXX      := g++

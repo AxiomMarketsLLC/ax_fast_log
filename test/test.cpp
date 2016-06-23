@@ -6,7 +6,7 @@
 #include <string>
 #include <unistd.h>
 #include "../AxFastLog.hpp"
-#include "tcp_client.hpp"
+#include "TcpClient.hpp"
 
 
 #define BOOST_TEST_MAIN
@@ -117,8 +117,8 @@ BOOST_FIXTURE_TEST_SUITE(socketAxFastLogSuite, axFastSockLogVars);
 
 
 BOOST_AUTO_TEST_CASE(socketAxFastLogTest){
-  tcp_client cli;
-  cli.conn(HOST, (PORT));
+  TcpClient cli;
+  cli.conn(HOST, (PORT), false);
   socketAx.log(testString,testSev);
   calcString = cli.receive(1024);
   BOOST_CHECK_MESSAGE(calcString.compare(testString)==0, "ERROR: Socket string incorrect");
@@ -186,7 +186,7 @@ BOOST_AUTO_TEST_CASE(safeQueueTester){
   testQueue.enqueue(testString);
   queueSize= testQueue.size();
   BOOST_CHECK_MESSAGE(queueSize == 1, "ERROR:Item not enqueued.");
-  calcString = testQueue.dequeue(TIMEOUT_MS);
+  calcString = testQueue.dequeue();
   BOOST_CHECK_MESSAGE(calcString.compare(testString) == 0,"ERROR: The dequeued string is incorrect");
 }
 
@@ -197,9 +197,9 @@ BOOST_FIXTURE_TEST_SUITE(socketTransportSuite, axFastLogVars);
 BOOST_AUTO_TEST_CASE(socketTransportTester){
   //set up socketTranport object and sockets
   calcString.erase();
-  tcp_client cli;
+  TcpClient cli;
   SocketTransport socketTransport(PORT+1);
-  cli.conn(HOST, (PORT+1));
+  cli.conn(HOST, (PORT+1), false);
   usleep(TIMEOUT_MS*1000);
   BOOST_CHECK_MESSAGE(socketTransport.clientConnected(), "ERROR: Client connection.");
   socketTransport.write(testString);

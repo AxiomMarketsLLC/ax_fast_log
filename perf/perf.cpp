@@ -3,16 +3,19 @@
 #include <string>
 #include <iostream>
 #include <cmath>
+#include <boost/thread.hpp>
 #include "../AxFastLog.hpp"
-#include "tcp_client.hpp"
+#include "TcpClient.hpp"
 #include <omp.h>
 
 #define AX_FPATH "test.txt"
 #define TEST_STR "TESTING 1, 2, 3"
+#define AX_HOST "localhost"
 #define AX_SPORT 9000
 #define TEST_ITERS 50
 #define MS_MULTI 1000
 #define US_MULTI 1000000
+
 //from intel devel guide: indirect: http://stackoverflow.com/questions/459691/best-timing-method-in-ci
 
 inline uint64_t rdtsc() {
@@ -37,7 +40,6 @@ std::pair<unsigned long long, double> test_printf_cycles(std::string testString,
     const char* testChars = testString.c_str();
     begin = omp_get_wtime();
     for(int i =0; i<=iter;++i) {
-
     	x = rdtsc();
     	printf(testChars);
    	y = rdtsc();
@@ -87,7 +89,6 @@ std::pair<unsigned long long,double> test_axlog_cycles(AxFastLog& ax, std::strin
     
     begin = omp_get_wtime();
     for(int i =0; i<=iter;++i) {
-
     	x = rdtsc();
     	ax.log(testString, LogEnums::INFO);
     	y = rdtsc();
@@ -97,34 +98,64 @@ std::pair<unsigned long long,double> test_axlog_cycles(AxFastLog& ax, std::strin
     return std::make_pair(sum/iter,end-begin);
 }
 
+
+void cliTask(TcpClient& cli) {
+try {
+while(true) {
+  boost::this_thread::interruption_point();
+  cli.receive(1024);
+}
+}
+catch (boost::thread_interrupted&) {}
+
+}
 int main()
 {
 
     AxFastLog axf (LogEnums::FILE, AX_FPATH);
     AxFastLog axs (LogEnums::SCKT, AX_SPORT);
     AxFastLog axc (LogEnums::CNSL);
-	 
-    tcp_client cli;
+    usleep(1000);
+    TcpClient cli;
+    cli.conn(AX_HOST, AX_SPORT, true);
+    std::unique_ptr<boost::thread> cliThread = std::unique_ptr<boost::thread>(new boost::thread(&cliTask,cli));
 
     std::pair<unsigned long long, double> avg;
 
     std::string testString = "TESTING 1, 2, 3"; 
+    
+    usleep(10000);
+
     avg = test_printf_cycles(testString, TEST_ITERS);
     printf("PERF: AVG CYCLES OVER %d ITERS: printf: %llu\n",TEST_ITERS,avg.first);
     printf("PERF: WALLTIME OVER %d ITERS: printf: %f\n",TEST_ITERS,avg.second*US_MULTI);
+    
     avg = test_fprintf_cycles(testString, TEST_ITERS);
     printf("PERF: AVG CYCLES OVER %d ITERS: fprintf: %llu\n",TEST_ITERS,avg.first);
     printf("PERF: WALLTIME OVER %d ITERS: fprintf: %f\n",TEST_ITERS,avg.second*US_MULTI);
+    
     avg = test_cout_cycles(testString, TEST_ITERS);
     printf("PERF: AVG CYCLES OVER %d ITERS: cout: %llu\n",TEST_ITERS,avg.first);
     printf("PERF: WALLTIME OVER %d ITERS: cout: %f\n",TEST_ITERS,avg.second*US_MULTI);
+
     avg = test_axlog_cycles(axf, testString, TEST_ITERS); 
     printf("PERF: AVG CYCLES OVER %d ITERS: axf: %llu\n",TEST_ITERS,avg.first);
     printf("PERF: WALLTIME OVER %d ITERS: axf: %f\n",TEST_ITERS,avg.second*US_MULTI);
+    
     avg = test_axlog_cycles(axc, testString, TEST_ITERS);
     printf("PERF: AVG CYCLES OVER %d ITERS: axc: %llu\n",TEST_ITERS,avg.first);
     printf("PERF: WALLTIME OVER %d ITERS: axc: %f\n",TEST_ITERS,avg.second*US_MULTI);
+
+    avg = test_axlog_cycles(axs, testString, TEST_ITERS);
+    printf("PERF: AVG CYCLES OVER %d ITERS: axs: %llu\n",TEST_ITERS,avg.first);
+    printf("PERF: WALLTIME OVER %d ITERS: axs: %f\n",TEST_ITERS,avg.second*US_MULTI);
     
-  
- 
+
+    
+
+    
+    cliThread->interrupt();
+    cliThread->join();
+    cli.close_socket();	
+    
 }
