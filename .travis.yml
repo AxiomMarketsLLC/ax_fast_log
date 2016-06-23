@@ -17,7 +17,7 @@ install:
   - ulimit -c unlimited -S
   
 script:
-  - ./test --log_level=test_suite
+  - ./test.sh --log_level=test_suite
 
 after_failure:
 
