@@ -1,4 +1,5 @@
 #!/bin/sh
+export CXX=g++
 make clean
 make perf
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$(/usr/bin/pwd)/lib

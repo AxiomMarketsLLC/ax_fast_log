@@ -13,8 +13,6 @@ CXXFLAGS  = -fPIC -O0 -std=c++11 -Wall -I$(INCDIR) -L$(LIBSDIR)
 SOLDFLAGS = -shared -lboost_system-mt -lboost_thread-mt
 ALDFLAGS = -lboost_thread-mt
 
-CXX      := g++
-
 SOURCES = $(wildcard *.cpp)
 OBJECTS = $(SOURCES:.cpp=.o)
 

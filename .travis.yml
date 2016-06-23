@@ -9,7 +9,7 @@ notifications:
 env:
   global:
     - REPO="AxiomMarketsLLC/ax_fast_log"
-    - CI_HOME=`pwd`/$REPO
+    - CLI_HOME=`pwd`/$REPO
 
 compiler:
   - g++
@@ -20,10 +20,10 @@ before_install:
 - sudo apt-get update -qq
 
 install:
-- sudo apt-get install -qq g++-4.8
+- sud oapt-get install -qq g++-4.8
+- export CXX="g++-4.8"
 
-script:
-  - ./test_travis.sh --log_level=test_suite
+script: "bash -c ./test_travis.sh"
 
 after_failure:
 
