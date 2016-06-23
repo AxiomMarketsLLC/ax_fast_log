@@ -54,8 +54,8 @@ TESTING 1, 2, 3
 TESTING 1, 2, 3
 TESTING 1, 2, 3
 TESTING 1, 2, 3
-PERF: AVG CYCLES OVER 50 ITERS: printf: 540
-PERF: WALLTIME OVER 50 ITERS: printf: 19.412022
+PERF: AVG CYCLES OVER 50 ITERS: printf: 477
+PERF: WALLTIME OVER 50 ITERS: printf: 18.178020
 TESTING 1, 2, 3
 TESTING 1, 2, 3
 TESTING 1, 2, 3
@@ -107,8 +107,8 @@ TESTING 1, 2, 3
 TESTING 1, 2, 3
 TESTING 1, 2, 3
 TESTING 1, 2, 3
-PERF: AVG CYCLES OVER 50 ITERS: fprintf: 508
-PERF: WALLTIME OVER 50 ITERS: fprintf: 14.388002
+PERF: AVG CYCLES OVER 50 ITERS: fprintf: 450
+PERF: WALLTIME OVER 50 ITERS: fprintf: 13.198238
 TESTING 1, 2, 3
 TESTING 1, 2, 3
 TESTING 1, 2, 3
@@ -160,14 +160,18 @@ TESTING 1, 2, 3
 TESTING 1, 2, 3
 TESTING 1, 2, 3
 TESTING 1, 2, 3
-PERF: AVG CYCLES OVER 50 ITERS: cout: 3752
-PERF: WALLTIME OVER 50 ITERS: cout: 81.339851
-PERF: AVG CYCLES OVER 50 ITERS: axf: 1552
-PERF: WALLTIME OVER 50 ITERS: axf: 34.881290
-PERF: AVG CYCLES OVER 50 ITERS: axc: 617
-PERF: WALLTIME OVER 50 ITERS: axc: 15.333295
-PERF: AVG CYCLES OVER 50 ITERS: axs: 607
-PERF: WALLTIME OVER 50 ITERS: axs: 15.183352
+PERF: AVG CYCLES OVER 50 ITERS: cout: 4177
+PERF: WALLTIME OVER 50 ITERS: cout: 90.502203
+PERF: AVG CYCLES OVER 50 ITERS: axf: 1813
+PERF: WALLTIME OVER 50 ITERS: axf: 40.824991
+PERF: AVG CYCLES OVER 50 ITERS: axc: 729
+PERF: WALLTIME OVER 50 ITERS: axc: 18.155202
+PERF: AVG CYCLES OVER 50 ITERS: axs: 717
+PERF: WALLTIME OVER 50 ITERS: axs: 17.880928
+TESTING 1, 2, 3
+TESTING 1, 2, 3
+TESTING 1, 2, 3
+TESTING 1, 2, 3
 TESTING 1, 2, 3
 TESTING 1, 2, 3
 TESTING 1, 2, 3
@@ -189,134 +193,46 @@ TESTING 1, 2, 3
 TESTING 1, 2, 3
 TESTING 1, 2, 3
 LOGGER: Data sent.TESTING 1, 2, 3
-TESTING 1, 2, 3
-TESTING 1, 2, 3
-TESTING 1, 2, 3
-TESTING 1, 2, 3
-TESTING 1, 2, 3
-TESTING 1, 2, 3
-TESTING 1, 2, 3
-TESTING 1, 2, 3
-TESTING 1, 2, 3
-TESTING 1, 2, 3
-TESTING 1, 2, 3
-TESTING 1, 2, 3
-TESTING 1, 2, 3
 
+LOGGER: Connection timeout
+LOGGER: Data sent.
+LOGGER: Connection timeout
+LOGGER: Data sent.
+LOGGER: Connection timeout
+LOGGER: Data sent.
+LOGGER: Connection timeout
+LOGGER: Data sent.
+LOGGER: Connection timeout
+LOGGER: Error while sending data.
+LOGGER: Connection timeout
+LOGGER: Error while sending data.
 TESTING 1, 2, 3
 TESTING 1, 2, 3
 TESTING 1, 2, 3
-TESTING 1, 2, 3
-LOGGER: Connection timeoutTESTING 1, 2, 3
-TESTING 1, 2, 3
-TESTING 1, 2, 3
-TESTING 1, 2, 3
-TESTING 1, 2, 3
-TESTING 1, 2, 3
-TESTING 1, 2, 3
-TESTING 1, 2, 3
-TESTING 1, 2, 3
-TESTING 1, 2, 3
-TESTING 1, 2, 3
-TESTING 1, 2, 3
-TESTING 1, 2, 3
+TESTING 1, 2, 3LOGGER: Connection timeout
 
-LOGGER: Data sent.
+LOGGER: Error while sending data.
+TESTING 1, 2, 3
 LOGGER: Connection timeout
-LOGGER: Data sent.
+TESTING 1, 2, 3LOGGER: Error while sending data.
 LOGGER: Connection timeout
-LOGGER: Data sent.
+LOGGER: Error while sending data.
 LOGGER: Connection timeout
-LOGGER: Data sent.
+LOGGER: Error while sending data.
+
 LOGGER: Connection timeout
-LOGGER: Data sent.
+LOGGER: Error while sending data.
 LOGGER: Connection timeout
-LOGGER: Data sent.
+LOGGER: Error while sending data.
 LOGGER: Connection timeout
-LOGGER: Data sent.
+LOGGER: Error while sending data.
 LOGGER: Connection timeout
-LOGGER: Data sent.
+LOGGER: Error while sending data.
 LOGGER: Connection timeout
-LOGGER: Data sent.
+LOGGER: Error while sending data.
 LOGGER: Connection timeout
-LOGGER: Data sent.
+LOGGER: Error while sending data.
 LOGGER: Connection timeout
-LOGGER: Data sent.
+LOGGER: Error while sending data.
 LOGGER: Connection timeout
-LOGGER: Data sent.
-LOGGER: Connection timeout
-LOGGER: Data sent.
-LOGGER: Connection timeout
-LOGGER: Data sent.
-LOGGER: Connection timeout
-LOGGER: Data sent.
-LOGGER: Connection timeout
-LOGGER: Data sent.
-LOGGER: Connection timeout
-LOGGER: Data sent.
-LOGGER: Connection timeout
-LOGGER: Data sent.
-LOGGER: Connection timeout
-LOGGER: Data sent.
-LOGGER: Connection timeout
-LOGGER: Data sent.
-LOGGER: Connection timeout
-LOGGER: Data sent.
-LOGGER: Connection timeout
-LOGGER: Data sent.
-LOGGER: Connection timeout
-LOGGER: Data sent.
-LOGGER: Connection timeout
-LOGGER: Data sent.
-LOGGER: Connection timeout
-LOGGER: Data sent.
-LOGGER: Connection timeout
-LOGGER: Data sent.
-LOGGER: Connection timeout
-LOGGER: Data sent.
-LOGGER: Connection timeout
-LOGGER: Data sent.
-LOGGER: Connection timeout
-LOGGER: Data sent.
-LOGGER: Connection timeout
-LOGGER: Data sent.
-LOGGER: Connection timeout
-LOGGER: Data sent.
-LOGGER: Connection timeout
-LOGGER: Data sent.
-LOGGER: Connection timeout
-LOGGER: Data sent.
-LOGGER: Connection timeout
-LOGGER: Data sent.
-LOGGER: Connection timeout
-LOGGER: Data sent.
-LOGGER: Connection timeout
-LOGGER: Data sent.
-LOGGER: Connection timeout
-LOGGER: Data sent.
-LOGGER: Connection timeout
-LOGGER: Data sent.
-LOGGER: Connection timeout
-LOGGER: Data sent.
-LOGGER: Connection timeout
-LOGGER: Data sent.
-LOGGER: Connection timeout
-LOGGER: Data sent.
-LOGGER: Connection timeout
-LOGGER: Data sent.
-LOGGER: Connection timeout
-LOGGER: Data sent.
-LOGGER: Connection timeout
-LOGGER: Data sent.
-LOGGER: Connection timeout
-LOGGER: Data sent.
-LOGGER: Connection timeout
-LOGGER: Data sent.
-LOGGER: Connection timeout
-LOGGER: Data sent.
-LOGGER: Connection timeout
-LOGGER: Data sent.
-LOGGER: Connection timeout
-LOGGER: Data sent.
-LOGGER: Connection timeout
-LOGGER: Data sent.
+LOGGER: Error while sending data.

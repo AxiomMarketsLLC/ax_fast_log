@@ -11,9 +11,6 @@ env:
     - export REPO="AxiomMarketsLLC/ax_fast_log"
     - export CLI_HOME=`pwd`/$REPO
 
-compiler:
-  - g++-4.8
-
 before_install:
  
 - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
