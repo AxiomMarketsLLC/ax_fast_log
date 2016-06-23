@@ -52,12 +52,17 @@ void test_axlog_cycles(std::string testString) {
     y = rdtsc();
     printf("PERF: CYCLES: ax_log (file): %lld\n",y-x);
 
+    AxFastLog axc(LogEnums::CNSL);
+    x = rdtsc();
+    axc.log(testString, LogEnums::INFO);
+    y = rdtsc();
+    printf("PERF: CYCLES: ax_log (cons): %lld\n",y-x);
 }
 
 int main()
 {
 
-
+   
     std::string testString = "TESTING 1, 2, 3"; 
     test_printf_cycles(testString);
     test_cout_cycles(testString);
