@@ -36,7 +36,7 @@ AxFastLog consoleAx;
 std::string testString;
 LogEnums::Severity testSev;
 std::string calcString;
-axFastConsLogVars():consAxFilePath("data/axTransTest.txt"),consoleAx(LogEnums::CNSL, 0), testString("TEST"), testSev(LogEnums::INFO),calcString(""){}
+axFastConsLogVars():consAxFilePath("data/axTransTest.txt"),consoleAx(LogEnums::CNSL), testString("TEST"), testSev(LogEnums::INFO),calcString(""){}
 };
 
 struct axFastSockLogVars{
