@@ -6,6 +6,11 @@ notifications:
   email: false
   slack: axiommarkets:uQPCDh2hZ26jzOx3TyWEnpDe
 
+env:
+  global:
+    - REPO="AxiomMarketsLLC/ax_fast_log"
+    - CI_HOME=`pwd`/$REPO
+
 compiler:
   - g++
 
@@ -15,11 +20,10 @@ before_install:
 - sudo apt-get update -qq
 
 install:
-- sudo apt-get install pwd
 - sudo apt-get install -qq g++-4.8
 
 script:
-  - ./test.sh --log_level=test_suite
+  - ./test_travis.sh --log_level=test_suite
 
 after_failure:
 
