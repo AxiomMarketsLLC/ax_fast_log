@@ -106,7 +106,7 @@ while(true) {
   cli.receive(1024);
 }
 }
-catch (boost::thread_interrupted&) {}
+catch (boost::thread_interrupted&) {cli.close_socket();}
 
 }
 int main()
@@ -156,6 +156,6 @@ int main()
     
     cliThread->interrupt();
     cliThread->join();
-    cli.close_socket();	
+   
     
 }
