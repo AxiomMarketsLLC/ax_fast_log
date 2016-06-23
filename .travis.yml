@@ -8,8 +8,8 @@ notifications:
 
 env:
   global:
-    - REPO="AxiomMarketsLLC/ax_fast_log"
-    - CLI_HOME=`pwd`/$REPO
+    - export REPO="AxiomMarketsLLC/ax_fast_log"
+    - export CLI_HOME=`pwd`/$REPO
 
 compiler:
   - g++
