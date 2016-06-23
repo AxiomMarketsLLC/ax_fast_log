@@ -10,12 +10,13 @@ compiler:
   - g++
 
 before_install:
-  - pwd
-  - ls
+- sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
+- sudo apt-get update -qq
 
 install:
-  - ulimit -c unlimited -S
-  
+- sudo apt-get install -qq g++-4.8
+- export CXX="g++-4.8"
+
 script:
   - ./test.sh --log_level=test_suite
 
