@@ -8,8 +8,7 @@ notifications:
 
 env:
   global:
-    - export REPO="AxiomMarketsLLC/ax_fast_log"
-    - export CLI_HOME=`pwd`/$REPO
+    - export TRAVIS_BUILD_DIR=$(TRAVIS_BUILD_DIR)
 
 before_install:
  
