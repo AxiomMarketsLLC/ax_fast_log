@@ -5,10 +5,13 @@
 #include <cmath>
 #include "../AxFastLog.hpp"
 #include "tcp_client.hpp"
+#include <omp.h>
 
 #define AX_FPATH "test.txt"
 #define AX_SPORT 9000
 #define TEST_ITERS 1
+#define MS_MULTI 1000
+#define US_MULTI 1000000
 //from intel devel guide: indirect: http://stackoverflow.com/questions/459691/best-timing-method-in-ci
 
 inline uint64_t rdtsc() {
@@ -25,50 +28,72 @@ inline uint64_t rdtsc() {
 
 
 
-unsigned long long test_printf_cycles(std::string testString, const int iter) {
+std::pair<unsigned long long, double> test_printf_cycles(std::string testString, const int iter) {
    
-    unsigned long long x;
-    unsigned long long y;
-    unsigned long long sum=0;
+    unsigned long long x, y, sum=0;
+    double begin, end;
+    testString+="\n";
     const char* testChars = testString.c_str();
+    begin = omp_get_wtime();
     for(int i =0; i<=iter;++i) {
+
     	x = rdtsc();
     	printf(testChars);
-    	y = rdtsc();
+   	y = rdtsc();
     	sum+=(y-x);
-   	printf("\n");
     }
-    return sum/iter;
+    end=omp_get_wtime();
+    return std::make_pair(sum/iter,end-begin);
 }
 
-unsigned long long test_cout_cycles(std::string testString, const int iter) {
-
-    unsigned long long x;
-    unsigned long long y;
-    unsigned long long sum=0;
+std::pair<unsigned long long, double> test_fprintf_cycles(std::string testString, const int iter) {
+   
+    unsigned long long x, y, sum=0;
+    double begin, end;
+    testString+="\n";
+    const char* testChars = testString.c_str(); 
+    begin = omp_get_wtime();
     for(int i =0; i<=iter;++i) {
     	x = rdtsc();
+    	fprintf(stdout, testChars);
+    	y = rdtsc();
+    	sum+=(y-x);
+    }
+    end = omp_get_wtime();
+    return std::make_pair(sum/iter,end-begin);
+}
+
+std::pair<unsigned long long,double> test_cout_cycles(std::string testString, const int iter) {
+
+    unsigned long long x, y, sum=0;
+    double begin, end;
+    begin = omp_get_wtime();
+    for(int i =0; i<=iter;++i) {
+	x = rdtsc();
     	std::cout << testString << std::endl;
     	y = rdtsc();
     	sum+=(y-x);
     }
-    return sum/iter;
+    end = omp_get_wtime();
+    return std::make_pair(sum/iter, end-begin);
 
 }
 
-unsigned long long test_axlog_cycles(AxFastLog& ax, std::string testString, const int iter) {
+std::pair<unsigned long long,double> test_axlog_cycles(AxFastLog& ax, std::string testString, const int iter) {
     
-    unsigned long long x;
-    unsigned long long y;
-    unsigned long long sum=0;
+    unsigned long long x,y,sum=0;
+    double begin,end;
     
+    begin = omp_get_wtime();
     for(int i =0; i<=iter;++i) {
+
     	x = rdtsc();
     	ax.log(testString, LogEnums::INFO);
     	y = rdtsc();
     	sum+=(y-x);
     }
-    return sum/iter;
+    end=omp_get_wtime();
+    return std::make_pair(sum/iter,end-begin);
 }
 
 int main()
@@ -80,17 +105,24 @@ int main()
 	 
     tcp_client cli;
 
-    unsigned long long avg;
+    std::pair<unsigned long long, double> avg;
 
     std::string testString = "TESTING 1, 2, 3"; 
     avg = test_printf_cycles(testString, TEST_ITERS);
-    printf("PERF: AVG CYCLES OVER %d ITERS: printf: %llu\n",TEST_ITERS,avg);
+    printf("PERF: AVG CYCLES OVER %d ITERS: printf: %llu\n",TEST_ITERS,avg.first);
+    printf("PERF: WALLTIME OVER %d ITERS: printf: %f\n",TEST_ITERS,avg.second*US_MULTI);
+    avg = test_fprintf_cycles(testString, TEST_ITERS);
+    printf("PERF: AVG CYCLES OVER %d ITERS: fprintf: %llu\n",TEST_ITERS,avg.first);
+    printf("PERF: WALLTIME OVER %d ITERS: fprintf: %f\n",TEST_ITERS,avg.second*US_MULTI);
     avg = test_cout_cycles(testString, TEST_ITERS);
-    printf("PERF: AVG CYCLES OVER %d ITERS: cout: %llu\n",TEST_ITERS,avg);
+    printf("PERF: AVG CYCLES OVER %d ITERS: cout: %llu\n",TEST_ITERS,avg.first);
+    printf("PERF: WALLTIME OVER %d ITERS: cout: %f\n",TEST_ITERS,avg.second*US_MULTI);
     avg = test_axlog_cycles(axf, testString, TEST_ITERS); 
-    printf("PERF: AVG CYCLES OVER %d ITERS: axf: %llu\n",TEST_ITERS,avg);
+    printf("PERF: AVG CYCLES OVER %d ITERS: axf: %llu\n",TEST_ITERS,avg.first);
+    printf("PERF: WALLTIME OVER %d ITERS: axf: %f\n",TEST_ITERS,avg.second*US_MULTI);
     avg = test_axlog_cycles(axc, testString, TEST_ITERS);
-    printf("PERF: AVG CYCLES OVER %d ITERS: axc: %llu\n",TEST_ITERS,avg);
+    printf("PERF: AVG CYCLES OVER %d ITERS: axc: %llu\n",TEST_ITERS,avg.first);
+    printf("PERF: WALLTIME OVER %d ITERS: axc: %f\n",TEST_ITERS,avg.second*US_MULTI);
     
   
  
