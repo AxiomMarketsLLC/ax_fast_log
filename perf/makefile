@@ -4,7 +4,7 @@ LIBSDIR	 := $(TOPDIR)/libs/
 TARGET   := ax_fast_log_perf
 INCDIR	 := $(TOPDIR)include/
 CXXFLAGS  = -Wall -O0 -std=c++11 -I$(INCDIR)
-PFLAGS = -lpthread -L$(LIBSDIR) -lboost_system-mt -lboost_thread-mt -fopenmp -L$(LIBDIR) -lax_fast_log 
+PFLAGS = -lpthread -L$(LIBSDIR) -l:libboost_system-mt.so.1.53.0 -lboost_thread-mt.so.1.53.0 -fopenmp -L$(LIBDIR) -lax_fast_log 
 
 SOURCES = $(wildcard *.cpp)
 OBJECTS = $(SOURCES:.cpp=.o)
