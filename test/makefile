@@ -13,7 +13,7 @@ OBJECTS = $(SOURCES:.cpp=.o)
 all:	$(TARGET)
 
 $(TARGET):	$(OBJECTS)
-	$(CXX) $(TFLAGS) -o $@ $^
+	$(CXX) $(TFLAGS) $^ -o $@
 
 $(SOURCES:.cpp=.d):%.d:%.cpp
 	$(CXX) $(CXXFLAGS) -MM $< >$@
