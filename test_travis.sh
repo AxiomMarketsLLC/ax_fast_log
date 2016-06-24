@@ -1,4 +1,5 @@
 #!/bin/sh
+
 mkdir lib
 make clean
 make test
