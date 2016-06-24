@@ -18,8 +18,9 @@ install:
 
 before_script:
 
-- export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/build/travis/AxiomMarketsLLC/ax_fast_log/lib/
-- export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/build/travis/AxiomMarketsLLC/ax_fast_log/libs/
+- echo ${PWD}
+- export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/$(PWD)/libs
+- export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/$(PWD)/libs
 
 script: ./test_travis.sh
 
