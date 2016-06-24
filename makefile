@@ -9,7 +9,7 @@ SONAME	 := libax_fast_log.so
 SOTARGET := $(LIBDIR)$(SONAME)
 ANAME	 := libax_fast_log.a
 ATARGET  := $(LIBDIR)$(ANAME)
-CXXFLAGS  = -fPIC -O0 -std=c++11 -Wall -I$(INCDIR)
+CXXFLAGS  = -fPIC -O2 -std=c++11 -Wall -I$(INCDIR)
 SOLDFLAGS = -shared -L$(LIBDIR) -lpthread -lboost_system -lboost_thread
 ALDFLAGS = -lboost_thread-mt
 

@@ -51,10 +51,10 @@ bool TcpClient::conn(string address , int port, bool noblock)
         sock = socket(AF_INET , SOCK_STREAM , 0);
         if (sock == -1)
         {
-            perror("TcpClient: Could not create socket");
+            cerr<<"TcpClient: Could not create socket"<<endl;
         }
 
-        cout<<"TcpClient: Socket created\n";
+        cout<<"TcpClient: Socket created"<<endl;
     }
 
 
@@ -69,7 +69,7 @@ bool TcpClient::conn(string address , int port, bool noblock)
         {
             //gethostbyname failed
             herror("gethostbyname");
-            cout<<"TcpClient: Failed to resolve hostname\n";
+            cout<<"TcpClient: Failed to resolve hostname"<<endl;
 
             return false;
         }
@@ -100,11 +100,11 @@ bool TcpClient::conn(string address , int port, bool noblock)
     //Connect to remote server
     if (connect(sock , (struct sockaddr *)&server , sizeof(server)) < 0)
     {
-        perror("TcpClient: connect failed. Error");
+        cerr<< "TcpClient: connect failed. Error" << endl;
         return 1;
     }
 
-    cout<<"TcpClient: Connected\n";
+    cout<<"TcpClient: Connected"<<endl;
     return true;
 }
 
@@ -116,10 +116,10 @@ bool TcpClient::send_data(string data)
     //Send some data
     if( send(sock , data.c_str() , strlen( data.c_str() ) , 0) < 0)
     {
-        perror("TcpClient: Send failed : ");
+        cerr<<"TcpClient: Send failed"<<endl;
         return false;
     }
-    cout<<"Data send\n";
+	cout<<"TcpClient:Data send"<<endl;
 
     return true;
 }
@@ -136,7 +136,7 @@ string TcpClient::receive(int size=512)
     //Receive a reply from the server
     if( recv(sock , buffer , sizeof(buffer) , 0) < 0)
     {
-        puts("TcpClient: Receive failed");
+        cerr<<"TcpClient: Receive failed"<<endl;
     }
 
     reply = buffer;

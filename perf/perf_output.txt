@@ -1,8 +1,11 @@
-axlogger: SocketTransport.cpp:68:startListen(): 
-Listening ...TcpClient: Socket created
+ax_lg: SocketTransport.cpp:68:startListen(): 
+Listening ...
+TcpClient: Socket created
+
 TcpClient: localhost resolved to 127.0.0.1
+
 TcpClient: Connected
-axlogger: SocketTransport.cpp:85:waitForConnection(): 
+ax_lg: SocketTransport.cpp:85:waitForConnection(): 
 Client is connected.TESTING 1, 2, 3
 TESTING 1, 2, 3
 TESTING 1, 2, 3
@@ -104,8 +107,8 @@ TESTING 1, 2, 3
 TESTING 1, 2, 3
 TESTING 1, 2, 3
 TESTING 1, 2, 3
-PERF: AVG CYCLES OVER 100 ITERS: printf: 2698
-PERF: WALLTIME OVER 100 ITERS: printf: 119.331758
+PERF: AVG CYCLES OVER 100 ITERS: printf: 2647
+PERF: WALLTIME OVER 100 ITERS: printf: 118.011609
 TESTING 1, 2, 3
 TESTING 1, 2, 3
 TESTING 1, 2, 3
@@ -207,8 +210,8 @@ TESTING 1, 2, 3
 TESTING 1, 2, 3
 TESTING 1, 2, 3
 TESTING 1, 2, 3
-PERF: AVG CYCLES OVER 100 ITERS: fprintf: 2552
-PERF: WALLTIME OVER 100 ITERS: fprintf: 111.259986
+PERF: AVG CYCLES OVER 100 ITERS: fprintf: 2478
+PERF: WALLTIME OVER 100 ITERS: fprintf: 108.460896
 TESTING 1, 2, 3
 TESTING 1, 2, 3
 TESTING 1, 2, 3
@@ -310,14 +313,14 @@ TESTING 1, 2, 3
 TESTING 1, 2, 3
 TESTING 1, 2, 3
 TESTING 1, 2, 3
-PERF: AVG CYCLES OVER 100 ITERS: cout: 4695
-PERF: WALLTIME OVER 100 ITERS: cout: 200.623646
-PERF: AVG CYCLES OVER 100 ITERS: axf: 578
-PERF: WALLTIME OVER 100 ITERS: axf: 28.973911
-PERF: AVG CYCLES OVER 100 ITERS: axc: 335
-PERF: WALLTIME OVER 100 ITERS: axc: 18.765684
-PERF: AVG CYCLES OVER 100 ITERS: axs: 344
-PERF: WALLTIME OVER 100 ITERS: axs: 19.255094
+PERF: AVG CYCLES OVER 100 ITERS: cout: 5160
+PERF: WALLTIME OVER 100 ITERS: cout: 220.430084
+PERF: AVG CYCLES OVER 100 ITERS: axf: 237
+PERF: WALLTIME OVER 100 ITERS: axf: 15.049707
+PERF: AVG CYCLES OVER 100 ITERS: axc: 194
+PERF: WALLTIME OVER 100 ITERS: axc: 13.256911
+PERF: AVG CYCLES OVER 100 ITERS: axs: 191
+PERF: WALLTIME OVER 100 ITERS: axs: 13.124663
 TESTING 1, 2, 3
 TESTING 1, 2, 3
 TESTING 1, 2, 3
@@ -419,5 +422,8 @@ TESTING 1, 2, 3
 TESTING 1, 2, 3
 TESTING 1, 2, 3
 TESTING 1, 2, 3
-axlogger: SocketTransport.cpp:102:write(): 
-Data sent.
+ax_lg: SocketTransport.cpp:102:write(): 
+Data sent.ax_lg: SocketTransport.cpp:91:write(): 
+Connection timeoutax_lg: SocketTransport.cpp:102:write(): 
+Data sent.ax_lg: SocketTransport.cpp:91:write(): 
+Connection timeout

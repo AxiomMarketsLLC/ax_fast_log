@@ -3,7 +3,7 @@
 #include <string>
 #include <iostream>
 #include <cmath>
-#include <boost/thread.hpp>
+
 #include "../AxFastLog.hpp"
 #include "TcpClient.hpp"
 #include <omp.h>
@@ -15,7 +15,7 @@
 #define TEST_ITERS 100
 #define MS_MULTI 1000
 #define US_MULTI 1000000
-
+#define NO_BUFFER_PRINTF
 //from intel devel guide: indirect: http://stackoverflow.com/questions/459691/best-timing-method-in-ci
 inline uint64_t rdtsc() {
     uint32_t lo, hi;
@@ -28,8 +28,6 @@ inline uint64_t rdtsc() {
       : "%ebx", "%ecx");
     return (uint64_t)hi << 32 | lo;
 }
-
-
 
 std::pair<unsigned long long, double> test_printf_cycles(std::string testString, const int iter) {
    
@@ -81,6 +79,7 @@ std::pair<unsigned long long,double> test_cout_cycles(std::string testString, co
 
 }
 
+
 std::pair<unsigned long long,double> test_axlog_cycles(AxFastLog& ax, std::string testString, const int iter) {
     
     unsigned long long x,y,sum=0;
@@ -111,7 +110,9 @@ catch (boost::thread_interrupted&) {cli.close_socket();}
 int main()
 {
 
+    #ifdef NO_BUFFER_PRINTF
     setvbuf (stdout, NULL, _IONBF, 0);
+    #endif
     AxFastLog axf (LogEnums::FILE, AX_FPATH);
     AxFastLog axs (LogEnums::SCKT, AX_SPORT);
     AxFastLog axc (LogEnums::CNSL);
