@@ -203,6 +203,7 @@ BOOST_AUTO_TEST_CASE(socketTransportTester){
   BOOST_CHECK_MESSAGE(socketTransport.clientConnected(), "ERROR: Client connection.");
   socketTransport.write(testString);
   calcString = cli.receive(1024);
+  std::cout << calcString << std::endl;
   BOOST_CHECK_MESSAGE(calcString.compare(testString)==0, "ERROR: Socket string is incorrect.");
 
 }
