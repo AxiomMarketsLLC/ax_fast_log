@@ -18,9 +18,9 @@ install:
 - export CXX="g++-4.8"
 - sudo apt-get install libboost-system1.53-dev
 - sudo apt-get install libboost-thread1.53-dev
-- sudo apt-get install libboost-unit_testing_framework1.53-dev
-before_script:
+- sudo apt-get install libboost-test1.53-dev
 
+before_script:
 - echo ${PWD}
 - export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/${PWD}/libs
 - export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/${PWD}/lib
