@@ -196,6 +196,8 @@ BOOST_FIXTURE_TEST_SUITE(socketTransportSuite, axFastLogVars);
 
 BOOST_AUTO_TEST_CASE(socketTransportTester){
   //set up socketTranport object and sockets
+  
+  testString = "Longer test than the one used previously.";
   TcpClient cli;
   SocketTransport socketTransport(PORT+1);
   cli.conn(HOST, (PORT+1), BLOCKING_SOCKET);
