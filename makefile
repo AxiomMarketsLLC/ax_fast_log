@@ -10,7 +10,7 @@ SOTARGET := $(LIBDIR)$(SONAME)
 ANAME	 := libax_fast_log.a
 ATARGET  := $(LIBDIR)$(ANAME)
 CXXFLAGS  = -fPIC -O0 -std=c++11 -Wall -I$(INCDIR)
-SOLDFLAGS = -shared -L$(LIBSDIR) -L$(LIBDIR) -lpthread -l:libboost_system-mt.so.1.53.0 -l:libboost_thread-mt.so.1.53.0
+SOLDFLAGS = -shared -L$(LIBSDIR) -L$(LIBDIR) -lpthread -lboost_system-mt -lboost_thread-mt
 ALDFLAGS = -lboost_thread-mt
 
 SOURCES = $(wildcard *.cpp)
