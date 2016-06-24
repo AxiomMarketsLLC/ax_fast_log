@@ -180,7 +180,7 @@ BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_FIXTURE_TEST_SUITE(safeQueueSuite, axFastLogVars);
 
-
+//TODO: add folly queue test
 BOOST_AUTO_TEST_CASE(safeQueueTester){
   calcString.erase();
   testQueue.enqueue(testString);
@@ -203,7 +203,8 @@ BOOST_AUTO_TEST_CASE(socketTransportTester){
   usleep(TIMEOUT_MS*1000);
   BOOST_CHECK_MESSAGE(socketTransport.clientConnected(), "ERROR: Client connection.");
   socketTransport.write(testString);
-  calcString = cli.receive(1024);
+  calcString = cli.receive(1024);i
+  std::cout << calcString << std::endl;
   BOOST_CHECK_MESSAGE(calcString.compare(testString)==0, "ERROR: Socket string is incorrect.");
 
 }
