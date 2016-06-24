@@ -4,6 +4,7 @@
 
 
 #include "SafeQueue.hpp"
+#include "ProducerConsumerQueue.hpp"
 #include "TransportInterface.hpp"
 #include "FileTransport.hpp"
 #include "ConsoleTransport.hpp"
@@ -23,18 +24,9 @@
 
 
 #define TIMEOUT_US 200
+#define DEFAULT_QUEUE_SZ 200
 
 class AxFastLog {
-
-/*
-private:
-
-  struct message{
-    time_t time;
-    Severity sev;
-    std::string body;
-  };
-*/
 
   public:
   AxFastLog(LogEnums::TransportType t, const std::string&);
@@ -45,7 +37,8 @@ private:
   ~AxFastLog();
 
   private:
-  SafeQueue<std::pair<std::string,LogEnums::Severity>> safeQ;
+  //SafeQueue<std::pair<std::string,LogEnums::Severity>> safeQ;
+  folly::ProducerConsumerQueue<std::pair<std::string,LogEnums::Severity>> safeQ;
   void post();
   std::unique_ptr<TransportInterface> transport;
   std::unique_ptr<boost::thread> postThread;

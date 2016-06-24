@@ -80,7 +80,7 @@ bool TcpClient::conn(string address , int port, bool noblock)
             //strcpy(ip , inet_ntoa(*addr_list[i]) );
             server.sin_addr = *addr_list[i];
 
-            cout<<"TCP CLIENT: " << address<<" resolved to "<<inet_ntoa(*addr_list[i])<<endl;
+            cout<<"TcpClient: " << address<<" resolved to "<<inet_ntoa(*addr_list[i])<<endl;
 
             break;
         }

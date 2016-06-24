@@ -2,7 +2,7 @@
 #include <unistd.h>
 #include "AxFastLog.hpp"
 
-AxFastLog::AxFastLog(LogEnums::TransportType t, const std::string& address): safeQ() {
+AxFastLog::AxFastLog(LogEnums::TransportType t, const std::string& address): safeQ(DEFAULT_QUEUE_SZ) {
 	if (t != LogEnums::FILE) {
 		throw std::runtime_error("Illegal arguments to AxFastLog(File) constructor");
  	}
@@ -10,7 +10,7 @@ AxFastLog::AxFastLog(LogEnums::TransportType t, const std::string& address): saf
 	postThread = std::unique_ptr<boost::thread>(new boost::thread(&AxFastLog::post, this));
 }
 
-AxFastLog::AxFastLog(LogEnums::TransportType t, const int port): safeQ() {
+AxFastLog::AxFastLog(LogEnums::TransportType t, const int port): safeQ(DEFAULT_QUEUE_SZ) {
 	if (t != LogEnums::SCKT) {
 		throw std::runtime_error("Illegal arguments to AxFastLog(Socket) constructor");
  	}
@@ -18,7 +18,7 @@ AxFastLog::AxFastLog(LogEnums::TransportType t, const int port): safeQ() {
 	postThread = std::unique_ptr<boost::thread>(new boost::thread(&AxFastLog::post, this));
 }
 
-AxFastLog::AxFastLog(LogEnums::TransportType t): safeQ() {
+AxFastLog::AxFastLog(LogEnums::TransportType t): safeQ(DEFAULT_QUEUE_SZ) {
 	if (t != LogEnums::CNSL) {
 		throw std::runtime_error("Illegal arguments to AxFastLog(Console) constructor");
  	}
@@ -34,15 +34,20 @@ AxFastLog::~AxFastLog(){
 
 
 void AxFastLog::log(const std::string& msg, LogEnums::Severity sev) {
-	safeQ.enqueue(std::make_pair(msg, sev));
+	//safeQ.enqueue(std::make_pair(msg, sev));
+	  safeQ.write(std::make_pair(msg,sev));
 }
 
 void AxFastLog::post(){
 		try {
 			while(true){
 				boost::this_thread::interruption_point();
-				std::pair<std::string,LogEnums::Severity> sendPair = safeQ.dequeue();
+				std::pair<std::string,LogEnums::Severity> sendPair;
+				if(safeQ.read(sendPair)) {
+				//std::pair<std::string,LogEnums::Severity> sendPair = safeQ.dequeue();
 				transport->write(sendPair.first,sendPair.second);
-			}
-		} catch (boost::thread_interrupted&) {	}
+				} 
+			}			
+		}
+		catch (boost::thread_interrupted&) {	}
 }
