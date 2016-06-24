@@ -2,7 +2,7 @@
 #include <unistd.h>
 #include "AxFastLog.hpp"
 
-AxFastLog::AxFastLog(LogEnums::TransportType t, const std::string& address): safeQ(DEFAULT_QUEUE_SZ) {
+AxFastLog::AxFastLog(LogEnums::TransportType t, const std::string& address): safeQueue(DEFAULT_QUEUE_SZ), q() {
 	if (t != LogEnums::FILE) {
 		throw std::runtime_error("Illegal arguments to AxFastLog(File) constructor");
  	}
@@ -10,7 +10,7 @@ AxFastLog::AxFastLog(LogEnums::TransportType t, const std::string& address): saf
 	postThread = std::unique_ptr<boost::thread>(new boost::thread(&AxFastLog::post, this));
 }
 
-AxFastLog::AxFastLog(LogEnums::TransportType t, const int port): safeQ(DEFAULT_QUEUE_SZ) {
+AxFastLog::AxFastLog(LogEnums::TransportType t, const int port): safeQueue(DEFAULT_QUEUE_SZ), q() {
 	if (t != LogEnums::SCKT) {
 		throw std::runtime_error("Illegal arguments to AxFastLog(Socket) constructor");
  	}
@@ -18,7 +18,7 @@ AxFastLog::AxFastLog(LogEnums::TransportType t, const int port): safeQ(DEFAULT_Q
 	postThread = std::unique_ptr<boost::thread>(new boost::thread(&AxFastLog::post, this));
 }
 
-AxFastLog::AxFastLog(LogEnums::TransportType t): safeQ(DEFAULT_QUEUE_SZ) {
+AxFastLog::AxFastLog(LogEnums::TransportType t): safeQueue(DEFAULT_QUEUE_SZ), q() {
 	if (t != LogEnums::CNSL) {
 		throw std::runtime_error("Illegal arguments to AxFastLog(Console) constructor");
  	}
@@ -34,8 +34,8 @@ AxFastLog::~AxFastLog(){
 
 
 void AxFastLog::log(const std::string& msg, LogEnums::Severity sev) {
-	//safeQ.enqueue(std::make_pair(msg, sev));
-	  safeQ.write(std::make_pair(msg,sev));
+	//q.enqueue(std::make_pair(msg, sev));
+	safeQueue.write(std::make_pair(msg,sev));
 }
 
 void AxFastLog::post(){
@@ -43,8 +43,8 @@ void AxFastLog::post(){
 			while(true){
 				boost::this_thread::interruption_point();
 				std::pair<std::string,LogEnums::Severity> sendPair;
-				if(safeQ.read(sendPair)) {
-				//std::pair<std::string,LogEnums::Severity> sendPair = safeQ.dequeue();
+				if(safeQueue.read(sendPair)) {
+			//std::pair<std::string,LogEnums::Severity> sendPair = q.dequeue();
 				transport->write(sendPair.first,sendPair.second);
 				} 
 			}			

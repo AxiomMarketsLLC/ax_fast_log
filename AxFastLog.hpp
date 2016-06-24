@@ -36,8 +36,8 @@ class AxFastLog {
   ~AxFastLog();
 
   private:
-  //SafeQueue<std::pair<std::string,LogEnums::Severity>> safeQ;
-  folly::ProducerConsumerQueue<std::pair<std::string,LogEnums::Severity>> safeQ;
+  SafeQueue<std::pair<std::string,LogEnums::Severity>> q;
+  folly::ProducerConsumerQueue<std::pair<std::string,LogEnums::Severity>> safeQueue;
   void post();
   std::unique_ptr<TransportInterface> transport;
   std::unique_ptr<boost::thread> postThread;
