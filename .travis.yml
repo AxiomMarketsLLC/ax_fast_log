@@ -8,7 +8,8 @@ notifications:
 
 env:
   global:
-    TRAVIS_BUILD_DIR="/home/build/travis/AxiomMarketsLLC/ax_fast_log"
+    LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/build/travis/AxiomMarketsLLC/ax_fast_log/lib/
+    LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/build/travis/AxiomMarketsLLC/ax_fast_log/libs/
 
 before_install:
  

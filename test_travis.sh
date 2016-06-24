@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 mkdir lib
 make clean
 make test
