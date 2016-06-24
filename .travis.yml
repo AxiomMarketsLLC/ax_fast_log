@@ -6,10 +6,6 @@ notifications:
   email: false
   slack: axiommarkets:uQPCDh2hZ26jzOx3TyWEnpDe
 
-env:
-  global:
-    LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/build/travis/AxiomMarketsLLC/ax_fast_log/lib/
-    LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/build/travis/AxiomMarketsLLC/ax_fast_log/libs/
 
 before_install:
  
@@ -19,6 +15,11 @@ before_install:
 install:
 - sudo apt-get install -qq g++-4.8
 - export CXX="g++-4.8"
+
+before_script:
+
+- export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/build/travis/AxiomMarketsLLC/ax_fast_log/lib/
+- export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/build/travis/AxiomMarketsLLC/ax_fast_log/libs/
 
 script: ./test_travis.sh
 
