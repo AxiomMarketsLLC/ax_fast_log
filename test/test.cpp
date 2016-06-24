@@ -118,7 +118,7 @@ BOOST_FIXTURE_TEST_SUITE(socketAxFastLogSuite, axFastSockLogVars);
 
 BOOST_AUTO_TEST_CASE(socketAxFastLogTest){
   TcpClient cli;
-  cli.conn(HOST, (PORT), false);
+  cli.conn(HOST, (PORT), BLOCKING_SOCKET);
   socketAx.log(testString,testSev);
   calcString = cli.receive(1024);
   BOOST_CHECK_MESSAGE(calcString.compare(testString)==0, "ERROR: Socket string incorrect");
@@ -198,7 +198,7 @@ BOOST_AUTO_TEST_CASE(socketTransportTester){
   //set up socketTranport object and sockets
   TcpClient cli;
   SocketTransport socketTransport(PORT+1);
-  cli.conn(HOST, (PORT+1), false);
+  cli.conn(HOST, (PORT+1), BLOCKING_SOCKET);
   usleep(TIMEOUT_MS*1000);
   BOOST_CHECK_MESSAGE(socketTransport.clientConnected(), "ERROR: Client connection.");
   socketTransport.write(testString);

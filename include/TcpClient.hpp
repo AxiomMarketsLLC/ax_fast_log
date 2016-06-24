@@ -7,6 +7,8 @@
 #include<netdb.h> //hostent
 #include <sys/fcntl.h>
 
+#define BLOCKING_SOCKET 0
+#define NONBLOCK_SOCKET 1
 //simple tcp client class used for testing SocketTransport.  source: http://www.binarytides.com/code-a-simple-socket-client-class-in-c/
 using namespace std;
 

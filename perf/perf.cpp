@@ -117,7 +117,7 @@ int main()
     AxFastLog axc (LogEnums::CNSL);
     usleep(1000);
     TcpClient cli;
-    cli.conn(AX_HOST, AX_SPORT, true);
+    cli.conn(AX_HOST, AX_SPORT, NONBLOCK_SOCKET);
     std::unique_ptr<boost::thread> cliThread = std::unique_ptr<boost::thread>(new boost::thread(&cliTask,cli));
 
     std::pair<unsigned long long, double> avg;
