@@ -1,6 +1,7 @@
 #ifndef __CONSOLETRANS__
 #define __CONSOLETRANS__
 #include "TransportInterface.hpp"
+#include "debug.h"
 #include <iostream>
 #include <stdio.h>
 class ConsoleTransport: public TransportInterface{

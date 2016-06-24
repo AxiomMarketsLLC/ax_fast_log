@@ -1,7 +1,7 @@
 #ifndef __FILETRANS__
 #define __FILETRANS__
 #include "TransportInterface.hpp"
-
+#include "debug.h"
 
 class FileTransport:public TransportInterface{
   std::unique_ptr<std::ofstream> outStream;

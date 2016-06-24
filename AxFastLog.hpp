@@ -33,7 +33,6 @@ class AxFastLog {
   AxFastLog(LogEnums::TransportType t, const int port);
   AxFastLog(LogEnums::TransportType t);
   void log(const std::string&, LogEnums::Severity);
-
   ~AxFastLog();
 
   private:

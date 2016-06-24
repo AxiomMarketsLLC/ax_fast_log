@@ -21,7 +21,7 @@ int ConsoleTransport::write(const std::string& msg, LogEnums::Severity sev){
     
   }catch(...)
   {
-     fprintf(stderr,"LOGGER: Could not write to console stream!");
+     DBG("LOGGER: Could not write to console stream!");
      return -1;
   }
   return 0;

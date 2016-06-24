@@ -65,7 +65,7 @@ bool SocketTransport::startListen(const int port)
     //Here, we set the maximum size for the backlog queue to 5
     listen(listenSocket, 5);
 
-    std::cout << "LOGGER: Listening ..." << std::endl;
+    DBG("Listening ...");
 
     return true;
 }
@@ -79,16 +79,16 @@ void SocketTransport::waitForConnection()
 
   if (clientSocket < 0)
   {
-   std::cout << "LOGGER: Error during client connection." << std::endl;
+   DBG("Error during client connection.");
 
   } else {
-   std::cout << "LOGGER: Client is connected." << std::endl;
+   DBG("Client is connected.");
   }
 }
 int SocketTransport::write(const std:: string& msg, LogEnums::Severity sev){
 
  if (!serveThread->timed_join(boost::posix_time::milliseconds(8000))) {
-	std::cout << "LOGGER: Connection timeout" << std::endl;
+	DBG("Connection timeout");
 	}
   //Send some data
   if(send(clientSocket, msg.c_str(), strlen(msg.c_str()) , 0) < 0)
@@ -96,10 +96,10 @@ int SocketTransport::write(const std:: string& msg, LogEnums::Severity sev){
     // Send failed : connection assumed to be lost
 		close(clientSocket);
 		clientSocket = -1;
-		std::cout << "LOGGER: Error while sending data." << std::endl;
+		DBG("Error while sending data.");
 		return -1;
   }
-  std::cout << "LOGGER: Data sent." << std::endl;
+  DBG("Data sent.");
 
   return 0;
 

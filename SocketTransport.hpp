@@ -1,6 +1,7 @@
 #ifndef __SOCKETTRANS__
 #define __SOCKETTRANS__
 #include "TransportInterface.hpp"
+#include "debug.h"
 #include <stdio.h>
 #include <string.h>
 #include <sys/socket.h>
