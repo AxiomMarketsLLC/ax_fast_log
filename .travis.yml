@@ -8,7 +8,7 @@ notifications:
 
 env:
   global:
-    TRAVIS_BUILD_DIR="/home/travis/AxiomMarketsLLC/ax_fast_log"
+    TRAVIS_BUILD_DIR="/home/build/travis/AxiomMarketsLLC/ax_fast_log"
 
 before_install:
  
