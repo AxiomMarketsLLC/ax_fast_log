@@ -4,7 +4,7 @@ LIBSDIR  := $(TOPDIR)libs/
 INCDIR	 := $(TOPDIR)include/
 TARGET   := ax_fast_log_test
 CXXFLAGS  = -Wall -g -std=c++11 -I$(INCDIR)
-TFLAGS = -Wl,--no-as-needed,--allow-multiple-definition,--start-group -L$(LIBSDIR) -L$(LIBDIR) -lboost_system-mt -lboost_thread-mt -lboost_unit_test_framework-mt -lax_fast_log -Wl,--end-group
+TFLAGS = -Wl,--no-as-needed,--allow-multiple-definition,--start-group -L$(LIBSDIR) -L$(LIBDIR) -l:libboost_system-mt.1.53.0 -l:libboost_thread-mt -l:libboost_unit_test_framework-mt.so.1.53.0 -lax_fast_log -Wl,--end-group
  
 
 SOURCES = $(wildcard *.cpp)
