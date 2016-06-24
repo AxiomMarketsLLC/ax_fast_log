@@ -11,22 +11,19 @@ before_install:
 - pip install --user cpp-coveralls
 - pip install --user pyyaml 
 - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
-- sudo add-apt-repository ppa:apokluda/boost1.53 --yes
+#- sudo add-apt-repository ppa:apokluda/boost1.53 --yes
 - sudo apt-get update -qq
 
 install:
 
 - sudo apt-get install -qq g++-4.8
 - export CXX="g++-4.8"
-
-- sudo apt-get install libboost-system1.53-dev
-- sudo apt-get install libboost-thread1.53-dev
-- sudo apt-get install libboost-test1.53-dev
+- sudo apt-get install libboost-system-dev
+- sudo apt-get install libboost-thread-dev
+- sudo apt-get install libboost-test-dev
 
 before_script:
 - echo ${PWD}
-- cd /usr/local/lib
-- ls
 - export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/${PWD}/libs
 - export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/${PWD}/lib
 - export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib
