@@ -197,7 +197,6 @@ BOOST_FIXTURE_TEST_SUITE(socketTransportSuite, axFastLogVars);
 BOOST_AUTO_TEST_CASE(socketTransportTester){
   //set up socketTranport object and sockets
   
-  testString = "Longer test than the one used previously.";
   TcpClient cli;
   SocketTransport socketTransport(PORT+1);
   cli.conn(HOST, (PORT+1), BLOCKING_SOCKET);
@@ -205,7 +204,6 @@ BOOST_AUTO_TEST_CASE(socketTransportTester){
   BOOST_CHECK_MESSAGE(socketTransport.clientConnected(), "ERROR: Client connection.");
   socketTransport.write(testString);
   calcString = cli.receive(1024);
-  std::cout << calcString << std::endl;
   BOOST_CHECK_MESSAGE(calcString.compare(testString)==0, "ERROR: Socket string is incorrect.");
 
 }

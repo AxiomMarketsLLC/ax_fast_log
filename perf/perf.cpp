@@ -12,12 +12,11 @@
 #define TEST_STR "TESTING 1, 2, 3"
 #define AX_HOST "localhost"
 #define AX_SPORT 9000
-#define TEST_ITERS 50
+#define TEST_ITERS 100
 #define MS_MULTI 1000
 #define US_MULTI 1000000
 
 //from intel devel guide: indirect: http://stackoverflow.com/questions/459691/best-timing-method-in-ci
-
 inline uint64_t rdtsc() {
     uint32_t lo, hi;
     __asm__ __volatile__ (
@@ -112,6 +111,7 @@ catch (boost::thread_interrupted&) {cli.close_socket();}
 int main()
 {
 
+    setvbuf (stdout, NULL, _IONBF, 0);
     AxFastLog axf (LogEnums::FILE, AX_FPATH);
     AxFastLog axs (LogEnums::SCKT, AX_SPORT);
     AxFastLog axc (LogEnums::CNSL);

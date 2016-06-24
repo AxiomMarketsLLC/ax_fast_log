@@ -26,6 +26,7 @@ before_script:
 - echo ${PWD}
 - export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/${PWD}/libs
 - export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/${PWD}/lib
+- export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib
 
 script: ./test_travis.sh
 
