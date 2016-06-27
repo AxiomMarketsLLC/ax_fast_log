@@ -27,7 +27,7 @@ AxFastLog fileAx;
 std::string testString;
 LogEnums::Severity testSev;
 std::string calcString;
-axFastFileLogVars():axFilePath("data/axTest.txt"),fileAx(LogEnums::FILE, axFilePath),testString("TEST"), testSev(LogEnums::INFO),calcString(""){}
+axFastFileLogVars():axFilePath("data/axTest.txt"),fileAx(LogEnums::FILE, axFilePath),testString("TEST"), testSev(LogEnums::INFO), calcString(""){}
 };
 
 struct axFastConsLogVars{
@@ -50,12 +50,14 @@ axFastSockLogVars():socketAx(LogEnums::SCKT, PORT), testString("TEST"), testSev(
 struct axFastLogVars{
 std::string transFilePath;
 std::string consFilePath;
+std::string consErroFilePath;
 std::string testString;
-LogEnums::Severity testSev;
+LogEnums::Severity testSevInfo;
+LogEnums::Severity testSevErro;
 std::string calcString;
 SafeQueue<std::string> testQueue;
 size_t queueSize;
-axFastLogVars():transFilePath("data/transTest.txt"),consFilePath("data/consTest.txt"), testQueue(), testString("TEST"), testSev(LogEnums::INFO),calcString(""){}
+axFastLogVars():transFilePath("data/transTest.txt"),consFilePath("data/consTest.txt"), consErroFilePath("data/consErroTest.txt"), testQueue(), testString("TEST"), testSevInfo(LogEnums::INFO),testSevErro(LogEnums::ERRO),calcString(""){}
 };
 
 
@@ -95,7 +97,7 @@ BOOST_AUTO_TEST_CASE(consoleAxFastLogTest){
   psbuf = myWriteFile.rdbuf();        // get file's streambuf
   std::cout.rdbuf(psbuf);         // assign psbuf to cout
 
-  consoleAx.log(testString, testSev);
+  consoleAx.log(testString,testSev);
   usleep(1000);
   std::cout.rdbuf(backup);        // restore cout's original streambuf
   myWriteFile.close();
@@ -135,7 +137,7 @@ BOOST_AUTO_TEST_CASE(fileTransportTester){
   fileTrans.write(testString);
   usleep(TIMEOUT_MS*1000);
   std::ifstream myReadFile;
-  
+
   myReadFile.open(transFilePath.c_str());
   if(myReadFile.is_open()){
     while (!myReadFile.eof()) {
@@ -150,7 +152,7 @@ BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_FIXTURE_TEST_SUITE(consoleTransportSuite, axFastLogVars);
 
-BOOST_AUTO_TEST_CASE(consoleTransportTester){
+BOOST_AUTO_TEST_CASE(consoleTransportTesterDefault){
   calcString.erase();
   ConsoleTransport consoleTrans;
   std::streambuf *psbuf, *backup;
@@ -175,7 +177,31 @@ BOOST_AUTO_TEST_CASE(consoleTransportTester){
   myReadFile.close();
   BOOST_CHECK_MESSAGE(calcString.compare(testString) == 0, "ERROR: Expected string not equal to calculated string");
 }
+BOOST_AUTO_TEST_CASE(consoleTransportTesterErro){
+  calcString.erase();
+  ConsoleTransport consoleTrans;
+  std::streambuf *psbuf, *backup;
+  std::ofstream myWriteFile;
+  std::ifstream myReadFile;
+  myWriteFile.open(consErroFilePath.c_str());
 
+  backup = std::cerr.rdbuf();     // back up cerr's streambuf
+  psbuf = myWriteFile.rdbuf();        // get file's streambuf
+  std::cerr.rdbuf(psbuf);         // assign psbuf to cerr
+
+  consoleTrans.write(testString,testSevErro);
+  std::cerr.rdbuf(backup);        // restore cerr's original streambuf
+  myWriteFile.close();
+
+  myReadFile.open(consFilePath.c_str());
+  if(myReadFile.is_open()){
+    while (!myReadFile.eof()) {
+      myReadFile >> calcString;
+    }
+  }
+  myReadFile.close();
+  BOOST_CHECK_MESSAGE(calcString.compare(testString) == 0, "ERROR: Expected string not equal to calculated string");
+}
 BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_FIXTURE_TEST_SUITE(safeQueueSuite, axFastLogVars);
@@ -196,7 +222,7 @@ BOOST_FIXTURE_TEST_SUITE(socketTransportSuite, axFastLogVars);
 
 BOOST_AUTO_TEST_CASE(socketTransportTester){
   //set up socketTranport object and sockets
-  
+
   TcpClient cli;
   SocketTransport socketTransport(PORT+1);
   cli.conn(HOST, (PORT+1), BLOCKING_SOCKET);
