@@ -37,4 +37,5 @@ after_failure:
 
   
 after_success:
+   - ls
   - coveralls --exclude boost --verbose --exclude tests --gcov /usr/bin/${GCOV} --gcov-options '../*.cpp -o'
