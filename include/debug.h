@@ -1,7 +1,6 @@
 #ifndef __DEBUG__
 #define __DEBUG__
 
-#define DEBUG
 #if defined(DEBUG)
 
 #define DBG(fmt, args...) fprintf(stdout, "\r\nax_lg: %s:%d:%s(): " fmt, \
