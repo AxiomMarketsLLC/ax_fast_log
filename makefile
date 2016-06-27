@@ -10,11 +10,11 @@ ANAME	 := libax_fast_log.a
 ATARGET  := $(LIBDIR)$(ANAME)
 
 #prod flags
-CXXFLAGS  = -fPIC -O2 -std=c++11 -Wall -I$(INCDIR) 
+#CXXFLAGS  = -fPIC -O2 -std=c++11 -Wall -I$(INCDIR) 
 #dbg flags
-#CXXFLAGS = --coverage -fPIC -std=c++11 -g -Wall -I$(INCDIR)
-OLDFLAGS = -shared -lpthread -lboost_system-mt -lboost_thread-mt
-ALDFLAGS = -lboost_thread-mt
+CXXFLAGS =-fprofile-arcs -ftest-coverage -fPIC -std=c++11 -g -Wall -I$(INCDIR)
+SOLDFLAGS =-shared -lpthread -lboost_system -lboost_thread
+ALDFLAGS =-lboost_thread-mt
 
 SOURCES = $(wildcard *.cpp)
 OBJECTS = $(SOURCES:.cpp=.o)
