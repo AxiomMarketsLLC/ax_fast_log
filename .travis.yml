@@ -38,4 +38,4 @@ after_failure:
   
 after_success:
   - ls
-  - coveralls --include include/ProducerConsumerQueue.hpp --exclude include/TcpClient.hpp --exclude TransportInterface.hpp --verbose --exclude test --gcov /usr/bin/${GCOV}
+  - coveralls --exclude include/TcpClient.hpp --exclude TransportInterface.hpp --verbose --exclude test --gcov /usr/bin/${GCOV}
