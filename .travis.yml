@@ -16,6 +16,7 @@ before_install:
 install:
 
 - sudo apt-get install -qq g++-4.8
+- sudo apt-get install -qq ggcov-4.8
 - export CXX="g++-4.8"
 - export GCOV="gcov-4.8"
 - sudo apt-get install libboost1.53-all-dev
@@ -25,8 +26,8 @@ install:
 
 before_script:
 - echo ${PWD}
-- echo /usr/bin/${CXX} --version
-- echo /usr/bin/${GCOV} --version
+- /usr/bin/${CXX} --version
+- /usr/bin/${GCOV} --version
 - export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/${PWD}/lib
 - export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib
 
