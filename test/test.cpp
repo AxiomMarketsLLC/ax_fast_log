@@ -51,13 +51,15 @@ struct axFastLogVars{
 std::string transFilePath;
 std::string consFilePath;
 std::string consErroFilePath;
+std::string consDbugFilePath;
 std::string testString;
 LogEnums::Severity testSevInfo;
 LogEnums::Severity testSevErro;
+LogEnums::Severity testSevDbug;
 std::string calcString;
 SafeQueue<std::string> testQueue;
 size_t queueSize;
-axFastLogVars():transFilePath("data/transTest.txt"),consFilePath("data/consTest.txt"), consErroFilePath("data/consErroTest.txt"), testQueue(), testString("TEST"), testSevInfo(LogEnums::INFO),testSevErro(LogEnums::ERRO),calcString(""){}
+axFastLogVars():transFilePath("data/transTest.txt"),consFilePath("data/consTest.txt"), consErroFilePath("data/consErroTest.txt"), consDbugFilePath("data/consDbugTest.txt"), testQueue(), testString("TEST"), testSevInfo(LogEnums::INFO),testSevErro(LogEnums::ERRO), testSevDbug(LogEnums::DEBG),calcString(""){}
 };
 
 
@@ -193,7 +195,7 @@ BOOST_AUTO_TEST_CASE(consoleTransportTesterErro){
   std::cerr.rdbuf(backup);        // restore cerr's original streambuf
   myWriteFile.close();
 
-  myReadFile.open(consFilePath.c_str());
+  myReadFile.open(consErroFilePath.c_str());
   if(myReadFile.is_open()){
     while (!myReadFile.eof()) {
       myReadFile >> calcString;
@@ -202,6 +204,33 @@ BOOST_AUTO_TEST_CASE(consoleTransportTesterErro){
   myReadFile.close();
   BOOST_CHECK_MESSAGE(calcString.compare(testString) == 0, "ERROR: Expected string not equal to calculated string");
 }
+
+BOOST_AUTO_TEST_CASE(consoleTransportTesterDbug){
+  calcString.erase();
+  ConsoleTransport consoleTrans;
+  std::streambuf *psbuf, *backup;
+  std::ofstream myWriteFile;
+  std::ifstream myReadFile;
+  myWriteFile.open(consDbugFilePath.c_str());
+
+  backup = std::clog.rdbuf();     // back up clog's streambuf
+  psbuf = myWriteFile.rdbuf();        // get file's streambuf
+  std::clog.rdbuf(psbuf);         // assign psbuf to clog
+
+  consoleTrans.write(testString,testSevDbug);
+  std::clog.rdbuf(backup);        // restore clog's original streambuf
+  myWriteFile.close();
+
+  myReadFile.open(consDbugFilePath.c_str());
+  if(myReadFile.is_open()){
+    while (!myReadFile.eof()) {
+      myReadFile >> calcString;
+    }
+  }
+  myReadFile.close();
+  BOOST_CHECK_MESSAGE(calcString.compare(testString) == 0, "ERROR: Expected string not equal to calculated string");
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_FIXTURE_TEST_SUITE(safeQueueSuite, axFastLogVars);
