@@ -286,11 +286,17 @@ BOOST_AUTO_TEST_CASE(socketTransportTester){
     }
     BOOST_CHECK_MESSAGE(calcString.compare("exception") ==0, "ERROR: Exception connecting client");
   }
-/*
+
   BOOST_AUTO_TEST_CASE(socketSendTest){
     calcString.erase();
     socketTransport socketTransport(PORT+3);
-
-  }*/
+    try{
+      socketTransport.write(testString);
+    }
+    catch{
+      calcString = "exception";
+    }
+    BOOST_CHECK_MESSAGE(calcString.compare("exception") ==0, "ERROR: Exception writing to client");
+  }
 
 BOOST_AUTO_TEST_SUITE_END()
