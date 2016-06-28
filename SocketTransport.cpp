@@ -18,21 +18,13 @@ SocketTransport::SocketTransport(const int port)
 
 SocketTransport::~SocketTransport(void)
 {
-  if (clientSocket != -1)
-  {
-    close(clientSocket);
-  }
-
-  if(listenSocket != -1)
-  {
-    close(listenSocket);
-  }
+  this->closeSocket();
   
 }
 
 bool SocketTransport::clientConnected()
 {
-  return clientSocket > -1;
+  return clientSocket != -1;
 }
 
 bool SocketTransport::startListen(const int port)
@@ -87,13 +79,14 @@ void SocketTransport::waitForConnection()
 }
 int SocketTransport::write(const std:: string& msg, LogEnums::Severity sev){
 
- if (!serveThread->timed_join(boost::posix_time::milliseconds(8000))) {
+ if (!serveThread->timed_join(boost::posix_time::milliseconds(SERVER_WAIT_TIMEOUT_MS))) {
 	DBG("Connection timeout");
+	return -1;
 	}
   //Send some data
   if(send(clientSocket, msg.c_str(), strlen(msg.c_str()) , 0) < 0)
   {
-    // Send failed : connection assumed to be lost
+    //Send failed : connection assumed to be lost
 		close(clientSocket);
 		clientSocket = -1;
 		DBG("Error while sending data.");
@@ -103,5 +96,17 @@ int SocketTransport::write(const std:: string& msg, LogEnums::Severity sev){
 
   return 0;
 
+}
+
+void SocketTransport::closeSocket(){
+  if (clientSocket != -1)
+  {
+    close(clientSocket);
+  }
+
+  if(listenSocket != -1)
+  {
+    close(listenSocket);
+  }
 }
 

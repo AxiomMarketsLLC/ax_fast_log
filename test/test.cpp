@@ -48,6 +48,7 @@ axFastSockLogVars():socketAx(LogEnums::SCKT, PORT), testString("TEST"), testSev(
 };
 
 struct axFastLogVars{
+int writeResult;
 std::string transFilePath;
 std::string consFilePath;
 std::string consErroFilePath;
@@ -264,7 +265,7 @@ BOOST_AUTO_TEST_CASE(socketTransportTester){
 }
 
   BOOST_AUTO_TEST_CASE(socketPortTester){
-    calcString.erase()
+    calcString.erase();
     try{
       SocketTransport socketTransport(1);
     }
@@ -276,27 +277,35 @@ BOOST_AUTO_TEST_CASE(socketTransportTester){
 
   BOOST_AUTO_TEST_CASE(socketClientTest){
     calcString.erase();
-    socketTransport socketTransport(PORT+2);
-    socketTransport.clientConnected = 2;
+    SocketTransport socketTransport(PORT+2);
     try{
-      socketTransport.clientConnected();
+      SocketTransport socketTransport2(PORT+2);
     }
     catch(...){
       calcString = "exception";
     }
-    BOOST_CHECK_MESSAGE(calcString.compare("exception") ==0, "ERROR: Exception connecting client");
+    BOOST_CHECK_MESSAGE(calcString.compare("exception") == 0, "ERROR: Exception not thrown as expected connecting client");
   }
 
-  BOOST_AUTO_TEST_CASE(socketSendTest){
+  BOOST_AUTO_TEST_CASE(socketTimeoutTest){
     calcString.erase();
-    socketTransport socketTransport(PORT+3);
-    try{
-      socketTransport.write(testString);
-    }
-    catch{
-      calcString = "exception";
-    }
-    BOOST_CHECK_MESSAGE(calcString.compare("exception") ==0, "ERROR: Exception writing to client");
+    SocketTransport socketTransport(PORT+3);
+    writeResult = socketTransport.write(testString);
+
+    BOOST_CHECK_MESSAGE(writeResult == -1, "ERROR: Return value not as expected");
+  }
+
+  BOOST_AUTO_TEST_CASE(socketSendDataTest){
+    TcpClient cli;
+    SocketTransport socketTransport(PORT+4);
+    cli.conn(HOST, (PORT+4), BLOCKING_SOCKET);
+    usleep(TIMEOUT_MS*1000);
+    BOOST_CHECK_MESSAGE(socketTransport.clientConnected(), "ERROR: Client connection.");
+    socketTransport.closeSocket();
+    writeResult = socketTransport.write(testString);
+
+
+    BOOST_CHECK_MESSAGE(writeResult == -1, "ERROR: Return value not as expected");
   }
 
 BOOST_AUTO_TEST_SUITE_END()

@@ -11,6 +11,7 @@
 #include <iostream>
 #include <boost/thread.hpp>
 #include <atomic>
+#define SERVER_WAIT_TIMEOUT_MS 8000
 
 class SocketTransport: public TransportInterface{
   int listenSocket, clientSocket;
@@ -24,5 +25,6 @@ public:
   bool startListen(const int port);
   void waitForConnection();
   int write(const std:: string&, LogEnums::Severity = LogEnums::INFO);
+  void closeSocket();
 };
 #endif
