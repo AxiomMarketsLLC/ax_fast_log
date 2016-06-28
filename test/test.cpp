@@ -50,6 +50,7 @@ axFastSockLogVars():socketAx(LogEnums::SCKT, PORT), testString("TEST"), testSev(
 struct axFastLogVars{
 int writeResult;
 std::string transFilePath;
+std::string transFileErrorPath;
 std::string consFilePath;
 std::string consErroFilePath;
 std::string consDbugFilePath;
@@ -60,7 +61,7 @@ LogEnums::Severity testSevDbug;
 std::string calcString;
 SafeQueue<std::string> testQueue;
 size_t queueSize;
-axFastLogVars():transFilePath("data/transTest.txt"),consFilePath("data/consTest.txt"), consErroFilePath("data/consErroTest.txt"), consDbugFilePath("data/consDbugTest.txt"), testQueue(), testString("TEST"), testSevInfo(LogEnums::INFO),testSevErro(LogEnums::ERRO), testSevDbug(LogEnums::DEBG),calcString(""){}
+axFastLogVars():transFilePath("data/transTest.txt"),transFileErrorPath("/test.txt"), consFilePath("data/consTest.txt"), consErroFilePath("data/consErroTest.txt"), consDbugFilePath("data/consDbugTest.txt"), testQueue(), testString("TEST"), testSevInfo(LogEnums::INFO),testSevErro(LogEnums::ERRO), testSevDbug(LogEnums::DEBG),calcString(""){}
 };
 
 
@@ -150,6 +151,32 @@ BOOST_AUTO_TEST_CASE(fileTransportTester){
   myReadFile.close();
   BOOST_CHECK_MESSAGE(calcString.compare(testString)== 0, "ERROR: Expected string not equal to calculated string" );
 }
+
+BOOST_AUTO_TEST_CASE(fileTransportPathErrorTester){
+  calcString.erase();
+  try{
+    FileTransport fileTrans(transFileErrorPath);
+  }
+  catch(...){
+    calcString = "exception";
+  }
+  BOOST_CHECK_MESSAGE(calcString.compare("exception")== 0, "ERROR: Expected exception not thrown");
+}
+
+BOOST_AUTO_TEST_CASE(fileTransportWriteErrorTester){
+  calcString.erase();
+  FileTransport fileTrans(transFilePath);
+  fileTrans.closePath();
+  try{
+    fileTrans.write(testString);
+  }catch(...){
+    calcString = "exception";
+  }
+
+  BOOST_CHECK_MESSAGE(calcString.compare("exception")== 0, "ERROR: Expected exception not thrown for writing to a closed stream" );
+}
+
+
 
 BOOST_AUTO_TEST_SUITE_END()
 

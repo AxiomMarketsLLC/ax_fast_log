@@ -23,6 +23,7 @@ private:
 
 public:
     TcpClient();
+    ~TcpClient();
     void close_socket();
     bool conn(string, int, bool);
     bool send_data(string data);
@@ -34,6 +35,11 @@ TcpClient::TcpClient()
     sock = -1;
     port = 0;
     address = "";
+}
+
+TcpClient::~TcpClient(){
+  
+   this->close_socket();
 }
 
 /**

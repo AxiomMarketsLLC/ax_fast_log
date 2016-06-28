@@ -10,7 +10,6 @@ FileTransport::FileTransport(const std::string& path) : outStream(new std::ofstr
 }
 
 int FileTransport::write(const std::string& msg, LogEnums::Severity sev){
-  //ofstream myfile (path);
   if (outStream->is_open())
   {
     *outStream << msg<<std::endl;
@@ -22,9 +21,15 @@ int FileTransport::write(const std::string& msg, LogEnums::Severity sev){
   return 0;
 }
 
-FileTransport::~FileTransport(){
+void FileTransport::closePath(){
+
   if( outStream->is_open() )
    {
        outStream->close();
    }
+}
+
+FileTransport::~FileTransport(){
+  
+  this->closePath();
 }
