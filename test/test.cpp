@@ -263,4 +263,15 @@ BOOST_AUTO_TEST_CASE(socketTransportTester){
 
 }
 
+  BOOST_AUTO_TEST_CASE(socketPortTester){
+    calcString.erase()
+    try{
+      SocketTransport socketTransport(1);
+    }
+    catch(...){
+      calcString = "exception"
+    }
+    BOOST_CHECK_MESSAGE(calcString.compare("exception") ==0, "ERROR: Exception not thrown as expected")
+  }
+
 BOOST_AUTO_TEST_SUITE_END()
