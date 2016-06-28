@@ -269,9 +269,28 @@ BOOST_AUTO_TEST_CASE(socketTransportTester){
       SocketTransport socketTransport(1);
     }
     catch(...){
-      calcString = "exception"
+      calcString = "exception";
     }
-    BOOST_CHECK_MESSAGE(calcString.compare("exception") ==0, "ERROR: Exception not thrown as expected")
+    BOOST_CHECK_MESSAGE(calcString.compare("exception") ==0, "ERROR: Exception not thrown as expected");
   }
+
+  BOOST_AUTO_TEST_CASE(socketClientTest){
+    calcString.erase();
+    socketTransport socketTransport(PORT+2);
+    socketTransport.clientConnected = 2;
+    try{
+      socketTransport.clientConnected();
+    }
+    catch(...){
+      calcString = "exception";
+    }
+    BOOST_CHECK_MESSAGE(calcString.compare("exception") ==0, "ERROR: Exception connecting client");
+  }
+/*
+  BOOST_AUTO_TEST_CASE(socketSendTest){
+    calcString.erase();
+    socketTransport socketTransport(PORT+3);
+
+  }*/
 
 BOOST_AUTO_TEST_SUITE_END()
