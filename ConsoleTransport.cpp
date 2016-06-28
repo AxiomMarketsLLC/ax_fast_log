@@ -1,28 +1,18 @@
 #include "ConsoleTransport.hpp"
 
-ConsoleTransport::ConsoleTransport():outStream(std::cout){
-}
+ConsoleTransport::ConsoleTransport(){}
 
 int ConsoleTransport::write(const std::string& msg, LogEnums::Severity sev){
-
-  try
-  {
-    switch(sev) {
+   switch(sev) {
     	case LogEnums::DEBG:
+		std::clog << msg << std::endl;
+		break;
     	case LogEnums::INFO:
-      		std::cout << msg << std::endl;
+     		std::cout << msg << std::endl;
       		break;
    	case LogEnums::WARN:
     	case LogEnums::ERRO:
-            	std::cerr <<  msg << std::endl;
-		break;
-  }
-    
-    
-  }catch(...)
-  {
-     DBG("LOGGER: Could not write to console stream!");
-     return -1;
+        	std::cerr << msg << std::endl;
   }
   return 0;
 }
