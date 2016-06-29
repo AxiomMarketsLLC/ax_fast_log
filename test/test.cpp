@@ -77,9 +77,8 @@ LogEnums::Severity testSevInfo;
 LogEnums::Severity testSevErro;
 LogEnums::Severity testSevDbug;
 std::string calcString;
-SafeQueue<std::string> testQueue;
 size_t queueSize;
-axFastLogVars():transFilePath("data/transTest.txt"),transFileErrorPath("/test.txt"), consFilePath("data/consTest.txt"), consErroFilePath("data/consErroTest.txt"), consDbugFilePath("data/consDbugTest.txt"), testQueue(), testString("TEST"), testSevInfo(LogEnums::INFO),testSevErro(LogEnums::ERRO), testSevDbug(LogEnums::DEBG),calcString(""){}
+axFastLogVars():transFilePath("data/transTest.txt"),transFileErrorPath("/test.txt"), consFilePath("data/consTest.txt"), consErroFilePath("data/consErroTest.txt"), consDbugFilePath("data/consDbugTest.txt"), testString("TEST"), testSevInfo(LogEnums::INFO),testSevErro(LogEnums::ERRO), testSevDbug(LogEnums::DEBG),calcString(""){}
 };
 
 
@@ -379,19 +378,6 @@ BOOST_AUTO_TEST_CASE(socketTransportTester){
 
 BOOST_AUTO_TEST_SUITE_END()
 
-BOOST_FIXTURE_TEST_SUITE(safeQueueSuite, axFastLogVars);
-
-BOOST_AUTO_TEST_CASE(safeQueueTester){
-  calcString.erase();
-  testQueue.enqueue(testString);
-  queueSize= testQueue.size();
-  BOOST_CHECK_MESSAGE(queueSize == 1, "ERROR:Item not enqueued.");
-  calcString = testQueue.dequeue();
-  BOOST_CHECK_MESSAGE(calcString.compare(testString) == 0,"ERROR: The dequeued string is incorrect");
-}
-
-BOOST_AUTO_TEST_SUITE_END()
-
 BOOST_FIXTURE_TEST_SUITE(producerConsumerQueueSuite,producerConsumerQueueVars);
 
 BOOST_AUTO_TEST_CASE(nonTrivialQueueTest){
@@ -402,7 +388,6 @@ BOOST_AUTO_TEST_CASE(nonTrivialQueueTest){
   nonTrivQueue.write(nonTriv_2);
   BOOST_CHECK_MESSAGE(nonTrivQueue.isFull(), "ERROR: Queue should be full");
   nonTrivQueue.popFront();
-  std::cout<<nonTrivQueue.sizeGuess()<<std::endl;
   BOOST_CHECK_MESSAGE(nonTrivQueue.sizeGuess() == 2, "ERROR: Queue size should be 2.");
 }
 

@@ -3,7 +3,6 @@
 
 
 
-#include "SafeQueue.hpp"
 #include "ProducerConsumerQueue.hpp"
 #include "TransportInterface.hpp"
 #include "FileTransport.hpp"
