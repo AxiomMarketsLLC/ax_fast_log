@@ -6,7 +6,7 @@ TARGET   := ax_fast_log_test
 #prod flags
 #CXFLAGS  = -std=c++11 -Wall -I$(INCDIR) 
 #dbg flags
-CXXFLAGS =--coverage -DDEBUG -Wall -I$(INCDIR) -std=c++11
+CXXFLAGS =--coverage -DDEBUG -Wall -g -I$(INCDIR) -I . -std=c++11
 
 TFLAGS = --coverage -Wl,--no-as-needed,--allow-multiple-definition,--start-group -L$(LIBDIR) -lboost_system -lboost_thread -lboost_unit_test_framework -lax_fast_log -Wl,--end-group
  

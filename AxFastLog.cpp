@@ -42,11 +42,13 @@ void AxFastLog::post(){
 		try {
 			while(true){
 				boost::this_thread::interruption_point();
-				std::pair<std::string,LogEnums::Severity> sendPair;
-				if(safeQueue.read(sendPair)) {
-			//std::pair<std::string,LogEnums::Severity> sendPair = q.dequeue();
-				transport->write(sendPair.first,sendPair.second);
-				} 
+         			if(!safeQueue.isEmpty()) {
+					std::pair<std::string,LogEnums::Severity> sendPair;
+					if(safeQueue.read(sendPair)) {
+						transport->write(sendPair.first,sendPair.second);
+						
+					} 
+				}
 			}			
 		}
 		catch (boost::thread_interrupted&) {	}

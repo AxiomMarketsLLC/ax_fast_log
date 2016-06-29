@@ -12,7 +12,7 @@ ATARGET  := $(LIBDIR)$(ANAME)
 #prod flags
 #CXXFLAGS  = -fPIC -O2 -std=c++11 -Wall -I$(INCDIR) 
 #dbg flags
-CXXFLAGS =--coverage -fPIC -std=c++11 -g -Wall -I$(INCDIR) -DDEBUG
+CXXFLAGS =--coverage -fPIC -std=c++11 -g -Wall -I$(INCDIR) -I . -DDEBUG
 SOLDFLAGS =-shared --coverage -lpthread -lboost_system -lboost_thread
 ALDFLAGS =-lboost_thread-mt
 

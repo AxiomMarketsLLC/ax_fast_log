@@ -111,18 +111,7 @@ class ProducerConsumerQueue {
     return true;
   }
 
-  // pointer to the value at the front of the queue (for use in-place) or
-  // nullptr if empty.
-  T* frontPtr() {
-    auto const currentRead = readIndex_.load(std::memory_order_relaxed);
-    if (currentRead == writeIndex_.load(std::memory_order_acquire)) {
-      // queue is empty
-      return nullptr;
-    }
-    return &records_[currentRead];
-  }
-
-  // queue must not be empty
+    // queue must not be empty
   void popFront() {
     auto const currentRead = readIndex_.load(std::memory_order_relaxed);
     assert(currentRead != writeIndex_.load(std::memory_order_acquire));

@@ -7,7 +7,7 @@
 #include <unistd.h>
 #include "../AxFastLog.hpp"
 #include "TcpClient.hpp"
-
+#include "test.hpp"
 
 #define BOOST_TEST_MAIN
 #define BOOST_TEST_DYN_LINK
@@ -20,6 +20,9 @@
 #define HOST "localhost"
 #define PORT 63000
 #define TIMEOUT_MS 1
+static const int DEFAULT_QUEUE_TEST_SIZE = 4;
+
+
 
 struct axFastFileLogVars{
 std:: string axFilePath;
@@ -52,7 +55,14 @@ AxFastLog* invldFileAx;
 AxFastLog* invldConsAx;
 AxFastLog* invldSockAx;
 std::string calcString;
-invalidAxFastVars():calcString(""){}
+std::string testFilePath;
+invalidAxFastVars():calcString(""), testFilePath("fileTest.txt"){}
+};
+
+struct producerConsumerQueueVars{
+  NotTrivial nonTriv, nonTriv_1, nonTriv_2;
+  folly::ProducerConsumerQueue<NotTrivial> nonTrivQueue;
+  producerConsumerQueueVars():nonTriv(), nonTriv_1(), nonTriv_2(), nonTrivQueue(DEFAULT_QUEUE_TEST_SIZE){}
 };
 
 struct axFastLogVars{
@@ -145,7 +155,7 @@ BOOST_FIXTURE_TEST_SUITE(InvalidAxConstructorsSuite,invalidAxFastVars);
 BOOST_AUTO_TEST_CASE(InvalidFileAxTester){
  calcString.erase();
  try{
-   invldFileAx = new AxFastLog(LogEnums::SCKT,"data/axTest.txt");
+   invldFileAx = new AxFastLog(LogEnums::SCKT,testFilePath);
  }catch(...){
     calcString = "exception";
   }
@@ -306,19 +316,6 @@ BOOST_AUTO_TEST_CASE(consoleTransportTesterDbug){
 
 BOOST_AUTO_TEST_SUITE_END()
 
-BOOST_FIXTURE_TEST_SUITE(safeQueueSuite, axFastLogVars);
-
-//TODO: add folly queue test
-BOOST_AUTO_TEST_CASE(safeQueueTester){
-  calcString.erase();
-  testQueue.enqueue(testString);
-  queueSize= testQueue.size();
-  BOOST_CHECK_MESSAGE(queueSize == 1, "ERROR:Item not enqueued.");
-  calcString = testQueue.dequeue();
-  BOOST_CHECK_MESSAGE(calcString.compare(testString) == 0,"ERROR: The dequeued string is incorrect");
-}
-
-BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_FIXTURE_TEST_SUITE(socketTransportSuite, axFastLogVars);
 
@@ -379,5 +376,34 @@ BOOST_AUTO_TEST_CASE(socketTransportTester){
 
     BOOST_CHECK_MESSAGE(writeResult == -1, "ERROR: Return value not as expected");
   }
+
+BOOST_AUTO_TEST_SUITE_END()
+
+BOOST_FIXTURE_TEST_SUITE(safeQueueSuite, axFastLogVars);
+
+BOOST_AUTO_TEST_CASE(safeQueueTester){
+  calcString.erase();
+  testQueue.enqueue(testString);
+  queueSize= testQueue.size();
+  BOOST_CHECK_MESSAGE(queueSize == 1, "ERROR:Item not enqueued.");
+  calcString = testQueue.dequeue();
+  BOOST_CHECK_MESSAGE(calcString.compare(testString) == 0,"ERROR: The dequeued string is incorrect");
+}
+
+BOOST_AUTO_TEST_SUITE_END()
+
+BOOST_FIXTURE_TEST_SUITE(producerConsumerQueueSuite,producerConsumerQueueVars);
+
+BOOST_AUTO_TEST_CASE(nonTrivialQueueTest){
+  BOOST_CHECK_MESSAGE(nonTrivQueue.isEmpty(), "ERROR: Queue not empty as expected.");
+  nonTrivQueue.write(nonTriv);
+  nonTrivQueue.write(nonTriv_1);
+  BOOST_CHECK_MESSAGE(!nonTrivQueue.isFull(), "ERROR: Queue should not be full.");
+  nonTrivQueue.write(nonTriv_2);
+  BOOST_CHECK_MESSAGE(nonTrivQueue.isFull(), "ERROR: Queue should be full");
+  nonTrivQueue.popFront();
+  std::cout<<nonTrivQueue.sizeGuess()<<std::endl;
+  BOOST_CHECK_MESSAGE(nonTrivQueue.sizeGuess() == 2, "ERROR: Queue size should be 2.");
+}
 
 BOOST_AUTO_TEST_SUITE_END()
