@@ -47,6 +47,14 @@ std::string calcString;
 axFastSockLogVars():socketAx(LogEnums::SCKT, PORT), testString("TEST"), testSev(LogEnums::INFO), calcString(""){}
 };
 
+struct invalidAxFastVars{
+AxFastLog* invldFileAx;
+AxFastLog* invldConsAx;
+AxFastLog* invldSockAx;
+std::string calcString;
+invalidAxFastVars():calcString(""){}
+};
+
 struct axFastLogVars{
 int writeResult;
 std::string transFilePath;
@@ -128,6 +136,43 @@ BOOST_AUTO_TEST_CASE(socketAxFastLogTest){
   socketAx.log(testString,testSev);
   calcString = cli.receive(1024);
   BOOST_CHECK_MESSAGE(calcString.compare(testString)==0, "ERROR: Socket string incorrect");
+}
+
+BOOST_AUTO_TEST_SUITE_END()
+
+BOOST_FIXTURE_TEST_SUITE(InvalidAxConstructorsSuite,invalidAxFastVars);
+
+BOOST_AUTO_TEST_CASE(InvalidFileAxTester){
+ calcString.erase();
+ try{
+   invldFileAx = new AxFastLog(LogEnums::SCKT,"data/axTest.txt");
+ }catch(...){
+    calcString = "exception";
+  }
+
+  BOOST_CHECK_MESSAGE(calcString.compare("exception")== 0, "ERROR: Expected exception not thrown for writing to a closed stream" );
+}
+
+BOOST_AUTO_TEST_CASE(InvalidConsAxTester){
+ calcString.erase();
+ try{
+   invldConsAx = new AxFastLog(LogEnums::FILE);
+ }catch(...){
+    calcString = "exception";
+  }
+
+  BOOST_CHECK_MESSAGE(calcString.compare("exception")== 0, "ERROR: Expected exception not thrown for writing to a closed stream" );
+}
+
+BOOST_AUTO_TEST_CASE(InvalidSockAxTester){
+ calcString.erase();
+ try{
+   invldSockAx = new AxFastLog(LogEnums::CNSL,PORT+5);
+ }catch(...){
+    calcString = "exception";
+  }
+
+  BOOST_CHECK_MESSAGE(calcString.compare("exception")== 0, "ERROR: Expected exception not thrown for writing to a closed stream" );
 }
 
 BOOST_AUTO_TEST_SUITE_END()
