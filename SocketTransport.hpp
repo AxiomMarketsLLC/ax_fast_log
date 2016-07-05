@@ -4,6 +4,7 @@
 #include "debug.h"
 #include <stdio.h>
 #include <string.h>
+#define _GNU_SOURCE 
 #include <sys/socket.h>
 #include <sys/fcntl.h>
 #include <arpa/inet.h>
