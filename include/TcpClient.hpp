@@ -52,9 +52,10 @@ bool TcpClient::conn(string address , int port, bool noblock)
     {
         //Create socket
         if(noblock) {
- 	sock = socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK, 0);
-	}
-        sock = socket(AF_INET , SOCK_STREAM , 0);
+ 	  sock = socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK, 0);
+ 	  } else {
+          sock = socket(AF_INET , SOCK_STREAM , 0);
+        }
         if (sock == -1)
         {
             cerr<<"TcpClient: Could not create socket"<<endl;
@@ -107,7 +108,7 @@ bool TcpClient::conn(string address , int port, bool noblock)
     if (connect(sock , (struct sockaddr *)&server , sizeof(server)) < 0)
     {
         cerr<< "TcpClient: connect failed. Error" << endl;
-        return 1;
+        return false;
     }
 
     cout<<"TcpClient: Connected"<<endl;
