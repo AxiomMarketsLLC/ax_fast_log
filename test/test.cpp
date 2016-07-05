@@ -105,7 +105,7 @@ BOOST_AUTO_TEST_CASE(consoleAxFastLogTest){
   std::cout.rdbuf(psbuf);         // assign psbuf to cout
 
   consoleAx.log(TESTSTRING,testSev);
-  usleep(1000);
+  usleep(TIMEOUT_MS*1000);
   std::cout.rdbuf(backup);        // restore cout's original streambuf
   myWriteFile.close();
 
@@ -118,7 +118,7 @@ BOOST_AUTO_TEST_CASE(consoleAxFastLogTest){
   myReadFile.close();
 
 
- BOOST_CHECK_MESSAGE(calcString.compare(TESTSTRING) == 0, "ERROR: Expected string not equal to calculated string" );
+ BOOST_CHECK_MESSAGE(calcString.compare(TESTSTRING) == 0, "ERROR: Expected string unequal to calculated string" );
 }
 BOOST_AUTO_TEST_SUITE_END()
 
@@ -130,7 +130,7 @@ BOOST_AUTO_TEST_CASE(socketAxFastLogTest){
   cli.conn(HOST, (PORT), BLOCKING_SOCKET);
   socketAx.log(TESTSTRING,testSev);
   calcString = cli.receive(1024);
-  BOOST_CHECK_MESSAGE(calcString.compare(TESTSTRING)==0, "ERROR: Socket string incorrect");
+  BOOST_CHECK_MESSAGE(calcString.compare(TESTSTRING)==0, "ERROR: Expected string unequal to calculated string");
 }
 
 BOOST_AUTO_TEST_SUITE_END()
@@ -311,7 +311,7 @@ BOOST_AUTO_TEST_CASE(socketTransportTester){
   SocketTransport socketTransport(PORT+1);
   cli.conn(HOST, (PORT+1), BLOCKING_SOCKET);
   usleep(TIMEOUT_MS*1000);
-  BOOST_CHECK_MESSAGE(socketTransport.clientConnected(), "ERROR: Client connection.");
+  BOOST_CHECK_MESSAGE(socketTransport.clientConnected(), "ERROR: Unexpected return from clientConnected method.");
   socketTransport.write(TESTSTRING);
   calcString = cli.receive(1024);
   BOOST_CHECK_MESSAGE(calcString.compare(TESTSTRING)==0, "ERROR: Socket string is incorrect.");
@@ -338,7 +338,7 @@ BOOST_AUTO_TEST_CASE(socketTransportTester){
     catch(...){
       calcString = "exception";
     }
-    BOOST_CHECK_MESSAGE(calcString.compare("exception") == 0, "ERROR: Exception not thrown as expected connecting client");
+    BOOST_CHECK_MESSAGE(calcString.compare("exception") == 0, "ERROR: Exception not thrown as expected when listening twice on same port");
   }
 
   BOOST_AUTO_TEST_CASE(socketTimeoutTest){
@@ -346,7 +346,7 @@ BOOST_AUTO_TEST_CASE(socketTransportTester){
     SocketTransport socketTransport(PORT+3);
     writeResult = socketTransport.write(TESTSTRING);
 
-    BOOST_CHECK_MESSAGE(writeResult == -1, "ERROR: Return value not as expected");
+    BOOST_CHECK_MESSAGE(writeResult == -1, "ERROR: Unexpected return from SocketTransport write method");
   }
 
   BOOST_AUTO_TEST_CASE(socketSendDataTest){
@@ -359,7 +359,7 @@ BOOST_AUTO_TEST_CASE(socketTransportTester){
     writeResult = socketTransport.write(TESTSTRING);
 
 
-    BOOST_CHECK_MESSAGE(writeResult == -1, "ERROR: Return value not as expected");
+    BOOST_CHECK_MESSAGE(writeResult == -1, "ERROR: Unexpected return from SocketTransport write when writing to a closed socket");
   }
 
 BOOST_AUTO_TEST_SUITE_END()

@@ -53,9 +53,10 @@ bool TcpClient::conn(string address , int port, bool noblock)
     {
         //Create socket
         if(noblock) {
- 	sock = socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK, 0);
-	}
-        sock = socket(AF_INET , SOCK_STREAM , 0);
+ 	  sock = socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK, 0);
+ 	  } else {
+          sock = socket(AF_INET , SOCK_STREAM , 0);
+        }
         if (sock == -1)
         {
             DBG("TcpClient: Could not create socket");
@@ -108,8 +109,8 @@ bool TcpClient::conn(string address , int port, bool noblock)
     //Connect to remote server
     if (connect(sock , (struct sockaddr *)&server , sizeof(server)) < 0)
     {
-        DBG("TcpClient: connect failed. Error");
-        return 1;
+        DBG("TcpClient: connect failed or socket nonblocking");
+        return true;
     }
 
     DBG("TcpClient: Connected");

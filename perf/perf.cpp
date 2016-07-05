@@ -118,7 +118,7 @@ int main()
     AxFastLog axc (LogEnums::CNSL);
     usleep(1000);
     TcpClient cli;
-    cli.conn(AX_HOST, AX_SPORT, NONBLOCK_SOCKET);
+    cli.conn(AX_HOST, AX_SPORT, BLOCK_SOCKET);
     std::unique_ptr<boost::thread> cliThread = std::unique_ptr<boost::thread>(new boost::thread(&cliTask,cli));
 
     std::pair<unsigned long long, double> avg;
@@ -149,11 +149,7 @@ int main()
 
     avg = test_axlog_cycles(axs, testString, TEST_ITERS);
     printf("PERF: AVG CYCLES OVER %d ITERS: axs: %llu\n",TEST_ITERS,avg.first);
-    printf("PERF: WALLTIME OVER %d ITERS: axs: %f\n",TEST_ITERS,avg.second*US_MULTI);
-    
-
-    
-
+    printf("PERF: WALLTIME OVER %d ITERS: axs: %f\n",TEST_ITERS,avg.second*US_MULTI); 
     
     cliThread->interrupt();
     cliThread->join();

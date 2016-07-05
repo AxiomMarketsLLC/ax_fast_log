@@ -40,15 +40,14 @@ bool SocketTransport::startListen(const int port)
     {
       return false;
     }
-
   }
 
   //clear address structure (copies zeros into serv_addr)
   bzero((char *) &serv_addr, sizeof(serv_addr));
 
   serv_addr.sin_addr.s_addr = INADDR_ANY;
-    serv_addr.sin_family = AF_INET;
-    serv_addr.sin_port = htons( port );
+  serv_addr.sin_family = AF_INET;
+  serv_addr.sin_port = htons( port );
 
     if (bind(listenSocket, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) <0)
     {
@@ -68,18 +67,11 @@ void SocketTransport::waitForConnection()
   socklen_t clilen;
   clilen=sizeof(cli_addr);
   clientSocket = accept(listenSocket, (struct sockaddr *) &cli_addr, &clilen);
-
-  if (clientSocket < 0)
-  {
-   DBG("Error during client connection.");
-
-  } else {
-   DBG("Client is connected.");
-  }
 }
+ 
 int SocketTransport::write(const std:: string& msg, LogEnums::Severity sev){
 
- if (!serveThread->timed_join(boost::posix_time::milliseconds(SERVER_WAIT_TIMEOUT_MS))) {
+ if (!serveThread->try_join_for(boost::chrono::milliseconds(SERVER_WAIT_TIMEOUT_MS))) {
 	DBG("Connection timeout");
 	return -1;
 	}
@@ -99,6 +91,7 @@ int SocketTransport::write(const std:: string& msg, LogEnums::Severity sev){
 }
 
 void SocketTransport::closeSocket(){
+  serveThread->interrupt();
   if (clientSocket != -1)
   {
     close(clientSocket);
