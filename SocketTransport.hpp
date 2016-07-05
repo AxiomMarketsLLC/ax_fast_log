@@ -17,11 +17,9 @@
 class SocketTransport: public TransportInterface{
   int listenSocket, clientSocket;
   std::unique_ptr<boost::thread> serveThread;
-  int setNonBlocking(int fd);
 public:
   SocketTransport(const int port);
   ~SocketTransport(void);
-
   bool clientConnected();
   bool startListen(const int port);
   void waitForConnection();
