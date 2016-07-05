@@ -93,8 +93,8 @@ bool TcpClient::conn(string address , int port, bool noblock)
             //strcpy(ip , inet_ntoa(*addr_list[i]) );
             server.sin_addr = *addr_list[i];
 
-            std::string dbgMsg = "TcpClient: " + address +" resolved to " + inet_ntoa(*addr_list[i])
-            DBG(dbgMsg);
+//            std::string dbgMsg = "TcpClient: " + address +" resolved to " + inet_ntoa(*addr_list[i]);
+            DBG("TcpClient: %s resolved to %s", address.c_str(), inet_ntoa(*addr_list[i]));
 
             break;
         }
