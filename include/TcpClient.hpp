@@ -6,6 +6,7 @@
 #include<arpa/inet.h> //inet_addr
 #include<netdb.h> //hostent
 #include <sys/fcntl.h>
+#include "debug.h"
 
 #define BLOCKING_SOCKET 0
 #define NONBLOCK_SOCKET 1
@@ -40,7 +41,7 @@ TcpClient::TcpClient()
 }
 
 TcpClient::~TcpClient(){
-  
+
    this->close_socket();
 }
 
@@ -61,10 +62,10 @@ bool TcpClient::conn(string address , int port, bool noblock)
         }
         if (sock == -1)
         {
-            cerr<<"TcpClient: Could not create socket"<<endl;
+            DBG("TcpClient: Could not create socket");
         }
 
-        cout<<"TcpClient: Socket created"<<endl;
+        DBG("TcpClient: Socket created");
     }
 
 
@@ -79,7 +80,7 @@ bool TcpClient::conn(string address , int port, bool noblock)
         {
             //gethostbyname failed
             herror("gethostbyname");
-            cout<<"TcpClient: Failed to resolve hostname"<<endl;
+            DBG("TcpClient: Failed to resolve hostname");
 
             return false;
         }
@@ -92,7 +93,8 @@ bool TcpClient::conn(string address , int port, bool noblock)
             //strcpy(ip , inet_ntoa(*addr_list[i]) );
             server.sin_addr = *addr_list[i];
 
-            cout<<"TcpClient: " << address<<" resolved to "<<inet_ntoa(*addr_list[i])<<endl;
+            std::string dbgMsg = "TcpClient: " + address +" resolved to " + inet_ntoa(*addr_list[i])
+            DBG(dbgMsg);
 
             break;
         }
@@ -110,11 +112,11 @@ bool TcpClient::conn(string address , int port, bool noblock)
     //Connect to remote server
     if (connect(sock , (struct sockaddr *)&server , sizeof(server)) < 0)
     {
-        cout<< "TcpClient: connect failed or socket nonblocking" << endl;
+        DBG("TcpClient: connect failed or socket nonblocking");
         return true;
     }
 
-    cout<<"TcpClient: Connected"<<endl;
+    DBG("TcpClient: Connected");
     return true;
 }
 
@@ -130,10 +132,10 @@ bool TcpClient::send_data(string data)
     //Send some data
     if( send(sock , data.c_str() , strlen( data.c_str() ) , 0) < 0)
     {
-        cerr<<"TcpClient: Send failed"<<endl;
+        DBG("TcpClient: Send failed");
         return false;
     }
-	cout<<"TcpClient:Data send"<<endl;
+	DBG("TcpClient:Data send");
 
     return true;
 }
@@ -167,7 +169,7 @@ void TcpClient::close_socket() {
 /*----------------------------------------------------------------------
  Portable function to set a socket into nonblocking mode.
  Calling this on a socket causes all future read() and write() calls on
- that socket to do only as much as they can immediately, and return 
+ that socket to do only as much as they can immediately, and return
  without waiting.
  If no data can be read or written, they return -1 and set errno
  to EAGAIN (or EWOULDBLOCK).
@@ -193,4 +195,4 @@ int TcpClient::set_non_blocking()
 int TcpClient::set_blocking()
 {
 return fcntl(sock, F_SETFL, fcntl(sock, F_GETFL, 0) & ~O_NONBLOCK);
-} 
+}
