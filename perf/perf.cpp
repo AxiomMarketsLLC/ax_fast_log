@@ -149,11 +149,7 @@ int main()
 
     avg = test_axlog_cycles(axs, testString, TEST_ITERS);
     printf("PERF: AVG CYCLES OVER %d ITERS: axs: %llu\n",TEST_ITERS,avg.first);
-    printf("PERF: WALLTIME OVER %d ITERS: axs: %f\n",TEST_ITERS,avg.second*US_MULTI);
-    
-
-    
-
+    printf("PERF: WALLTIME OVER %d ITERS: axs: %f\n",TEST_ITERS,avg.second*US_MULTI); 
     
     cliThread->interrupt();
     cliThread->join();

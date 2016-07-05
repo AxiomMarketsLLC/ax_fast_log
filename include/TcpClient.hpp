@@ -107,8 +107,8 @@ bool TcpClient::conn(string address , int port, bool noblock)
     //Connect to remote server
     if (connect(sock , (struct sockaddr *)&server , sizeof(server)) < 0)
     {
-        cerr<< "TcpClient: connect failed. Error" << endl;
-        return false;
+        cout<< "TcpClient: connect failed or socket nonblocking" << endl;
+        return true;
     }
 
     cout<<"TcpClient: Connected"<<endl;

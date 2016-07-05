@@ -8,7 +8,7 @@ TARGET   := ax_fast_log_test
 #dbg flags
 CXXFLAGS =--coverage -DDEBUG -Wall -g -I$(INCDIR) -I . -std=c++11
 
-TFLAGS = --coverage -Wl,--no-as-needed,--allow-multiple-definition,--start-group -L$(LIBDIR) -lboost_system -lboost_thread -lboost_unit_test_framework -lax_fast_log -Wl,--end-group
+TFLAGS = --coverage -Wl,--no-as-needed,--allow-multiple-definition,--start-group -L$(LIBDIR) -lboost_system -lboost_thread -lboost_chrono -lboost_unit_test_framework -lax_fast_log -Wl,--end-group
  
 
 SOURCES = $(wildcard *.cpp)
