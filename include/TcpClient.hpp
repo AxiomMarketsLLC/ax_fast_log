@@ -20,6 +20,8 @@ private:
     int port;
     struct sockaddr_in server;
     int set_non_blocking();
+    int set_blocking();
+    bool noblock;
 
 public:
     TcpClient();
@@ -47,6 +49,7 @@ TcpClient::~TcpClient(){
 */
 bool TcpClient::conn(string address , int port, bool noblock)
 {
+    this->noblock = noblock;
     //create socket if it is not already created
     if(sock == -1)
     {
@@ -120,6 +123,10 @@ bool TcpClient::conn(string address , int port, bool noblock)
 */
 bool TcpClient::send_data(string data)
 {
+    if(noblock) {
+   set_blocking();
+   noblock=false;
+   }
     //Send some data
     if( send(sock , data.c_str() , strlen( data.c_str() ) , 0) < 0)
     {
@@ -139,7 +146,10 @@ string TcpClient::receive(int size=512)
     char buffer[size];
     memset(buffer,0,sizeof(buffer));
     string reply;
-
+    if(noblock) {
+      set_blocking();
+      noblock = false;
+    }
     //Receive a reply from the server
     if( recv(sock , buffer , sizeof(buffer) , 0) < 0)
     {
@@ -178,4 +188,9 @@ int TcpClient::set_non_blocking()
     flags = 1;
     return ioctl(sock, FIOBIO, &flags);
 #endif
-}     
+}    
+
+int TcpClient::set_blocking()
+{
+return fcntl(sock, F_SETFL, fcntl(sock, F_GETFL, 0) & ~O_NONBLOCK);
+} 
