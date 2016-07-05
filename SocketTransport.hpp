@@ -11,8 +11,9 @@
 #include <iostream>
 #include <boost/thread.hpp>
 #include <atomic>
-#define SERVER_WAIT_TIMEOUT_MS 8000
+#include <boost/chrono.hpp>
 
+#define SERVER_WAIT_TIMEOUT_MS 8000
 class SocketTransport: public TransportInterface{
   int listenSocket, clientSocket;
   std::unique_ptr<boost::thread> serveThread;
