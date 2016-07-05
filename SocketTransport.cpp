@@ -35,7 +35,8 @@ bool SocketTransport::startListen(const int port)
   if(listenSocket == -1)
   {
     //Create socket
-    listenSocket = socket(AF_INET, SOCK_STREAM, 0);
+  // listenSocket = socket(AF_INET, SOCK_STREAM, 0);
+   listenSocket = socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK, 0);
     if(listenSocket == -1)
     {
       return false;
@@ -67,8 +68,12 @@ void SocketTransport::waitForConnection()
   struct sockaddr_in cli_addr;
   socklen_t clilen;
   clilen=sizeof(cli_addr);
-  clientSocket = accept(listenSocket, (struct sockaddr *) &cli_addr, &clilen);
-
+  try { 
+  while(true) {
+   boost::this_thread::interruption_point();
+   clientSocket = accept(listenSocket, (struct sockaddr *) &cli_addr, &clilen);
+  }
+  } catch(boost::thread_interrupted const&){return;}
   if (clientSocket < 0)
   {
    DBG("Error during client connection.");
@@ -99,6 +104,7 @@ int SocketTransport::write(const std:: string& msg, LogEnums::Severity sev){
 }
 
 void SocketTransport::closeSocket(){
+  serveThread->interrupt();
   if (clientSocket != -1)
   {
     close(clientSocket);
