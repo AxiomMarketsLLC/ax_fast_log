@@ -13,7 +13,7 @@ ATARGET  := $(LIBDIR)$(ANAME)
 #CXXFLAGS  = -fPIC -O2 -std=c++11 -Wall -I$(INCDIR) 
 #dbg flags
 CXXFLAGS =--coverage -fPIC -std=c++11 -g -Wall -I$(INCDIR) -I . -DDEBUG
-SOLDFLAGS =-shared --coverage -lpthread -lboost_system -lboost_thread
+SOLDFLAGS =-shared --coverage -lpthread -lboost_system -lboost_thread -lboost_chrono
 ALDFLAGS =-lboost_thread-mt
 
 SOURCES = $(wildcard *.cpp)
