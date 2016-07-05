@@ -68,13 +68,14 @@ void SocketTransport::waitForConnection()
   socklen_t clilen;
   clilen=sizeof(cli_addr);
   while (true) {
-  boost::this_thread::interruption_point();
-  clientSocket = accept4(listenSocket, (struct sockaddr *) &cli_addr, &clilen, SOCK_NONBLOCK);
-  if (clientSocket > -1 ) {
-  break;
+  	boost::this_thread::interruption_point();
+  	clientSocket = accept4(listenSocket, (struct sockaddr *) &cli_addr, &clilen, SOCK_NONBLOCK);
+  	if (clientSocket > -1 ) {
+  		break;
+  	}
+  }
 }
-}
-}
+
 int SocketTransport::write(const std:: string& msg, LogEnums::Severity sev){
 
  if (!serveThread->try_join_for(boost::chrono::milliseconds(SERVER_WAIT_TIMEOUT_MS))) {
