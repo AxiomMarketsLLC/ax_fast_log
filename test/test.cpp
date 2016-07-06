@@ -6,7 +6,7 @@
 #include <string>
 #include <unistd.h>
 #include "../AxFastLog.hpp"
-#include "TcpClient.hpp"
+//#include "TcpClient.hpp"
 #include "test.hpp"
 
 #define BOOST_TEST_MAIN
