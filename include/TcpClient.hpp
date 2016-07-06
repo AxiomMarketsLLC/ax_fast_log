@@ -74,7 +74,7 @@ bool TcpClient::conn(string address , int port, bool noblock)
 
 
     //setup address structure
-    if(inet_addr(address.c_str()) == INVALID_FD)
+    if(inet_addr(address.c_str()) == INADDR_NONE)
     {
         struct hostent *he;
         struct in_addr **addr_list;

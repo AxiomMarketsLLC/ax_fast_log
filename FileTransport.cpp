@@ -7,14 +7,18 @@ FileTransport::FileTransport(const std::string& path) : outStream(new std::ofstr
   if(!outStream->is_open()){
     throw(std::runtime_error("LOGGER: Output stream could not be opened"));
   }
+  outStream->exceptions ( std::ofstream::failbit | std::ofstream::badbit );
 }
 
 int FileTransport::write(const std::string& msg, LogEnums::Severity sev){
   if (outStream->is_open())
   {
-    *outStream << msg<<std::endl;
-  }
-  else{
+    try {
+      *outStream << msg<<std::endl;
+    } catch (std::ofstream::failure e) {
+      DBG("LOGGER: Output stream in error state");
+    }
+  } else {
      throw(std::runtime_error("LOGGER: Output stream is not open"));
      return WRITE_FAILURE;
   }
