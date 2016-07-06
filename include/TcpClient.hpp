@@ -39,7 +39,7 @@ public:
 
 TcpClient::TcpClient()
 {
-    sock = -1;
+    sock = INVALID_FD;
     port = 0;
     address = "";
 }
@@ -74,7 +74,7 @@ bool TcpClient::conn(string address , int port, bool noblock)
 
 
     //setup address structure
-    if(inet_addr(address.c_str()) == -1)
+    if(inet_addr(address.c_str()) == INVALID_FD)
     {
         struct hostent *he;
         struct in_addr **addr_list;
@@ -191,7 +191,7 @@ int TcpClient::set_non_blocking()
     /* If they have O_NONBLOCK, use the Posix way to do it */
 #if defined(O_NONBLOCK)
     /* Fixme: O_NONBLOCK is defined but broken on SunOS 4.1.x and AIX 3.2.5. */
-    if (-1 == (flags = fcntl(sock, F_GETFL, 0)))
+    if (INVALID_FD == (flags = fcntl(sock, F_GETFL, 0)))
         flags = 0;
     return fcntl(sock, F_SETFL, flags | O_NONBLOCK);
 #else
