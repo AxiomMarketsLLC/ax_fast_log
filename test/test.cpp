@@ -48,7 +48,7 @@ axFastServSockLogVars():servSocketAx(LogEnums::SCKT, PORT),testSev(LogEnums::INF
 struct invalidAxFastVars{
 AxFastLog* invldFileAx, *invldConsAx, *invldServSockAx;
 std::string calcString, testFilePath;
-invalidAxFastVars():calcString(""), testFilePath("fileTest.txt"){}
+invalidAxFastVars():calcString(""), testFilePath("data/fileTest.txt"){}
 };
 
 struct producerConsumerQueueVars{
@@ -56,6 +56,13 @@ struct producerConsumerQueueVars{
   folly::ProducerConsumerQueue<NotTrivial> nonTrivQueue;
   producerConsumerQueueVars():nonTriv(), nonTriv_1(), nonTriv_2(), nonTrivQueue(DEFAULT_QUEUE_TEST_SIZE){}
 };
+
+struct tcpClientTestVars {
+  std::string calcString, testFilePath;
+  TcpClient cli;
+  tcpClientTestVars():cli(), calcString(""), testFilePath("data/clientTest.txt"){}
+};
+
 
 struct axFastLogVars{
 int writeResult;
@@ -377,4 +384,12 @@ BOOST_AUTO_TEST_CASE(nonTrivialQueueTest){
   BOOST_CHECK_MESSAGE(nonTrivQueue.sizeGuess() == 2, "ERROR: Queue size should be 2.");
 }
 
+BOOST_AUTO_TEST_SUITE_END()
+
+BOOST_FIXTURE_TEST_SUITE(tcpClientTestSuite,tcpClientTestVars);
+char[256] cmd;
+snprintf(cmd, sizeof(cmd),"nc -l %d &", PORT+6, testFilePath.c_str());
+system(cmd);
+cli.conn("localhost", PORT+6, BLOCKING_SOCKET);
+cli.send_data(TEST_STRING);
 BOOST_AUTO_TEST_SUITE_END()
