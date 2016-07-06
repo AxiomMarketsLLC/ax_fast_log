@@ -14,7 +14,7 @@ AxFastLog::AxFastLog(LogEnums::TransportType t, const int port): safeQueue(DEFAU
   if (t != LogEnums::SCKT) {
 		throw std::runtime_error("Illegal arguments to AxFastLog(Socket) constructor");
  	}
-  	transport = std::unique_ptr<SocketTransport>(new SocketTransport(port));
+  	transport = std::unique_ptr<ServerSocketTransport>(new ServerSocketTransport(port));
 	postThread = std::unique_ptr<boost::thread>(new boost::thread(&AxFastLog::post, this));
 }
 

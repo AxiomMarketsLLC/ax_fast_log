@@ -7,7 +7,7 @@
 #include "TransportInterface.hpp"
 #include "FileTransport.hpp"
 #include "ConsoleTransport.hpp"
-#include "SocketTransport.hpp"
+#include "ServerSocketTransport.hpp"
 
 #include <boost/thread.hpp>
 #include <boost/date_time/posix_time/posix_time_types.hpp>

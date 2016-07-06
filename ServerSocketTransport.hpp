@@ -1,10 +1,10 @@
-#ifndef __SOCKETTRANS__
-#define __SOCKETTRANS__
+#ifndef __SERVSOCKETTRANS__
+#define __SERVSOCKETTRANS__
 #include "TransportInterface.hpp"
 #include "debug.h"
 #include <stdio.h>
 #include <string.h>
- 
+
 #include <sys/socket.h>
 #include <sys/fcntl.h>
 #include <arpa/inet.h>
@@ -18,12 +18,12 @@
 #define INVALID_FD (-1)
 
 
-class SocketTransport: public TransportInterface{
+class ServerSocketTransport: public TransportInterface{
   int listenSocket, clientSocket;
   std::unique_ptr<boost::thread> serveThread;
 public:
-  SocketTransport(const int port);
-  ~SocketTransport(void);
+  ServerSocketTransport(const int port);
+  ~ServerSocketTransport(void);
   bool clientConnected();
   bool startListen(const int port);
   void waitForConnection();

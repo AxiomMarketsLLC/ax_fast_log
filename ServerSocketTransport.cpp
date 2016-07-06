@@ -1,8 +1,8 @@
-#include "SocketTransport.hpp"
+#include "ServerSocketTransport.hpp"
 #include <unistd.h>
 #include <stdexcept>
 
-SocketTransport::SocketTransport(const int port)
+ServerSocketTransport::ServerSocketTransport(const int port)
 {
   if (port < 1025 || port > 65535){
       throw std::invalid_argument("LOGGER: Incorrect argument port: must enter an integer between 1025-65535");
@@ -12,22 +12,22 @@ SocketTransport::SocketTransport(const int port)
   if(!this->startListen(port)) {
     throw std::runtime_error("LOGGER: Couldn't start listen on port");
   }
-  serveThread = std::unique_ptr<boost::thread>(new boost::thread(&SocketTransport::waitForConnection, this));
-  
+  serveThread = std::unique_ptr<boost::thread>(new boost::thread(&ServerSocketTransport::waitForConnection, this));
+
 }
 
-SocketTransport::~SocketTransport(void)
+ServerSocketTransport::~ServerSocketTransport(void)
 {
   this->closeSocket();
-  
+
 }
 
-bool SocketTransport::clientConnected()
+bool ServerSocketTransport::clientConnected()
 {
   return clientSocket != INVALID_FD;
 }
 
-bool SocketTransport::startListen(const int port)
+bool ServerSocketTransport::startListen(const int port)
 {
   struct sockaddr_in serv_addr;
 
@@ -61,7 +61,7 @@ bool SocketTransport::startListen(const int port)
     return true;
 }
 
-void SocketTransport::waitForConnection()
+void ServerSocketTransport::waitForConnection()
 {
   struct sockaddr_in cli_addr;
   socklen_t clilen;
@@ -75,7 +75,7 @@ void SocketTransport::waitForConnection()
   }
 }
 
-int SocketTransport::write(const std:: string& msg, LogEnums::Severity sev){
+int ServerSocketTransport::write(const std:: string& msg, LogEnums::Severity sev){
 
  if (!serveThread->try_join_for(boost::chrono::milliseconds(SERVER_WAIT_TIMEOUT_MS))) {
 	DBG("Connection timeout");
@@ -96,7 +96,7 @@ int SocketTransport::write(const std:: string& msg, LogEnums::Severity sev){
 
 }
 
-void SocketTransport::closeSocket(){
+void ServerSocketTransport::closeSocket(){
   serveThread->interrupt();
   if (clientSocket != INVALID_FD)
   {
@@ -108,4 +108,3 @@ void SocketTransport::closeSocket(){
     close(listenSocket);
   }
 }
-

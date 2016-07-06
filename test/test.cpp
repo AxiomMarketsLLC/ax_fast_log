@@ -38,15 +38,15 @@ LogEnums::Severity testSev;
 axFastConsLogVars():consAxFilePath("data/axTransTest.txt"), calcString(""), consoleAx(LogEnums::CNSL), testSev(LogEnums::INFO){}
 };
 
-struct axFastSockLogVars{
-AxFastLog socketAx;
+struct axFastServSockLogVars{
+AxFastLog servSocketAx;
 LogEnums::Severity testSev;
 std::string calcString;
-axFastSockLogVars():socketAx(LogEnums::SCKT, PORT),testSev(LogEnums::INFO), calcString(""){}
+axFastSockLogVars():servSocketAx(LogEnums::SCKT, PORT),testSev(LogEnums::INFO), calcString(""){}
 };
 
 struct invalidAxFastVars{
-AxFastLog* invldFileAx, *invldConsAx, *invldSockAx;
+AxFastLog* invldFileAx, *invldConsAx, *invldServSockAx;
 std::string calcString, testFilePath;
 invalidAxFastVars():calcString(""), testFilePath("fileTest.txt"){}
 };
@@ -122,13 +122,13 @@ BOOST_AUTO_TEST_CASE(consoleAxFastLogTest){
 }
 BOOST_AUTO_TEST_SUITE_END()
 
-BOOST_FIXTURE_TEST_SUITE(socketAxFastLogSuite, axFastSockLogVars);
+BOOST_FIXTURE_TEST_SUITE(servSocketAxFastLogSuite, axFastSockLogVars);
 
 
-BOOST_AUTO_TEST_CASE(socketAxFastLogTest){
+BOOST_AUTO_TEST_CASE(servSocketAxFastLogTest){
   TcpClient cli;
   cli.conn(HOST, (PORT), BLOCKING_SOCKET);
-  socketAx.log(TEST_STRING,testSev);
+  servSocketAx.log(TEST_STRING,testSev);
   calcString = cli.receive(1024);
   BOOST_CHECK_MESSAGE(calcString.compare(TEST_STRING)==0, "ERROR: Expected string unequal to calculated string");
 }
@@ -159,10 +159,10 @@ BOOST_AUTO_TEST_CASE(InvalidConsAxTester){
   BOOST_CHECK_MESSAGE(calcString.compare("exception")== 0, "ERROR: Expected exception not thrown for writing to a closed stream" );
 }
 
-BOOST_AUTO_TEST_CASE(InvalidSockAxTester){
+BOOST_AUTO_TEST_CASE(InvalidServSockAxTester){
  calcString.erase();
  try{
-   invldSockAx = new AxFastLog(LogEnums::CNSL,PORT+5);
+   invldServSockAx = new AxFastLog(LogEnums::CNSL,PORT+5);
  }catch(...){
     calcString = "exception";
   }
@@ -302,26 +302,26 @@ BOOST_AUTO_TEST_CASE(consoleTransportTesterDbug){
 BOOST_AUTO_TEST_SUITE_END()
 
 
-BOOST_FIXTURE_TEST_SUITE(socketTransportSuite, axFastLogVars);
+BOOST_FIXTURE_TEST_SUITE(serverSocketTransportSuite, axFastLogVars);
 
-BOOST_AUTO_TEST_CASE(socketTransportTester){
+BOOST_AUTO_TEST_CASE(serverSocketTransportTester){
   //set up socketTranport object and sockets
 
   TcpClient cli;
-  SocketTransport socketTransport(PORT+1);
+  ServerSocketTransport serverSocketTransport(PORT+1);
   cli.conn(HOST, (PORT+1), BLOCKING_SOCKET);
   usleep(TIMEOUT_MS*1000);
-  BOOST_CHECK_MESSAGE(socketTransport.clientConnected(), "ERROR: Unexpected return from clientConnected method.");
-  socketTransport.write(TEST_STRING);
+  BOOST_CHECK_MESSAGE(serverSocketTransport.clientConnected(), "ERROR: Unexpected return from clientConnected method.");
+  serverSocketTransport.write(TEST_STRING);
   calcString = cli.receive(1024);
-  BOOST_CHECK_MESSAGE(calcString.compare(TEST_STRING)==0, "ERROR: Socket string is incorrect.");
+  BOOST_CHECK_MESSAGE(calcString.compare(TEST_STRING)==0, "ERROR: Server Socket string is incorrect.");
 
 }
 
   BOOST_AUTO_TEST_CASE(socketPortTester){
     calcString.erase();
     try{
-      SocketTransport socketTransport(1);
+      ServerSocketTransport serverSocketTransport(1);
     }
     catch(...){
       calcString = "exception";
@@ -331,9 +331,9 @@ BOOST_AUTO_TEST_CASE(socketTransportTester){
 
   BOOST_AUTO_TEST_CASE(socketClientTest){
     calcString.erase();
-    SocketTransport socketTransport(PORT+2);
+    ServerSocketTransport serverSocketTransport(PORT+2);
     try{
-      SocketTransport socketTransport2(PORT+2);
+      ServerSocketTransport serverSocketTransport2(PORT+2);
     }
     catch(...){
       calcString = "exception";
@@ -343,23 +343,23 @@ BOOST_AUTO_TEST_CASE(socketTransportTester){
 
   BOOST_AUTO_TEST_CASE(socketTimeoutTest){
     calcString.erase();
-    SocketTransport socketTransport(PORT+3);
-    writeResult = socketTransport.write(TEST_STRING);
+    ServerSocketTransport serverSocketTransport(PORT+3);
+    writeResult = serverSocketTransport.write(TEST_STRING);
 
-    BOOST_CHECK_MESSAGE(writeResult == -1, "ERROR: Unexpected return from SocketTransport write method");
+    BOOST_CHECK_MESSAGE(writeResult == -1, "ERROR: Unexpected return from ServerSocketTransport write method");
   }
 
   BOOST_AUTO_TEST_CASE(socketSendDataTest){
     TcpClient cli;
-    SocketTransport socketTransport(PORT+4);
+    ServerSocketTransport serverSocketTransport(PORT+4);
     cli.conn(HOST, (PORT+4), BLOCKING_SOCKET);
     usleep(TIMEOUT_MS*1000);
-    BOOST_CHECK_MESSAGE(socketTransport.clientConnected(), "ERROR: Client connection.");
-    socketTransport.closeSocket();
-    writeResult = socketTransport.write(TEST_STRING);
+    BOOST_CHECK_MESSAGE(serverSocketTransport.clientConnected(), "ERROR: Client connection.");
+    serverSocketTransport.closeSocket();
+    writeResult = serverSocketTransport.write(TEST_STRING);
 
 
-    BOOST_CHECK_MESSAGE(writeResult == -1, "ERROR: Unexpected return from SocketTransport write when writing to a closed socket");
+    BOOST_CHECK_MESSAGE(writeResult == -1, "ERROR: Unexpected return from ServerSocketTransport write when writing to a closed socket");
   }
 
 BOOST_AUTO_TEST_SUITE_END()
