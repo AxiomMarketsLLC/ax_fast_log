@@ -42,7 +42,7 @@ struct axFastServSockLogVars{
 AxFastLog servSocketAx;
 LogEnums::Severity testSev;
 std::string calcString;
-axFastSockLogVars():servSocketAx(LogEnums::SCKT, PORT),testSev(LogEnums::INFO), calcString(""){}
+axFastServSockLogVars():servSocketAx(LogEnums::SCKT, PORT),testSev(LogEnums::INFO), calcString(""){}
 };
 
 struct invalidAxFastVars{
@@ -122,7 +122,7 @@ BOOST_AUTO_TEST_CASE(consoleAxFastLogTest){
 }
 BOOST_AUTO_TEST_SUITE_END()
 
-BOOST_FIXTURE_TEST_SUITE(servSocketAxFastLogSuite, axFastSockLogVars);
+BOOST_FIXTURE_TEST_SUITE(servSocketAxFastLogSuite, axFastServSockLogVars);
 
 
 BOOST_AUTO_TEST_CASE(servSocketAxFastLogTest){
