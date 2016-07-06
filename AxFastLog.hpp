@@ -8,9 +8,12 @@
 #include "FileTransport.hpp"
 #include "ConsoleTransport.hpp"
 #include "SocketTransport.hpp"
-#include "ClientSocketTransport.hpp"
+
 #include <boost/thread.hpp>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
+
+
+#include "ClientSocketTransport.hpp"
 #include <time.h>
 #include <memory>
 

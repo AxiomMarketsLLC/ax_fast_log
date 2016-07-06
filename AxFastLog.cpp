@@ -22,8 +22,8 @@ AxFastLog::AxFastLog(LogEnums::TransportType t, const int port, const std::strin
 	if (t != LogEnums::CSKT) {
 		throw std::runtime_error("Illegal arguments to AxFastLog(ClientSocket) constructor");
  	}
-	transport = std::unique_ptr<SocketTransport>(new ClientSocketTransport(port, address));
-postThread = std::unique_ptr<boost::thread>(new boost::thread(&AxFastLog::post, this));
+	transport = std::unique_ptr<ClientSocketTransport>(new ClientSocketTransport(port, address));
+        postThread = std::unique_ptr<boost::thread>(new boost::thread(&AxFastLog::post, this));
 }
 
 AxFastLog::AxFastLog(LogEnums::TransportType t): safeQueue(DEFAULT_QUEUE_SZ){
