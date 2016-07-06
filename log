@@ -1,0 +1,28 @@
+rm -f ClientSocketTransport.o AxFastLog.o FileTransport.o ServerSocketTransport.o ConsoleTransport.o TcpClient.o 
+cd /home/tmcdaniel/dev/ax_fast_log/test/; make clean
+make[1]: Entering directory `/home/tmcdaniel/dev/ax_fast_log/test'
+rm -f test.o ax_fast_log_test
+make[1]: Leaving directory `/home/tmcdaniel/dev/ax_fast_log/test'
+cd /home/tmcdaniel/dev/ax_fast_log/perf/; make clean
+make[1]: Entering directory `/home/tmcdaniel/dev/ax_fast_log/perf'
+rm -f perf.o ax_fast_log_perf
+make[1]: Leaving directory `/home/tmcdaniel/dev/ax_fast_log/perf'
+g++ --coverage -fPIC -std=c++11 -g -Wall -I/home/tmcdaniel/dev/ax_fast_log/include -I . -DDEBUG   -c -o ClientSocketTransport.o ClientSocketTransport.cpp
+g++ --coverage -fPIC -std=c++11 -g -Wall -I/home/tmcdaniel/dev/ax_fast_log/include -I . -DDEBUG   -c -o AxFastLog.o AxFastLog.cpp
+g++ --coverage -fPIC -std=c++11 -g -Wall -I/home/tmcdaniel/dev/ax_fast_log/include -I . -DDEBUG   -c -o FileTransport.o FileTransport.cpp
+g++ --coverage -fPIC -std=c++11 -g -Wall -I/home/tmcdaniel/dev/ax_fast_log/include -I . -DDEBUG   -c -o ServerSocketTransport.o ServerSocketTransport.cpp
+g++ --coverage -fPIC -std=c++11 -g -Wall -I/home/tmcdaniel/dev/ax_fast_log/include -I . -DDEBUG   -c -o ConsoleTransport.o ConsoleTransport.cpp
+g++ --coverage -fPIC -std=c++11 -g -Wall -I/home/tmcdaniel/dev/ax_fast_log/include -I . -DDEBUG   -c -o TcpClient.o TcpClient.cpp
+g++ -shared --coverage -lpthread -lboost_system -lboost_thread -lboost_chrono -o /home/tmcdaniel/dev/ax_fast_log/lib/libax_fast_log.so ClientSocketTransport.o AxFastLog.o FileTransport.o ServerSocketTransport.o ConsoleTransport.o TcpClient.o
+cd /home/tmcdaniel/dev/ax_fast_log/test/; make
+make[1]: Entering directory `/home/tmcdaniel/dev/ax_fast_log/test'
+g++ --coverage -DDEBUG -Wall -g -I/home/tmcdaniel/dev/ax_fast_log/test/../include/ -I ../ -std=c++11   -c -o test.o test.cpp
+g++ --coverage -Wl,--no-as-needed,--allow-multiple-definition,--start-group -L/home/tmcdaniel/dev/ax_fast_log/test/../lib/ -lboost_system -lboost_thread -lboost_chrono -lboost_unit_test_framework -lax_fast_log -Wl,--end-group -o ax_fast_log_test test.o
+make[1]: Leaving directory `/home/tmcdaniel/dev/ax_fast_log/test'
+Running 19 test cases...
+
+ax_lg: ServerSocketTransport.cpp:60:startListen(): Listening ...
+ax_lg: TcpClient.cpp:35:conn(): TcpClient: Socket created
+ax_lg: TcpClient.cpp:61:conn(): TcpClient: localhost resolved to 127.0.0.1
+ax_lg: TcpClient.cpp:82:conn(): TcpClient: Connected
+ax_lg: ServerSocketTransport.cpp:93:write(): Data sent.

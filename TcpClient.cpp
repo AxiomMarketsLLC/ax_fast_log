@@ -30,6 +30,7 @@ bool TcpClient::conn(std::string address , int port, bool noblock)
         if (sock == INVALID_FD)
         {
             DBG("TcpClient: Could not create socket");
+            return false;
         }
 
         DBG("TcpClient: Socket created");
@@ -107,7 +108,7 @@ bool TcpClient::send_data(std::string data)
         DBG("TcpClient: Send failed");
         return false;
     }
-	DBG("TcpClient:Data send");
+	DBG("TcpClient: Data send");
 
     return true;
 }

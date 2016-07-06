@@ -6,7 +6,6 @@
 #include <string>
 #include <unistd.h>
 #include "../AxFastLog.hpp"
-//#include "TcpClient.hpp"
 #include "test.hpp"
 
 #define BOOST_TEST_MAIN
@@ -58,8 +57,8 @@ struct producerConsumerQueueVars{
 };
 
 struct tcpClientTestVars {
-  std::string calcString, testFilePath;
   TcpClient cli;
+  std::string calcString, testFilePath;
   tcpClientTestVars():cli(), calcString(""), testFilePath("data/clientTest.txt"){}
 };
 
@@ -387,9 +386,25 @@ BOOST_AUTO_TEST_CASE(nonTrivialQueueTest){
 BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_FIXTURE_TEST_SUITE(tcpClientTestSuite,tcpClientTestVars);
-char[256] cmd;
-snprintf(cmd, sizeof(cmd),"nc -l %d &", PORT+6, testFilePath.c_str());
+
+BOOST_AUTO_TEST_CASE(tcpClientTest){
+char cmd[256];
+snprintf(cmd, sizeof(cmd),"nc -l %d > %s &", PORT+6, testFilePath.c_str());
 system(cmd);
-cli.conn("localhost", PORT+6, BLOCKING_SOCKET);
+
+std::ifstream myReadFile;
+
+cli.conn(HOST, PORT+6, BLOCKING_SOCKET);
 cli.send_data(TEST_STRING);
+
+myReadFile.open(testFilePath.c_str());
+  if(myReadFile.is_open()){
+    while (!myReadFile.eof()) {
+      myReadFile >> calcString;
+    }
+  }
+  myReadFile.close();
+  BOOST_CHECK_MESSAGE(calcString.compare(TEST_STRING) == 0, "ERROR: Expected string not equal to calculated string");
+
+}
 BOOST_AUTO_TEST_SUITE_END()
