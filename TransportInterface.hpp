@@ -7,7 +7,7 @@
 
 namespace LogEnums {
   enum Severity{INFO, DEBG, WARN, ERRO};
-  enum TransportType{FILE,SCKT,CNSL};
+  enum TransportType{FILE,SCKT,CSKT,CNSL};
 }
 
 class TransportInterface {
@@ -16,5 +16,5 @@ class TransportInterface {
  virtual int write(const std::string&, LogEnums::Severity) = 0;
  virtual ~TransportInterface() = 0;
 };
-inline TransportInterface::~TransportInterface() { }
+inline TransportInterface::~TransportInterface(){};
 #endif

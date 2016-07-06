@@ -1,7 +1,7 @@
 #include "ClientSocketTransport.hpp"
 #include "debug.h"
 
-ClientSocketTransport::ClientSocketTransport(int port,std::string address){
+ClientSocketTransport::ClientSocketTransport(const int port,const std::string& address){
   if(!cli.conn(port,address)){
     throw std::runtime_error("LOGGER: Error while connecting to server.");
   }

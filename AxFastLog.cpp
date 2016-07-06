@@ -2,27 +2,35 @@
 #include <unistd.h>
 #include "AxFastLog.hpp"
 
-AxFastLog::AxFastLog(LogEnums::TransportType t, const std::string& address): safeQueue(DEFAULT_QUEUE_SZ)// q() {
-{	if (t != LogEnums::FILE) {
+AxFastLog::AxFastLog(LogEnums::TransportType t, const std::string& address): safeQueue(DEFAULT_QUEUE_SZ){
+	if (t != LogEnums::FILE) {
 		throw std::runtime_error("Illegal arguments to AxFastLog(File) constructor");
  	}
         transport = std::unique_ptr<FileTransport>(new FileTransport(address));
 	postThread = std::unique_ptr<boost::thread>(new boost::thread(&AxFastLog::post, this));
 }
 
-AxFastLog::AxFastLog(LogEnums::TransportType t, const int port): safeQueue(DEFAULT_QUEUE_SZ)// q() {
-{	if (t != LogEnums::SCKT) {
+AxFastLog::AxFastLog(LogEnums::TransportType t, const int port): safeQueue(DEFAULT_QUEUE_SZ){
+  if (t != LogEnums::SCKT) {
 		throw std::runtime_error("Illegal arguments to AxFastLog(Socket) constructor");
  	}
-  	transport = std::unique_ptr<SocketTransport>(new SocketTransport(port)); 
+  	transport = std::unique_ptr<SocketTransport>(new SocketTransport(port));
 	postThread = std::unique_ptr<boost::thread>(new boost::thread(&AxFastLog::post, this));
 }
 
-AxFastLog::AxFastLog(LogEnums::TransportType t): safeQueue(DEFAULT_QUEUE_SZ)// q() {
-{	if (t != LogEnums::CNSL) {
+AxFastLog::AxFastLog(LogEnums::TransportType t, const int port, const std::string& address): safeQueue(DEFAULT_QUEUE_SZ){
+	if (t != LogEnums::CSKT) {
+		throw std::runtime_error("Illegal arguments to AxFastLog(ClientSocket) constructor");
+ 	}
+	transport = std::unique_ptr<SocketTransport>(new ClientSocketTransport(port, address));
+postThread = std::unique_ptr<boost::thread>(new boost::thread(&AxFastLog::post, this));
+}
+
+AxFastLog::AxFastLog(LogEnums::TransportType t): safeQueue(DEFAULT_QUEUE_SZ){
+	if (t != LogEnums::CNSL) {
 		throw std::runtime_error("Illegal arguments to AxFastLog(Console) constructor");
  	}
-  	transport = std::unique_ptr<ConsoleTransport>(new ConsoleTransport()); 
+  	transport = std::unique_ptr<ConsoleTransport>(new ConsoleTransport());
 	postThread = std::unique_ptr<boost::thread>(new boost::thread(&AxFastLog::post, this));
 
 }
@@ -46,10 +54,10 @@ void AxFastLog::post(){
 					std::pair<std::string,LogEnums::Severity> sendPair;
 					if(safeQueue.read(sendPair)) {
 						transport->write(sendPair.first,sendPair.second);
-						
-					} 
+
+					}
 				}
-			}			
+			}
 		}
 		catch (boost::thread_interrupted&) {	}
 }

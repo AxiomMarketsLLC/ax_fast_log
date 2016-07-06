@@ -8,6 +8,7 @@
 #include "FileTransport.hpp"
 #include "ConsoleTransport.hpp"
 #include "SocketTransport.hpp"
+#include "ClientSocketTransport.hpp"
 #include <boost/thread.hpp>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
 #include <time.h>
@@ -28,16 +29,17 @@
 class AxFastLog {
 
   public:
-  AxFastLog(LogEnums::TransportType t, const std::string&);
-  AxFastLog(LogEnums::TransportType t, const int port);
-  AxFastLog(LogEnums::TransportType t);
+  AxFastLog(LogEnums::TransportType , const std::string&);
+  AxFastLog(LogEnums::TransportType , const int);
+  AxFastLog(LogEnums::TransportType , const int, const std::string&);
+  AxFastLog(LogEnums::TransportType);
   void log(const std::string&, LogEnums::Severity);
   ~AxFastLog();
 
   private:
   //using folly queue instead
   //SafeQueue<std::pair<std::string,LogEnums::Severity>> q;
-  
+
   folly::ProducerConsumerQueue<std::pair<std::string,LogEnums::Severity>> safeQueue;
   void post();
   std::unique_ptr<TransportInterface> transport;
