@@ -389,20 +389,30 @@ BOOST_FIXTURE_TEST_SUITE(tcpClientTestSuite,tcpClientTestVars);
 
 BOOST_AUTO_TEST_CASE(tcpClientTest){
 char cmd[256];
-snprintf(cmd, sizeof(cmd),"nc -l %d > %s &", PORT+6, testFilePath.c_str());
+snprintf(cmd, sizeof(cmd),"nc -l -v %d > %s &", PORT+6, testFilePath.c_str());
 system(cmd);
+usleep(1000*TIMEOUT_MS);
 
 std::ifstream myReadFile;
 
 cli.conn(HOST, PORT+6, BLOCKING_SOCKET);
 cli.send_data(TEST_STRING);
 
+usleep(1000*TIMEOUT_MS);
 myReadFile.open(testFilePath.c_str());
-  if(myReadFile.is_open()){
+
+if(myReadFile.is_open()){
     while (!myReadFile.eof()) {
       myReadFile >> calcString;
     }
-  }
+}
+FILE *fp = popen("pgrep -f nc", "r");
+
+while (fgets(cmd, sizeof(cmd), fp)) {
+  std::cout << cmd << std::endl;
+}
+
+fclose(fp);
   myReadFile.close();
   BOOST_CHECK_MESSAGE(calcString.compare(TEST_STRING) == 0, "ERROR: Expected string not equal to calculated string");
 
