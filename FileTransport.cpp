@@ -16,9 +16,9 @@ int FileTransport::write(const std::string& msg, LogEnums::Severity sev){
   }
   else{
      throw(std::runtime_error("LOGGER: Output stream is not open"));
-     return -1;
+     return WRITE_FAILURE;
   }
-  return 0;
+  return WRITE_SUCCESS;
 }
 
 void FileTransport::closePath(){

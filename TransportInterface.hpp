@@ -2,7 +2,8 @@
 #define __TRANSPORT__
 #include <string>
 #include <memory>
-
+#define WRITE_SUCCESS (0)
+#define WRITE_FAILURE (-1)
 
 namespace LogEnums {
   enum Severity{INFO, DEBG, WARN, ERRO};

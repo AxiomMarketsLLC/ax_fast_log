@@ -7,7 +7,6 @@ class NotTrivial {
      ~NotTrivial();
 };
 NotTrivial::~NotTrivial() {
-	fprintf(stdout,"");
 }
 
 #endif
