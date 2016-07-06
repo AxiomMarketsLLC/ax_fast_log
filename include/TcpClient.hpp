@@ -8,11 +8,13 @@
 #include <sys/fcntl.h>
 #include "debug.h"
 
-#define BLOCKING_SOCKET 0
-#define NONBLOCK_SOCKET 1
+#define BLOCKING_SOCKET (0)
+#define NONBLOCK_SOCKET (1)
+#define TCP_TIMEOUT_S (1)
+#define INVALID_FD (-1)
 //simple tcp client class used for testing SocketTransport.  source: http://www.binarytides.com/code-a-simple-socket-client-class-in-c/
-using namespace std;
 
+using namespace std;
 class TcpClient
 {
 private:
@@ -20,9 +22,11 @@ private:
     std::string address;
     int port;
     struct sockaddr_in server;
+    bool noblock;
+    
     int set_non_blocking();
     int set_blocking();
-    bool noblock;
+    bool set_timeout_write();
 
 public:
     TcpClient();
@@ -52,7 +56,7 @@ bool TcpClient::conn(string address , int port, bool noblock)
 {
     this->noblock = noblock;
     //create socket if it is not already created
-    if(sock == -1)
+    if(sock == INVALID_FD)
     {
         //Create socket
         if(noblock) {
@@ -60,7 +64,7 @@ bool TcpClient::conn(string address , int port, bool noblock)
  	  } else {
           sock = socket(AF_INET , SOCK_STREAM , 0);
         }
-        if (sock == -1)
+        if (sock == INVALID_FD)
         {
             DBG("TcpClient: Could not create socket");
         }
@@ -90,12 +94,8 @@ bool TcpClient::conn(string address , int port, bool noblock)
 
         for(int i = 0; addr_list[i] != NULL; i++)
         {
-            //strcpy(ip , inet_ntoa(*addr_list[i]) );
             server.sin_addr = *addr_list[i];
-
-//            std::string dbgMsg = "TcpClient: " + address +" resolved to " + inet_ntoa(*addr_list[i]);
             DBG("TcpClient: %s resolved to %s", address.c_str(), inet_ntoa(*addr_list[i]));
-
             break;
         }
     }
@@ -112,11 +112,16 @@ bool TcpClient::conn(string address , int port, bool noblock)
     //Connect to remote server
     if (connect(sock , (struct sockaddr *)&server , sizeof(server)) < 0)
     {
-        DBG("TcpClient: connect failed or socket nonblocking");
+        DBG("TcpClient: Connect failed, or nonblocking connect mode");
         return true;
     }
 
     DBG("TcpClient: Connected");
+
+    if(!set_timeout_write()) {
+	DBG("TcpClient: Warning - set timeout failed");
+    }
+
     return true;
 }
 
@@ -126,9 +131,13 @@ bool TcpClient::conn(string address , int port, bool noblock)
 bool TcpClient::send_data(string data)
 {
     if(noblock) {
-   set_blocking();
-   noblock=false;
-   }
+   	set_blocking();
+        if(!set_timeout_write()) {
+          DBG("TcpClient: Warning - set write timeout failed");
+        }
+	noblock=false;
+    }
+
     //Send some data
     if( send(sock , data.c_str() , strlen( data.c_str() ) , 0) < 0)
     {
@@ -155,7 +164,7 @@ string TcpClient::receive(int size=512)
     //Receive a reply from the server
     if( recv(sock , buffer , sizeof(buffer) , 0) < 0)
     {
-        cerr<<"TcpClient: Receive failed"<<endl;
+        DBG("TcpClient: Receive failed");
     }
 
     reply = buffer;
@@ -195,4 +204,15 @@ int TcpClient::set_non_blocking()
 int TcpClient::set_blocking()
 {
 return fcntl(sock, F_SETFL, fcntl(sock, F_GETFL, 0) & ~O_NONBLOCK);
+}
+
+
+bool TcpClient::set_timeout_write() {
+    struct timeval timeout;      
+    timeout.tv_sec = TCP_TIMEOUT_S;
+    timeout.tv_usec = 0;
+    return setsockopt(sock, SOL_SOCKET, SO_SNDTIMEO, (char *)&timeout,
+                sizeof(timeout)) >= 0;
+       
+
 }

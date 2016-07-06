@@ -14,6 +14,6 @@ int ConsoleTransport::write(const std::string& msg, LogEnums::Severity sev){
     	case LogEnums::ERRO:
         	std::cerr << msg << std::endl;
   }
-  return 0;
+  return WRITE_SUCCESS;
 }
 ConsoleTransport::~ConsoleTransport(){}

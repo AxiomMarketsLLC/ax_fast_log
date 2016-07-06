@@ -5,10 +5,10 @@
 SocketTransport::SocketTransport(const int port)
 {
   if (port < 1025 || port > 65535){
-      throw std::invalid_argument("Incorrect argument port: must enter an integer between 1025-65535");
+      throw std::invalid_argument("LOGGER: Incorrect argument port: must enter an integer between 1025-65535");
   }
-  listenSocket = -1;
-  clientSocket= -1;
+  listenSocket = INVALID_FD;
+  clientSocket = INVALID_FD;
   if(!this->startListen(port)) {
     throw std::runtime_error("LOGGER: Couldn't start listen on port");
   }
@@ -24,7 +24,7 @@ SocketTransport::~SocketTransport(void)
 
 bool SocketTransport::clientConnected()
 {
-  return clientSocket != -1;
+  return clientSocket != INVALID_FD;
 }
 
 bool SocketTransport::startListen(const int port)
@@ -32,12 +32,12 @@ bool SocketTransport::startListen(const int port)
   struct sockaddr_in serv_addr;
 
   //create listen socket if it is not already created
-  if(listenSocket == -1)
+  if(listenSocket == INVALID_FD)
   {
     //Create socket
     listenSocket = socket(AF_INET, SOCK_STREAM, 0);
-  //  fcntl(sockfd, F_SETFL, O_NONBLOCK);
-    if(listenSocket == -1)
+
+    if(listenSocket == INVALID_FD)
     {
       return false;
     }
@@ -54,11 +54,10 @@ bool SocketTransport::startListen(const int port)
     {
       return false;
     }
-    //Here, we set the maximum size for the backlog queue to 5
-    listen(listenSocket, 5);
+
+    listen(listenSocket, SERVER_BACKLOG_SZ);
 
     DBG("Listening ...");
-
     return true;
 }
 
@@ -70,7 +69,7 @@ void SocketTransport::waitForConnection()
   while (true) {
   	boost::this_thread::interruption_point();
   	clientSocket = accept4(listenSocket, (struct sockaddr *) &cli_addr, &clilen, SOCK_NONBLOCK);
-  	if (clientSocket > -1 ) {
+  	if (clientSocket != INVALID_FD ) {
   		break;
   	}
   }
@@ -80,31 +79,31 @@ int SocketTransport::write(const std:: string& msg, LogEnums::Severity sev){
 
  if (!serveThread->try_join_for(boost::chrono::milliseconds(SERVER_WAIT_TIMEOUT_MS))) {
 	DBG("Connection timeout");
-	return -1;
+	return WRITE_FAILURE;
 	}
   //Send some data
   if(send(clientSocket, msg.c_str(), strlen(msg.c_str()) , 0) < 0)
   {
     //Send failed : connection assumed to be lost
 		close(clientSocket);
-		clientSocket = -1;
+		clientSocket = INVALID_FD;
 		DBG("Error while sending data.");
-		return -1;
+		return WRITE_FAILURE;
   }
   DBG("Data sent.");
 
-  return 0;
+  return WRITE_SUCCESS;
 
 }
 
 void SocketTransport::closeSocket(){
   serveThread->interrupt();
-  if (clientSocket != -1)
+  if (clientSocket != INVALID_FD)
   {
     close(clientSocket);
   }
 
-  if(listenSocket != -1)
+  if(listenSocket != INVALID_FD)
   {
     close(listenSocket);
   }
