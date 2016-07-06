@@ -26,17 +26,17 @@ static const string TESTSTRING = "TEST";
 
 
 struct axFastFileLogVars{
-std:: string axFilePath, calcString;
+std::string axFilePath, calcString;
 AxFastLog fileAx;
 LogEnums::Severity testSev;
-axFastFileLogVars():axFilePath("data/axTest.txt"),fileAx(LogEnums::FILE, axFilePath), testSev(LogEnums::INFO), calcString(""){}
+axFastFileLogVars():axFilePath("data/axTest.txt"),calcString(""),fileAx(LogEnums::FILE, axFilePath), testSev(LogEnums::INFO){}
 };
 
 struct axFastConsLogVars{
 std::string consAxFilePath, calcString;
 AxFastLog consoleAx;
 LogEnums::Severity testSev;
-axFastConsLogVars():consAxFilePath("data/axTransTest.txt"),consoleAx(LogEnums::CNSL), testSev(LogEnums::INFO),calcString(""){}
+axFastConsLogVars():consAxFilePath("data/axTransTest.txt"), calcString(""), consoleAx(LogEnums::CNSL), testSev(LogEnums::INFO){}
 };
 
 struct axFastSockLogVars{
