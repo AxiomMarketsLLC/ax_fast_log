@@ -408,14 +408,7 @@ if(myReadFile.is_open()){
       myReadFile >> calcString;
     }
 }
-/*FILE *fp = popen("pgrep -f nc", "r");
 
-while (fgets(cmd, sizeof(cmd), fp)) {
-  std::cout << std::endl;
-  std::cout << cmd << std::endl;
-}
-
-fclose(fp);*/
   myReadFile.close();
   BOOST_CHECK_MESSAGE(calcString.compare(TEST_STRING) == 0, "ERROR: Expected string not equal to calculated string");
 
