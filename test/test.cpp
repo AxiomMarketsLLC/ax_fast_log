@@ -393,7 +393,7 @@ snprintf(cmd, sizeof(cmd),"nc -l %d > %s &", PORT+6, testFilePath.c_str());
 system(cmd);
 memset(cmd, 0, sizeof(cmd));
 
-usleep(4000*TIMEOUT_MS);
+usleep(3000*TIMEOUT_MS);
 
 std::ifstream myReadFile;
 
