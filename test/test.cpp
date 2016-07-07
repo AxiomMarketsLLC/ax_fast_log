@@ -72,11 +72,10 @@ struct tcpClientTestVars {
 
 struct axFastLogVars{
 int writeResult;
-std::string transFilePath, transFileErrorPath, consFilePath, consErroFilePath, consDbugFilePath;
+std::string transFilePath, transFileErrorPath, consFilePath, consErroFilePath, consDbugFilePath,cliSockFilePath, calcString;
 LogEnums::Severity testSevInfo, testSevErro, testSevDbug;
-std::string calcString;
 size_t queueSize;
-axFastLogVars():transFilePath("data/transTest.txt"),transFileErrorPath("/test.txt"), consFilePath("data/consTest.txt"), consErroFilePath("data/consErroTest.txt"), consDbugFilePath("data/consDbugTest.txt"), testSevInfo(LogEnums::INFO),testSevErro(LogEnums::ERRO), testSevDbug(LogEnums::DEBG),calcString(""){}
+axFastLogVars():transFilePath("data/transTest.txt"),transFileErrorPath("/test.txt"), consFilePath("data/consTest.txt"), consErroFilePath("data/consErroTest.txt"), consDbugFilePath("data/consDbugTest.txt"),cliSockFilePath("data/cliSockTest"),calcString(""), testSevInfo(LogEnums::INFO),testSevErro(LogEnums::ERRO), testSevDbug(LogEnums::DEBG){}
 };
 
 
@@ -165,7 +164,6 @@ BOOST_AUTO_TEST_CASE(cliSocketAxFastLogTest){
     }
   }
   myReadFile.close();
-  delete cliSocketAx;
   BOOST_CHECK_MESSAGE(calcString.compare(TEST_STRING) == 0, "ERROR: Expected string not equal to calculated string");
 }
 
@@ -385,6 +383,31 @@ BOOST_AUTO_TEST_CASE(serverSocketTransportTester){
 
     BOOST_CHECK_MESSAGE(writeResult == -1, "ERROR: Unexpected return from ServerSocketTransport write when writing to a closed socket");
   }
+
+BOOST_AUTO_TEST_SUITE_END()
+
+BOOST_FIXTURE_TEST_SUITE(clientSocketTransportSuite, axFastLogVars);
+
+BOOST_AUTO_TEST_CASE(clientSocketTransportTester){
+  char cmd[256];
+  snprintf(cmd, sizeof(cmd),"nc -l %d > %s &", PORT+8, cliSockFilePath.c_str());
+  system(cmd);
+  memset(cmd, 0, sizeof(cmd));
+  usleep(4000*TIMEOUT_MS);
+  std::ifstream myReadFile;
+
+  ClientSocketTransport clientSocketTransport(PORT+8, HOST);
+  clientSocketTransport.write(TEST_STRING);
+  usleep(1000*TIMEOUT_MS);
+  myReadFile.open(cliSockFilePath.c_str());
+  if(myReadFile.is_open()){
+    while (!myReadFile.eof()) {
+      myReadFile >> calcString;
+    }
+  }
+  myReadFile.close();
+  BOOST_CHECK_MESSAGE(calcString.compare(TEST_STRING) == 0, "ERROR: Expected string not equal to calculated string");
+}
 
 BOOST_AUTO_TEST_SUITE_END()
 
