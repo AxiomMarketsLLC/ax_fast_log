@@ -136,7 +136,7 @@ BOOST_FIXTURE_TEST_SUITE(servSocketAxFastLogSuite, axFastServSockLogVars);
 
 BOOST_AUTO_TEST_CASE(servSocketAxFastLogTest){
   TcpClient cli;
-  cli.conn(HOST, (PORT), BLOCKING_SOCKET);
+  cli.conn(HOST, (PORT));
   servSocketAx.log(TEST_STRING,testSev);
   calcString = cli.receive(1024);
   BOOST_CHECK_MESSAGE(calcString.compare(TEST_STRING)==0, "ERROR: Expected string unequal to calculated string");
@@ -334,7 +334,7 @@ BOOST_AUTO_TEST_CASE(serverSocketTransportTester){
 
   TcpClient cli;
   ServerSocketTransport serverSocketTransport(PORT+1);
-  cli.conn(HOST, (PORT+1), BLOCKING_SOCKET);
+  cli.conn(HOST, (PORT+1));
   usleep(TIMEOUT_MS*1000);
   BOOST_CHECK_MESSAGE(serverSocketTransport.clientConnected(), "ERROR: Unexpected return from clientConnected method.");
   serverSocketTransport.write(TEST_STRING);
@@ -374,7 +374,7 @@ BOOST_AUTO_TEST_CASE(serverSocketTransportTester){
   BOOST_AUTO_TEST_CASE(socketSendDataTest){
     TcpClient cli;
     ServerSocketTransport serverSocketTransport(PORT+4);
-    cli.conn(HOST, (PORT+4), BLOCKING_SOCKET);
+    cli.conn(HOST, (PORT+4));
     usleep(TIMEOUT_MS*1000);
     BOOST_CHECK_MESSAGE(serverSocketTransport.clientConnected(), "ERROR: Client connection.");
     serverSocketTransport.closeSocket();
@@ -439,7 +439,7 @@ usleep(4000*TIMEOUT_MS);
 
 std::ifstream myReadFile;
 
-cli.conn(HOST, PORT+6, BLOCKING_SOCKET);
+cli.conn(HOST, PORT+6);
 cli.send_data(TEST_STRING);
 
 usleep(2000*TIMEOUT_MS);

@@ -15,18 +15,12 @@ TcpClient::~TcpClient(){
 /**
     Connect to a host on a certain port number
 */
-bool TcpClient::conn(std::string address , int port, bool noblock)
+bool TcpClient::conn(std::string address , int port)
 {
-    this->noblock = noblock;
     //create socket if it is not already created
     if(sock == INVALID_FD)
     {
-        //Create socket
-        if(noblock) {
- 	  sock = socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK, 0);
- 	  } else {
-          sock = socket(AF_INET , SOCK_STREAM , 0);
-        }
+      sock = socket(AF_INET , SOCK_STREAM , 0);
         if (sock == INVALID_FD)
         {
             DBG("TcpClient: Could not create socket");
@@ -35,8 +29,15 @@ bool TcpClient::conn(std::string address , int port, bool noblock)
 
         DBG("TcpClient: Socket created");
     }
+    struct timeval timeout;      
+    timeout.tv_sec = TCP_TIMEOUT_S;
+    timeout.tv_usec = 0;
+    fd_set set;
+    FD_ZERO(&set);
+    FD_SET(sock, &set);
 
-
+    fcntl(sock, F_SETFL, O_NONBLOCK);
+    
     //setup address structure
     if(inet_addr(address.c_str()) == INADDR_NONE)
     {
@@ -72,21 +73,29 @@ bool TcpClient::conn(std::string address , int port, bool noblock)
 
     server.sin_family = AF_INET;
     server.sin_port = htons( port );
-
+    int stat;
     //Connect to remote server
-    if (connect(sock , (struct sockaddr *)&server , sizeof(server)) < 0)
+    if ( (stat = connect(sock , (struct sockaddr *)&server , sizeof(server))) < 0)
     {
-        DBG("TcpClient: Connect failed, or nonblocking connect mode");
-        return true;
+        if(errno != EINPROGRESS){
+          DBG("TcpClient: Connection failure");
+          return false;   
+        }
+        
     }
+    stat=select(sock+1, NULL, &set, NULL, &timeout); 
+    if(stat==1) {
+        socklen_t len = sizeof(stat);
+        getsockopt(sock, SOL_SOCKET, SO_ERROR, &stat, &len);
+        if (!stat) {
+         set_timeout_write();
+         fcntl(sock, F_SETFL, fcntl(sock, F_GETFL, 0) & ~O_NONBLOCK);
+         DBG("TcpClient: Connected");
+         return true; //successfully connected
+        }
+    } DBG("TcpClient: Connection failed");
 
-    DBG("TcpClient: Connected");
-
-    if(!set_timeout_write()) {
-	DBG("TcpClient: Warning - set timeout failed");
-    }
-
-    return true;
+    return false;
 }
 
 /**
@@ -94,13 +103,6 @@ bool TcpClient::conn(std::string address , int port, bool noblock)
 */
 bool TcpClient::send_data(std::string data)
 {
-    if(noblock) {
-   	set_blocking();
-        if(!set_timeout_write()) {
-          DBG("TcpClient: Warning - set write timeout failed");
-        }
-	noblock=false;
-    }
 
     //Send some data
     if( send(sock , data.c_str() , strlen( data.c_str() ) , 0) < 0)
@@ -121,10 +123,7 @@ std::string TcpClient::receive(int size=512)
     char buffer[size];
     memset(buffer,0,sizeof(buffer));
     std::string reply;
-    if(noblock) {
-      set_blocking();
-      noblock = false;
-    }
+
     //Receive a reply from the server
     if( recv(sock , buffer , sizeof(buffer) , 0) < 0)
     {
@@ -148,27 +147,23 @@ void TcpClient::close_socket() {
  to EAGAIN (or EWOULDBLOCK).
  Thanks to Bjorn Reese for this code.
 ----------------------------------------------------------------------*/
-int TcpClient::set_non_blocking()
+/*int TcpClient::set_non_blocking()
 {
     int flags;
 
-    /* If they have O_NONBLOCK, use the Posix way to do it */
+     If they have O_NONBLOCK, use the Posix way to do it */
 #if defined(O_NONBLOCK)
     /* Fixme: O_NONBLOCK is defined but broken on SunOS 4.1.x and AIX 3.2.5. */
-    if (INVALID_FD == (flags = fcntl(sock, F_GETFL, 0)))
+   /* if (INVALID_FD == (flags = fcntl(sock, F_GETFL, 0)))
         flags = 0;
-    return fcntl(sock, F_SETFL, flags | O_NONBLOCK);
+    return fcntl(sock, F_SETFL, flags | O_NONBLOCK);*/
 #else
     /* Otherwise, use the old way of doing it */
-    flags = 1;
+   /* flags = 1;
     return ioctl(sock, FIOBIO, &flags);
 #endif
-}    
-
-int TcpClient::set_blocking()
-{
-return fcntl(sock, F_SETFL, fcntl(sock, F_GETFL, 0) & ~O_NONBLOCK);
-}
+}    */
+#endif
 
 
 bool TcpClient::set_timeout_write() {

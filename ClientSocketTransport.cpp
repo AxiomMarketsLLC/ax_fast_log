@@ -3,7 +3,7 @@
 #define NOBLOCK_SOCK (true)
 
 ClientSocketTransport::ClientSocketTransport(const int port,const std::string& address):cli(){
-  if(!cli.conn(address,port,!NOBLOCK_SOCK)){
+  if(!cli.conn(address,port)){
     throw std::runtime_error("LOGGER: Error while connecting to server.");
   }
 }
