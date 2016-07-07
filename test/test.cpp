@@ -47,7 +47,7 @@ axFastServSockLogVars():calcString(""), servSocketAx(LogEnums::SSKT, PORT),testS
 struct axFastCliSockLogVars{
   std::string cliSockAxFilePath, calcString;
   AxFastLog* cliSocketAx;
-  LogEnums::Severity testsev;
+  LogEnums::Severity testSev;
   axFastCliSockLogVars():cliSockAxFilePath("data/axCliSockTest.txt"),calcString(""),testSev(LogEnums::INFO){}
 };
 
@@ -156,9 +156,9 @@ BOOST_AUTO_TEST_CASE(cliSocketAxFastLogTest){
   std::ifstream myReadFile;
 
   cliSocketAx =  new AxFastLog(LogEnums::CSKT, PORT+7, HOST);
-  cliSocketAx.write(TEST_STRING);
+  cliSocketAx->log(TEST_STRING,testSev);
   usleep(1000*TIMEOUT_MS);
-  myReadFile.open(consDbugFilePath.c_str());
+  myReadFile.open(cliSockAxFilePath.c_str());
   if(myReadFile.is_open()){
     while (!myReadFile.eof()) {
       myReadFile >> calcString;
@@ -426,10 +426,6 @@ if(myReadFile.is_open()){
       myReadFile >> calcString;
     }
 }
-<<<<<<< HEAD
-=======
-
->>>>>>> 94aeb911f864b1dbd3360ef4573bb0c612699b87
   myReadFile.close();
   BOOST_CHECK_MESSAGE(calcString.compare(TEST_STRING) == 0, "ERROR: Expected string not equal to calculated string");
 
