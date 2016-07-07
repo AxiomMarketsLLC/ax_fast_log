@@ -388,12 +388,13 @@ BOOST_AUTO_TEST_SUITE_END()
 BOOST_FIXTURE_TEST_SUITE(tcpClientTestSuite,tcpClientTestVars);
 
 BOOST_AUTO_TEST_CASE(tcpClientTest){
+
 char cmd[256];
 snprintf(cmd, sizeof(cmd),"nc -l %d > %s &", PORT+6, testFilePath.c_str());
 system(cmd);
 memset(cmd, 0, sizeof(cmd));
 
-usleep(3000*TIMEOUT_MS);
+usleep(4000*TIMEOUT_MS);
 
 std::ifstream myReadFile;
 
