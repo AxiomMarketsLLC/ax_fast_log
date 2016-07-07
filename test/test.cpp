@@ -17,7 +17,7 @@
 
 
 #define HOST "localhost"
-#define PORT (63000)
+#define PORT (62000)
 #define TIMEOUT_MS (1)
 
 static const int DEFAULT_QUEUE_TEST_SIZE = 4;
@@ -398,7 +398,7 @@ BOOST_AUTO_TEST_CASE(clientSocketTransportTester){
 
   ClientSocketTransport clientSocketTransport(PORT+8, HOST);
   clientSocketTransport.write(TEST_STRING);
-  usleep(1000*TIMEOUT_MS);
+  usleep(2000*TIMEOUT_MS);
   myReadFile.open(cliSockFilePath.c_str());
   if(myReadFile.is_open()){
     while (!myReadFile.eof()) {
@@ -442,7 +442,7 @@ std::ifstream myReadFile;
 cli.conn(HOST, PORT+6, BLOCKING_SOCKET);
 cli.send_data(TEST_STRING);
 
-usleep(1000*TIMEOUT_MS);
+usleep(2000*TIMEOUT_MS);
 myReadFile.open(testFilePath.c_str());
 
 if(myReadFile.is_open()){
