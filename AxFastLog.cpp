@@ -11,7 +11,7 @@ AxFastLog::AxFastLog(LogEnums::TransportType t, const std::string& address): saf
 }
 
 AxFastLog::AxFastLog(LogEnums::TransportType t, const int port): safeQueue(DEFAULT_QUEUE_SZ){
-  if (t != LogEnums::SCKT) {
+  if (t != LogEnums::SSKT) {
 		throw std::runtime_error("Illegal arguments to AxFastLog(Socket) constructor");
  	}
   	transport = std::unique_ptr<ServerSocketTransport>(new ServerSocketTransport(port));

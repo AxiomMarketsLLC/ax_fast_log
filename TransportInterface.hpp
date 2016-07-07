@@ -7,7 +7,7 @@
 
 namespace LogEnums {
   enum Severity{INFO, DEBG, WARN, ERRO};
-  enum TransportType{FILE,SCKT,CSKT,CNSL};
+  enum TransportType{FILE,SSKT,CSKT,CNSL};
 }
 
 class TransportInterface {

@@ -38,10 +38,17 @@ axFastConsLogVars():consAxFilePath("data/axTransTest.txt"), calcString(""), cons
 };
 
 struct axFastServSockLogVars{
+std::string calcString;
 AxFastLog servSocketAx;
 LogEnums::Severity testSev;
-std::string calcString;
-axFastServSockLogVars():servSocketAx(LogEnums::SCKT, PORT),testSev(LogEnums::INFO), calcString(""){}
+axFastServSockLogVars():calcString(""), servSocketAx(LogEnums::SSKT, PORT),testSev(LogEnums::INFO){}
+};
+
+struct axFastCliSockLogVars{
+  std::string cliSockAxFilePath, calcString;
+  AxFastLog* cliSocketAx;
+  LogEnums::Severity testsev;
+  axFastCliSockLogVars():cliSockAxFilePath("data/axCliSockTest.txt"),calcString(""),testSev(LogEnums::INFO){}
 };
 
 struct invalidAxFastVars{
@@ -76,8 +83,6 @@ axFastLogVars():transFilePath("data/transTest.txt"),transFileErrorPath("/test.tx
 BOOST_FIXTURE_TEST_SUITE(fileAxFastLogSuite, axFastFileLogVars);
 
 BOOST_AUTO_TEST_CASE(fileAxFastLogTest){
-
-  calcString.erase();
   fileAx.log(TEST_STRING,testSev);
 
   usleep(TIMEOUT_MS*1000); //wait 1000 microseconds
@@ -98,7 +103,6 @@ BOOST_AUTO_TEST_SUITE_END();
 BOOST_FIXTURE_TEST_SUITE(consoleAxLogSuite, axFastConsLogVars);
 
 BOOST_AUTO_TEST_CASE(consoleAxFastLogTest){
-  calcString.erase();
 
   //read from file and write to calculatedString
   std::streambuf *psbuf, *backup;
@@ -141,12 +145,36 @@ BOOST_AUTO_TEST_CASE(servSocketAxFastLogTest){
 
 BOOST_AUTO_TEST_SUITE_END()
 
+BOOST_FIXTURE_TEST_SUITE(cliSocketAxFastLogSuite, axFastCliSockLogVars);
+
+BOOST_AUTO_TEST_CASE(cliSocketAxFastLogTest){
+  char cmd[256];
+  snprintf(cmd, sizeof(cmd),"nc -l %d > %s &", PORT+7, cliSockAxFilePath.c_str());
+  system(cmd);
+  memset(cmd, 0, sizeof(cmd));
+  usleep(4000*TIMEOUT_MS);
+  std::ifstream myReadFile;
+
+  cliSocketAx =  new AxFastLog(LogEnums::CSKT, PORT+7, HOST);
+  cliSocketAx.write(TEST_STRING);
+  usleep(1000*TIMEOUT_MS);
+  myReadFile.open(consDbugFilePath.c_str());
+  if(myReadFile.is_open()){
+    while (!myReadFile.eof()) {
+      myReadFile >> calcString;
+    }
+  }
+  myReadFile.close();
+  BOOST_CHECK_MESSAGE(calcString.compare(TEST_STRING) == 0, "ERROR: Expected string not equal to calculated string");
+}
+
+BOOST_AUTO_TEST_SUITE_END()
+
 BOOST_FIXTURE_TEST_SUITE(InvalidAxConstructorsSuite,invalidAxFastVars);
 
 BOOST_AUTO_TEST_CASE(InvalidFileAxTester){
- calcString.erase();
  try{
-   invldFileAx = new AxFastLog(LogEnums::SCKT,testFilePath);
+   invldFileAx = new AxFastLog(LogEnums::SSKT,testFilePath);
  }catch(...){
     calcString = "exception";
   }
@@ -155,7 +183,6 @@ BOOST_AUTO_TEST_CASE(InvalidFileAxTester){
 }
 
 BOOST_AUTO_TEST_CASE(InvalidConsAxTester){
- calcString.erase();
  try{
    invldConsAx = new AxFastLog(LogEnums::FILE);
  }catch(...){
@@ -166,7 +193,6 @@ BOOST_AUTO_TEST_CASE(InvalidConsAxTester){
 }
 
 BOOST_AUTO_TEST_CASE(InvalidServSockAxTester){
- calcString.erase();
  try{
    invldServSockAx = new AxFastLog(LogEnums::CNSL,PORT+5);
  }catch(...){
@@ -182,7 +208,6 @@ BOOST_FIXTURE_TEST_SUITE(fileTransportSuite, axFastLogVars);
 
 
 BOOST_AUTO_TEST_CASE(fileTransportTester){
-  calcString.erase();
   FileTransport fileTrans(transFilePath);
   fileTrans.write(TEST_STRING);
   usleep(TIMEOUT_MS*1000);
@@ -199,7 +224,6 @@ BOOST_AUTO_TEST_CASE(fileTransportTester){
 }
 
 BOOST_AUTO_TEST_CASE(fileTransportPathErrorTester){
-  calcString.erase();
   try{
     FileTransport fileTrans(transFileErrorPath);
   }
@@ -210,7 +234,6 @@ BOOST_AUTO_TEST_CASE(fileTransportPathErrorTester){
 }
 
 BOOST_AUTO_TEST_CASE(fileTransportWriteErrorTester){
-  calcString.erase();
   FileTransport fileTrans(transFilePath);
   fileTrans.closePath();
   try{
@@ -229,7 +252,6 @@ BOOST_AUTO_TEST_SUITE_END()
 BOOST_FIXTURE_TEST_SUITE(consoleTransportSuite, axFastLogVars);
 
 BOOST_AUTO_TEST_CASE(consoleTransportTesterDefault){
-  calcString.erase();
   ConsoleTransport consoleTrans;
   std::streambuf *psbuf, *backup;
   std::ofstream myWriteFile;
@@ -254,7 +276,6 @@ BOOST_AUTO_TEST_CASE(consoleTransportTesterDefault){
   BOOST_CHECK_MESSAGE(calcString.compare(TEST_STRING) == 0, "ERROR: Expected string not equal to calculated string");
 }
 BOOST_AUTO_TEST_CASE(consoleTransportTesterErro){
-  calcString.erase();
   ConsoleTransport consoleTrans;
   std::streambuf *psbuf, *backup;
   std::ofstream myWriteFile;
@@ -280,7 +301,6 @@ BOOST_AUTO_TEST_CASE(consoleTransportTesterErro){
 }
 
 BOOST_AUTO_TEST_CASE(consoleTransportTesterDbug){
-  calcString.erase();
   ConsoleTransport consoleTrans;
   std::streambuf *psbuf, *backup;
   std::ofstream myWriteFile;
@@ -325,7 +345,6 @@ BOOST_AUTO_TEST_CASE(serverSocketTransportTester){
 }
 
   BOOST_AUTO_TEST_CASE(socketPortTester){
-    calcString.erase();
     try{
       ServerSocketTransport serverSocketTransport(1);
     }
@@ -336,7 +355,6 @@ BOOST_AUTO_TEST_CASE(serverSocketTransportTester){
   }
 
   BOOST_AUTO_TEST_CASE(socketClientTest){
-    calcString.erase();
     ServerSocketTransport serverSocketTransport(PORT+2);
     try{
       ServerSocketTransport serverSocketTransport2(PORT+2);
@@ -348,7 +366,6 @@ BOOST_AUTO_TEST_CASE(serverSocketTransportTester){
   }
 
   BOOST_AUTO_TEST_CASE(socketTimeoutTest){
-    calcString.erase();
     ServerSocketTransport serverSocketTransport(PORT+3);
     writeResult = serverSocketTransport.write(TEST_STRING);
 
@@ -409,7 +426,10 @@ if(myReadFile.is_open()){
       myReadFile >> calcString;
     }
 }
+<<<<<<< HEAD
+=======
 
+>>>>>>> 94aeb911f864b1dbd3360ef4573bb0c612699b87
   myReadFile.close();
   BOOST_CHECK_MESSAGE(calcString.compare(TEST_STRING) == 0, "ERROR: Expected string not equal to calculated string");
 
