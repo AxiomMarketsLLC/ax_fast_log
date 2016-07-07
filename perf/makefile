@@ -3,7 +3,7 @@ LIBDIR   := $(TOPDIR)lib/
 LIBSDIR	 := $(TOPDIR)/libs/
 TARGET   := ax_fast_log_perf
 INCDIR	 := $(TOPDIR)include/
-CXXFLAGS  = -Wall -O0 -std=c++11 -I$(INCDIR) -DDEBUG
+CXXFLAGS  = -Wall -O0 -std=c++11 -I$(INCDIR) -I../ -DDEBUG
 PFLAGS = -lpthread -lboost_system -lboost_thread -fopenmp -L$(LIBDIR) -lax_fast_log 
 
 SOURCES = $(wildcard *.cpp)
