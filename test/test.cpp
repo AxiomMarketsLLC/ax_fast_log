@@ -405,6 +405,7 @@ BOOST_AUTO_TEST_SUITE_END()
 BOOST_FIXTURE_TEST_SUITE(tcpClientTestSuite,tcpClientTestVars);
 
 BOOST_AUTO_TEST_CASE(tcpClientTest){
+
 char cmd[256];
 snprintf(cmd, sizeof(cmd),"nc -l %d > %s &", PORT+6, testFilePath.c_str());
 system(cmd);
@@ -425,6 +426,10 @@ if(myReadFile.is_open()){
       myReadFile >> calcString;
     }
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 94aeb911f864b1dbd3360ef4573bb0c612699b87
   myReadFile.close();
   BOOST_CHECK_MESSAGE(calcString.compare(TEST_STRING) == 0, "ERROR: Expected string not equal to calculated string");
 

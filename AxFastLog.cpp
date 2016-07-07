@@ -42,7 +42,6 @@ AxFastLog::~AxFastLog(){
 
 
 void AxFastLog::log(const std::string& msg, LogEnums::Severity sev) {
-	//q.enqueue(std::make_pair(msg, sev));
 	safeQueue.write(std::make_pair(msg,sev));
 }
 
