@@ -16,3 +16,9 @@ int ClientSocketTransport::write(const std:: string& msg, LogEnums::Severity sev
   }
   return WRITE_SUCCESS;
 }
+
+void ClientSocketTransport::closeClient(){
+  cli.close_socket();
+}
+ 
+

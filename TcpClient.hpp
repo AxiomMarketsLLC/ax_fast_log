@@ -22,7 +22,6 @@ private:
     std::string address;
     int port;
     struct sockaddr_in server;
-
     bool set_timeout_write();
 
 public:

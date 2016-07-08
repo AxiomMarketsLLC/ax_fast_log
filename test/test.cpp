@@ -409,6 +409,32 @@ BOOST_AUTO_TEST_CASE(clientSocketTransportTester){
   BOOST_CHECK_MESSAGE(calcString.compare(TEST_STRING) == 0, "ERROR: Expected string not equal to calculated string");
 }
 
+BOOST_AUTO_TEST_CASE(cliSocketLogFailTest){
+  char cmd[256];
+  snprintf(cmd, sizeof(cmd),"nc -l %d > %s &", PORT+9, cliSockFilePath.c_str());
+  system(cmd);
+  memset(cmd, 0, sizeof(cmd));
+  usleep(4000*TIMEOUT_MS);
+  ClientSocketTransport clientSocketTransport(PORT+9, HOST); 
+  clientSocketTransport.closeClient(); 
+  if(clientSocketTransport.write(TEST_STRING)== WRITE_FAILURE){ 
+    calcString = "failed";
+  }
+
+
+  BOOST_CHECK_MESSAGE(calcString.compare("failed") == 0, "ERROR:Return value not as expected");
+}
+
+BOOST_AUTO_TEST_CASE(cliSocketConnFailTest){
+  try{
+   ClientSocketTransport clientSocketTransport(PORT+10, HOST);
+  }catch(...){
+    calcString = "exception";
+  }
+
+  BOOST_CHECK_MESSAGE(calcString.compare("exception") == 0, "ERROR:Exception not thrown as expected");
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_FIXTURE_TEST_SUITE(producerConsumerQueueSuite,producerConsumerQueueVars);

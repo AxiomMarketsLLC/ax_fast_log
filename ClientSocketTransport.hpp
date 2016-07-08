@@ -12,6 +12,7 @@ private:
 public:
     ClientSocketTransport(const int, const std::string&);
     int write(const std:: string&, LogEnums::Severity = LogEnums::INFO);
+    void closeClient();
 
 };
 #endif
