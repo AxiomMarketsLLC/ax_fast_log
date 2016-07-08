@@ -148,13 +148,13 @@ BOOST_FIXTURE_TEST_SUITE(cliSocketAxFastLogSuite, axFastCliSockLogVars);
 
 BOOST_AUTO_TEST_CASE(cliSocketAxFastLogTest){
   char cmd[256];
-  snprintf(cmd, sizeof(cmd),"nc -l %d > %s &", PORT+7, cliSockAxFilePath.c_str());
+  snprintf(cmd, sizeof(cmd),"nc -l %d > %s &", PORT+11, cliSockAxFilePath.c_str());
   system(cmd);
   memset(cmd, 0, sizeof(cmd));
-  usleep(4000*TIMEOUT_MS);
+  usleep(5000*TIMEOUT_MS);
   std::ifstream myReadFile;
 
-  cliSocketAx =  new AxFastLog(LogEnums::CSKT, PORT+7, HOST);
+  cliSocketAx =  new AxFastLog(LogEnums::CSKT, PORT+11, HOST);
   cliSocketAx->log(TEST_STRING,testSev);
   usleep(1000*TIMEOUT_MS);
   myReadFile.open(cliSockAxFilePath.c_str());
