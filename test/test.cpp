@@ -52,7 +52,7 @@ struct axFastCliSockLogVars{
 };
 
 struct invalidAxFastVars{
-AxFastLog* invldFileAx, *invldConsAx, *invldServSockAx;
+AxFastLog* invldFileAx, *invldConsAx, *invldServSockAx, *invldCliSockAx;
 std::string calcString, testFilePath;
 invalidAxFastVars():calcString(""), testFilePath("data/fileTest.txt"){}
 };
@@ -194,6 +194,16 @@ BOOST_AUTO_TEST_CASE(InvalidConsAxTester){
 BOOST_AUTO_TEST_CASE(InvalidServSockAxTester){
  try{
    invldServSockAx = new AxFastLog(LogEnums::CNSL,PORT+5);
+ }catch(...){
+    calcString = "exception";
+  }
+
+  BOOST_CHECK_MESSAGE(calcString.compare("exception")== 0, "ERROR: Expected exception not thrown for writing to a closed stream" );
+}
+
+BOOST_AUTO_TEST_CASE(InvalidCliSockAxTester){
+ try{
+   invldCliSockAx = new AxFastLog(LogEnums::CNSL,PORT+5,HOST);
  }catch(...){
     calcString = "exception";
   }
