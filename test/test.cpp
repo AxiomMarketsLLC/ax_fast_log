@@ -345,7 +345,7 @@ BOOST_AUTO_TEST_CASE(serverSocketTransportTester){
   TcpClient cli;
   ServerSocketTransport serverSocketTransport(PORT+1);
   cli.conn(HOST, (PORT+1));
-  usleep(TIMEOUT_MS*1000);
+  usleep(TIMEOUT_MS*2000);
   BOOST_CHECK_MESSAGE(serverSocketTransport.clientConnected(), "ERROR: Unexpected return from clientConnected method.");
   serverSocketTransport.write(TEST_STRING);
   calcString = cli.receive(1024);
