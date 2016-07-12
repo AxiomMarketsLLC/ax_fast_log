@@ -490,4 +490,32 @@ if(myReadFile.is_open()){
   BOOST_CHECK_MESSAGE(calcString.compare(TEST_STRING) == 0, "ERROR: Expected string not equal to calculated string");
 
 }
+
+/*BOOST_AUTO_TEST_CASE(tcpClientPlainIPTest){
+
+char cmd[256];
+snprintf(cmd, sizeof(cmd),"nc -l %d > %s &", PORT+12, testFilePath.c_str());
+system(cmd);
+memset(cmd, 0, sizeof(cmd));
+
+usleep(4000*TIMEOUT_MS);
+
+std::ifstream myReadFile;
+
+cli.conn("127.0.0.1", PORT+12);
+cli.send_data(TEST_STRING);
+
+usleep(2000*TIMEOUT_MS);
+myReadFile.open(testFilePath.c_str());
+
+if(myReadFile.is_open()){
+    while (!myReadFile.eof()) {
+      myReadFile >> calcString;
+    }
+}
+  myReadFile.close();
+  BOOST_CHECK_MESSAGE(calcString.compare(TEST_STRING) == 0, "ERROR: Expected string not equal to calculated string");
+
+}
+*/
 BOOST_AUTO_TEST_SUITE_END()
