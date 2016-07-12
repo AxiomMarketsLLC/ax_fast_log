@@ -11,7 +11,7 @@
 #include <unistd.h>
 #include "debug.h"
 
-#define TCP_TIMEOUT_S (1)
+#define TCP_TIMEOUT_S (2)
 #define INVALID_FD (-1)
 //simple tcp client class used for testing SocketTransport.  source: http://www.binarytides.com/code-a-simple-socket-client-class-in-c/
 
