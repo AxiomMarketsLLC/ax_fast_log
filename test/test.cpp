@@ -479,7 +479,7 @@ std::ifstream myReadFile;
 cli.conn(HOST, PORT+6);
 cli.send_data(TEST_STRING);
 
-usleep(2000*TIMEOUT_MS);
+usleep(3000*TIMEOUT_MS);
 myReadFile.open(testFilePath.c_str());
 
 if(myReadFile.is_open()){
