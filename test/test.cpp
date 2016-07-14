@@ -153,13 +153,13 @@ BOOST_AUTO_TEST_CASE(cliSocketAxFastLogTest){
   int port = ++open_port;
   snprintf(cmd, sizeof(cmd),"nc -l %d > %s &", port, cliSockAxFilePath.c_str());
   system(cmd);
-  memset(cmd, 0, sizeof(cmd));
-  usleep(5000*TIMEOUT_MS);
+
+  usleep(4000*TIMEOUT_MS);
   std::ifstream myReadFile;
 
   cliSocketAx =  new AxFastLog(LogEnums::CSKT, port, HOST);
   cliSocketAx->log(TEST_STRING,testSev);
-  usleep(1000*TIMEOUT_MS);
+  usleep(4000*TIMEOUT_MS);
   myReadFile.open(cliSockAxFilePath.c_str());
   if(myReadFile.is_open()){
     while (!myReadFile.eof()) {
