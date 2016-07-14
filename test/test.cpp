@@ -18,7 +18,7 @@
 
 
 #define HOST "localhost"
-#define PORT (62000)
+#define PORT (63000)
 #define TIMEOUT_MS (1)
 
 static std::atomic<int> open_port(PORT);
@@ -157,9 +157,9 @@ BOOST_AUTO_TEST_CASE(cliSocketAxFastLogTest){
   usleep(4000*TIMEOUT_MS);
   std::ifstream myReadFile;
 
-  cliSocketAx =  new AxFastLog(LogEnums::CSKT, port, HOST);
+  cliSocketAx = new AxFastLog(LogEnums::CSKT, port, HOST);
   cliSocketAx->log(TEST_STRING,testSev);
-  usleep(4000*TIMEOUT_MS);
+  usleep(1000*TIMEOUT_MS);
   myReadFile.open(cliSockAxFilePath.c_str());
   if(myReadFile.is_open()){
     while (!myReadFile.eof()) {
@@ -435,7 +435,6 @@ BOOST_AUTO_TEST_CASE(cliSocketLogFailTest){
   char cmd[256];
   snprintf(cmd, sizeof(cmd),"nc -l %d > %s &", port, cliSockFilePath.c_str());
   system(cmd);
-  memset(cmd, 0, sizeof(cmd));
   usleep(4000*TIMEOUT_MS);
   ClientSocketTransport clientSocketTransport(port, HOST); 
   clientSocketTransport.closeClient(); 
@@ -482,7 +481,6 @@ int port = ++open_port;
 char cmd[256];
 snprintf(cmd, sizeof(cmd),"nc -l %d > %s &", port, testFilePath.c_str());
 system(cmd);
-memset(cmd, 0, sizeof(cmd));
 
 usleep(4000*TIMEOUT_MS);
 
