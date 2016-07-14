@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string>
 #include <unistd.h>
+#include <atomic>
 #include "../AxFastLog.hpp"
 #include "test.hpp"
 
@@ -20,6 +21,7 @@
 #define PORT (62000)
 #define TIMEOUT_MS (1)
 
+static std::atomic<int> open_port(PORT);
 static const int DEFAULT_QUEUE_TEST_SIZE = 4;
 static const std::string TEST_STRING = "TEST";
 
@@ -41,7 +43,7 @@ struct axFastServSockLogVars{
 std::string calcString;
 AxFastLog servSocketAx;
 LogEnums::Severity testSev;
-axFastServSockLogVars():calcString(""), servSocketAx(LogEnums::SSKT, PORT),testSev(LogEnums::INFO){}
+axFastServSockLogVars():calcString(""), servSocketAx(LogEnums::SSKT, open_port),testSev(LogEnums::INFO){}
 };
 
 struct axFastCliSockLogVars{
@@ -136,7 +138,7 @@ BOOST_FIXTURE_TEST_SUITE(servSocketAxFastLogSuite, axFastServSockLogVars);
 
 BOOST_AUTO_TEST_CASE(servSocketAxFastLogTest){
   TcpClient cli;
-  cli.conn(HOST, (PORT));
+  cli.conn(HOST, (open_port));
   servSocketAx.log(TEST_STRING,testSev);
   calcString = cli.receive(1024);
   BOOST_CHECK_MESSAGE(calcString.compare(TEST_STRING)==0, "ERROR: Expected string unequal to calculated string");
@@ -148,13 +150,14 @@ BOOST_FIXTURE_TEST_SUITE(cliSocketAxFastLogSuite, axFastCliSockLogVars);
 
 BOOST_AUTO_TEST_CASE(cliSocketAxFastLogTest){
   char cmd[256];
-  snprintf(cmd, sizeof(cmd),"nc -l %d > %s &", PORT+11, cliSockAxFilePath.c_str());
+  int port = ++open_port;
+  snprintf(cmd, sizeof(cmd),"nc -l %d > %s &", port, cliSockAxFilePath.c_str());
   system(cmd);
   memset(cmd, 0, sizeof(cmd));
   usleep(5000*TIMEOUT_MS);
   std::ifstream myReadFile;
 
-  cliSocketAx =  new AxFastLog(LogEnums::CSKT, PORT+11, HOST);
+  cliSocketAx =  new AxFastLog(LogEnums::CSKT, port, HOST);
   cliSocketAx->log(TEST_STRING,testSev);
   usleep(1000*TIMEOUT_MS);
   myReadFile.open(cliSockAxFilePath.c_str());
@@ -192,8 +195,9 @@ BOOST_AUTO_TEST_CASE(InvalidConsAxTester){
 }
 
 BOOST_AUTO_TEST_CASE(InvalidServSockAxTester){
+ int port = ++open_port;
  try{
-   invldServSockAx = new AxFastLog(LogEnums::CNSL,PORT+5);
+   invldServSockAx = new AxFastLog(LogEnums::CNSL,port);
  }catch(...){
     calcString = "exception";
   }
@@ -203,7 +207,7 @@ BOOST_AUTO_TEST_CASE(InvalidServSockAxTester){
 
 BOOST_AUTO_TEST_CASE(InvalidCliSockAxTester){
  try{
-   invldCliSockAx = new AxFastLog(LogEnums::CNSL,PORT+5,HOST);
+   invldCliSockAx = new AxFastLog(LogEnums::CNSL,open_port,HOST);
  }catch(...){
     calcString = "exception";
   }
@@ -341,11 +345,11 @@ BOOST_FIXTURE_TEST_SUITE(serverSocketTransportSuite, axFastLogVars);
 
 BOOST_AUTO_TEST_CASE(serverSocketTransportTester){
   //set up socketTranport object and sockets
-
+  int port = ++open_port;
   TcpClient cli;
-  ServerSocketTransport serverSocketTransport(PORT+1);
+  ServerSocketTransport serverSocketTransport(port);
   usleep(TIMEOUT_MS*1000);
-  cli.conn(HOST, (PORT+1));
+  cli.conn(HOST, (port));
   usleep(TIMEOUT_MS*1000);
   BOOST_CHECK_MESSAGE(serverSocketTransport.clientConnected(), "ERROR: Unexpected return from clientConnected method.");
   serverSocketTransport.write(TEST_STRING);
@@ -365,9 +369,10 @@ BOOST_AUTO_TEST_CASE(serverSocketTransportTester){
   }
 
   BOOST_AUTO_TEST_CASE(socketClientTest){
-    ServerSocketTransport serverSocketTransport(PORT+2);
+    int port = ++open_port;
+    ServerSocketTransport serverSocketTransport(port);
     try{
-      ServerSocketTransport serverSocketTransport2(PORT+2);
+      ServerSocketTransport serverSocketTransport2(port);
     }
     catch(...){
       calcString = "exception";
@@ -376,16 +381,18 @@ BOOST_AUTO_TEST_CASE(serverSocketTransportTester){
   }
 
   BOOST_AUTO_TEST_CASE(socketTimeoutTest){
-    ServerSocketTransport serverSocketTransport(PORT+3);
+    int port = ++open_port;
+    ServerSocketTransport serverSocketTransport(port);
     writeResult = serverSocketTransport.write(TEST_STRING);
 
     BOOST_CHECK_MESSAGE(writeResult == -1, "ERROR: Unexpected return from ServerSocketTransport write method");
   }
 
   BOOST_AUTO_TEST_CASE(socketSendDataTest){
+    int port = ++open_port;
     TcpClient cli;
-    ServerSocketTransport serverSocketTransport(PORT+4);
-    cli.conn(HOST, (PORT+4));
+    ServerSocketTransport serverSocketTransport(port);
+    cli.conn(HOST, (port));
     usleep(TIMEOUT_MS*1000);
     BOOST_CHECK_MESSAGE(serverSocketTransport.clientConnected(), "ERROR: Client connection.");
     serverSocketTransport.closeSocket();
@@ -400,14 +407,16 @@ BOOST_AUTO_TEST_SUITE_END()
 BOOST_FIXTURE_TEST_SUITE(clientSocketTransportSuite, axFastLogVars);
 
 BOOST_AUTO_TEST_CASE(clientSocketTransportTester){
+  int port = ++open_port;
+  
   char cmd[256];
-  snprintf(cmd, sizeof(cmd),"nc -l %d > %s &", PORT+8, cliSockFilePath.c_str());
+  snprintf(cmd, sizeof(cmd),"nc -l %d > %s &", port, cliSockFilePath.c_str());
   system(cmd);
   memset(cmd, 0, sizeof(cmd));
   usleep(4000*TIMEOUT_MS);
   std::ifstream myReadFile;
 
-  ClientSocketTransport clientSocketTransport(PORT+8, HOST);
+  ClientSocketTransport clientSocketTransport(port, HOST);
   clientSocketTransport.write(TEST_STRING);
   usleep(2000*TIMEOUT_MS);
   myReadFile.open(cliSockFilePath.c_str());
@@ -421,12 +430,14 @@ BOOST_AUTO_TEST_CASE(clientSocketTransportTester){
 }
 
 BOOST_AUTO_TEST_CASE(cliSocketLogFailTest){
+  int port = ++open_port;
+
   char cmd[256];
-  snprintf(cmd, sizeof(cmd),"nc -l %d > %s &", PORT+9, cliSockFilePath.c_str());
+  snprintf(cmd, sizeof(cmd),"nc -l %d > %s &", port, cliSockFilePath.c_str());
   system(cmd);
   memset(cmd, 0, sizeof(cmd));
   usleep(4000*TIMEOUT_MS);
-  ClientSocketTransport clientSocketTransport(PORT+9, HOST); 
+  ClientSocketTransport clientSocketTransport(port, HOST); 
   clientSocketTransport.closeClient(); 
   if(clientSocketTransport.write(TEST_STRING)== WRITE_FAILURE){ 
     calcString = "failed";
@@ -437,8 +448,9 @@ BOOST_AUTO_TEST_CASE(cliSocketLogFailTest){
 }
 
 BOOST_AUTO_TEST_CASE(cliSocketConnFailTest){
+  int port = ++open_port;
   try{
-   ClientSocketTransport clientSocketTransport(PORT+10, HOST);
+   ClientSocketTransport clientSocketTransport(port, HOST);
   }catch(...){
     calcString = "exception";
   }
@@ -466,9 +478,9 @@ BOOST_AUTO_TEST_SUITE_END()
 BOOST_FIXTURE_TEST_SUITE(tcpClientTestSuite,tcpClientTestVars);
 
 BOOST_AUTO_TEST_CASE(tcpClientTest){
-
+int port = ++open_port;
 char cmd[256];
-snprintf(cmd, sizeof(cmd),"nc -l %d > %s &", PORT+6, testFilePath.c_str());
+snprintf(cmd, sizeof(cmd),"nc -l %d > %s &", port, testFilePath.c_str());
 system(cmd);
 memset(cmd, 0, sizeof(cmd));
 
@@ -476,7 +488,7 @@ usleep(4000*TIMEOUT_MS);
 
 std::ifstream myReadFile;
 
-cli.conn(HOST, PORT+6);
+cli.conn(HOST, port);
 cli.send_data(TEST_STRING);
 
 usleep(4000*TIMEOUT_MS);
@@ -493,9 +505,9 @@ if(myReadFile.is_open()){
 }
 
 /*BOOST_AUTO_TEST_CASE(tcpClientPlainIPTest){
-
+int port = ++open_port;
 char cmd[256];
-snprintf(cmd, sizeof(cmd),"nc -l %d > %s &", PORT+12, testFilePath.c_str());
+snprintf(cmd, sizeof(cmd),"nc -l %d > %s &", port, testFilePath.c_str());
 system(cmd);
 memset(cmd, 0, sizeof(cmd));
 
@@ -503,7 +515,7 @@ usleep(4000*TIMEOUT_MS);
 
 std::ifstream myReadFile;
 
-cli.conn("127.0.0.1", PORT+12);
+cli.conn("127.0.0.1", port);
 cli.send_data(TEST_STRING);
 
 usleep(2000*TIMEOUT_MS);
