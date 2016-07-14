@@ -37,7 +37,7 @@ AxFastLog::AxFastLog(LogEnums::TransportType t): safeQueue(DEFAULT_QUEUE_SZ){
 
 AxFastLog::~AxFastLog(){
  postThread->interrupt();
- postThread->timed_join(boost::posix_time::microseconds(TIMEOUT_US));
+ postThread->timed_join(boost::posix_time::microseconds(AX_TIMEOUT_US));
 };
 
 

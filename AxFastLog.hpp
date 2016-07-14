@@ -26,7 +26,7 @@
 */
 
 
-#define TIMEOUT_US 200
+#define AX_TIMEOUT_US 200
 #define DEFAULT_QUEUE_SZ 200
 
 class AxFastLog {
